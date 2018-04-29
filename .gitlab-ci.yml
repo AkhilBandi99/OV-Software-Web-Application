@@ -58,7 +58,7 @@ build:
     DOCKER_DRIVER: overlay2
   script:
     - setup_docker
-    - bash -x build
+    - build
   only:
     - branches
 
@@ -512,6 +512,12 @@ production:
       docker build -t "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" .
     else
       echo "Building Heroku-based application using gliderlabs/herokuish docker image..."
+      echo "Container"
+      echo "$CI_CONTAINER_NAME"
+      echo "repository"
+      echo "$CI_APPLICATION_REPOSITORY"
+      echo "registry"
+      echo "$CI_REGISTRY"
       docker run -i --name="$CI_CONTAINER_NAME" -v "$(pwd):/tmp/app:ro" gliderlabs/herokuish /bin/herokuish buildpack build
       docker commit "$CI_CONTAINER_NAME" "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
       docker rm "$CI_CONTAINER_NAME" >/dev/null
