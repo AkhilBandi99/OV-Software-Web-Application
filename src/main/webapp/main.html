@@ -102,13 +102,11 @@
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			console.log(this.responseText);
 			if(this.responseText == 0) {
-				window.open("")
-			} else {
-				//somehow redirect to the second page
-				window.open("./main.html");
+				window.location.replace(".");
 			}
 		}
 	}
+    xhr.open("GET", "./OV/test");
     </script>
 </body>
 
