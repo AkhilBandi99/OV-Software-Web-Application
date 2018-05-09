@@ -13,7 +13,7 @@ public class TestResource {
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String test(@Context HttpServletRequest r) {
-		return "" + Login.Security(r.getSession()) + " " + r.getSession().getAttribute("Timeout");
+		return "" + Login.Security(r.getSession());
 	}
 
 }
