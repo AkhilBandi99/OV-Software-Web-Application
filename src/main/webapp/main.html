@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module4</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div>
+        <div class="container">
+            <div class="row" style="padding-top:12px;padding-bottom:6px;">
+                <div class="col-md-12" style="padding:0px;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-md-12 d-flex align-items-center"><img src="assets/img/OV.png" style="height:70px;margin-right:12px;"><input type="text" placeholder="Employee Number" style="margin:6px;"><input type="text" placeholder="Full Name" style="margin:6px;">
+                                <div class="dropdown d-inline-flex"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Status</button>
+                                    <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">Active</a><a class="dropdown-item" role="presentation" href="#">Not active</a><a class="dropdown-item" role="presentation" href="#">Not active yet</a></div>
+                                </div><button class="btn btn-primary" type="button" style="margin-left:6px;">Search</button>
+                                <div class="btn-group ml-auto" role="group"><button class="btn btn-primary" type="button" style="margin:6px;">Import</button><button class="btn btn-primary" type="button" style="margin:6px;">Export</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top:6px;">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body" style="padding:0px;">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Number</th>
+                                            <th>Full Name</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>894291</td>
+                                            <td>Steve Jobs</td>
+                                            <td>Active</td>
+                                        </tr>
+                                        <tr>
+                                            <td>382328</td>
+                                            <td>Bill Gates</td>
+                                            <td>Not active yet</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal fade" role="dialog" tabindex="-1" id="empInfo">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Steve Jobs</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                        <div class="modal-body" style="padding:0;">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Payrate</th>
+                                                            <th>From</th>
+                                                            <th>Until</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>40€</td>
+                                                            <td>01.01.17</td>
+                                                            <td>31.12.17</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>30€</td>
+                                                            <td>01.01.18</td>
+                                                            <td>31.12.18</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Save</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
