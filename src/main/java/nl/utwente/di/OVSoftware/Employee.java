@@ -29,5 +29,9 @@ public class Employee {
 	public List<Payrates> getPayrates(){
 		return payrates;
 	}
+	
+	public String toString() {
+		return getId() + " " + getName();
+	}
 
 }

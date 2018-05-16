@@ -11,15 +11,19 @@ import javax.ws.rs.core.MediaType;
 @Path("/main")
 public class MainResource {
 	
-	public List<Employee> getEmployees() {
-		return null;
-	}
 	
 	@GET
 	@Path("/search/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> search(@PathParam("name") String n){
 		return null;
+	}
+	
+	@GET
+	@Path("/employees")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Employee> getEmployees(){
+		return Database.allEmployees();
 	}
 	
 }

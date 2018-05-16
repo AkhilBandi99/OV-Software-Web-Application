@@ -8,6 +8,7 @@ public class userMaps {
 	
 	public userMaps() {
 		this.newUser("Akhil", "Bandi");
+		this.newUser("a", "a");
 	}
 	
 	public void newUser(String username, String password) {
