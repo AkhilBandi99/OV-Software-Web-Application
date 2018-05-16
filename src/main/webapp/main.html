@@ -39,7 +39,7 @@
                                             <th>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="EmployeeList">
                                         <tr>
                                             <td>894291</td>
                                             <td>Steve Jobs</td>
@@ -96,17 +96,62 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/main.js"></script>
-    <script type="text/javascript">
+    <script>
+    var list = [];
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			console.log(this.responseText);
-			if(this.responseText == 0) {
-				window.location.replace(".");
+			if (isNaN(this.responseText)){
+				
+				try {
+					list = JSON.parse(this.responseText);
+					updatelist();
+				} catch(e) {
+					console.log(e);
+				}
 			}
+			else {
+				if(this.responseText == 0) {
+					window.location.replace(".");
+				}
+			}				
 		}
 	}
+    
+    function updatelist() {
+    	var body = document.getElementById('EmployeeList');
+    	body.innerHTML = "";
+    	console.log(body.innerHTML);
+    	
+    	for (var i = 0; i < list.length; i++) {
+    		
+    		var ver = document.createElement("tr");
+    		
+    		var id = document.createElement("td");
+    	    var ptxt = document.createTextNode(list[i].id);
+    	    id.appendChild(ptxt);
+    	    ver.appendChild(id); 
+    	    
+    		var name = document.createElement("td");
+    	    var ntxt = document.createTextNode(list[i].name);
+    	    name.appendChild(ntxt);
+    	    ver.appendChild(name);
+    	    
+    		var active = document.createElement("td");
+    	    var atxt = document.createTextNode("WIP");
+    	    active.appendChild(atxt);
+    	    ver.appendChild(active);
+
+    	    body.appendChild(ver);
+    	}
+    	
+    }
+    
     xhr.open("GET", "./OV/test");
+    xhr.send(this.responseText);
+    
+    xhr.open("GET", "./OV/main/employees");
+    xhr.send(this.responseText);
     </script>
 </body>
 
