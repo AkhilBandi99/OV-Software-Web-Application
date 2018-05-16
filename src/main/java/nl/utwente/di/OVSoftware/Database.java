@@ -11,12 +11,12 @@ import java.util.List;
 public class Database {
 
 	private static String retr = "SELECT h.res_id, h.fullname, r.purchaseprice, r.vandatum, r.totdatum "
-			+ "FROM public.\"HumresTable\" h, public.\"EmployeeRateTable\" r "
+			+ "FROM di08.humres h, di08.employeerates r "
 			+ "WHERE h.res_id = r.crdnr AND h.\"freefield 16\" = 'N' "
 			+ "ORDER BY h.res_id";
 	
 	private static String all = "SELECT h.res_id, h.fullname "
-			+ "FROM public.\"HumresTable\" h "
+			+ "FROM di08.humres h "
 			+ "WHERE h.\"freefield 16\" = 'N' "
 			+ "ORDER BY h.res_id";
 
@@ -50,9 +50,9 @@ public class Database {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		String url = "jdbc:postgresql://localhost:5432/ov";
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
-			Connection conn = DriverManager.getConnection(url, "user", "dab");
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			Statement statement = conn.createStatement();
 			ResultSet res = statement.executeQuery(query);
 			return res;
