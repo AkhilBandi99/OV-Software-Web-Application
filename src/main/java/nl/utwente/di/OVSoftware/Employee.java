@@ -6,11 +6,13 @@ import java.util.List;
 public class Employee {
 	private final int id;
 	private final String name;
+	private final String status;
 	List<Payrates> payrates;
 	
-	public Employee(int i, String n) {
+	public Employee(int i, String name, String status) {
 		id = i;
-		name = n;
+		this.name = name;
+		this.status = status;
 		payrates = new ArrayList<>();
 	}
 
@@ -21,6 +23,8 @@ public class Employee {
 	public String getName() {
 		return name;
 	}
+
+	public String getStatus(){return status;}
 	
 	public void addPayrates(int c, String s, String e) {
 		payrates.add(new Payrates(c, s, e));
@@ -31,7 +35,7 @@ public class Employee {
 	}
 	
 	public String toString() {
-		return getId() + " " + getName();
+		return getId() + " " + getName() + " " +getStatus();
 	}
 
 }

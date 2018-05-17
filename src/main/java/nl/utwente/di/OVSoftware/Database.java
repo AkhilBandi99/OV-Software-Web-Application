@@ -15,7 +15,7 @@ public class Database {
 			+ "WHERE h.res_id = r.crdnr AND h.\"freefield 16\" = 'N' "
 			+ "ORDER BY h.res_id";
 	
-	private static String all = "SELECT h.res_id, h.fullname "
+	private static String all = "SELECT h.res_id, h.fullname, h.emp_stat "
 			+ "FROM di08.humres h "
 			+ "WHERE h.\"freefield 16\" = 'N' "
 			+ "ORDER BY h.res_id";
@@ -26,7 +26,7 @@ public class Database {
 		try {
 			while(!res.isLast()) {
 				res.next();
-				l.add(new Employee(res.getInt(1), res.getString(2)));
+				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
