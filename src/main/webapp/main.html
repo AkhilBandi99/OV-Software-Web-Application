@@ -98,19 +98,22 @@
     <script src="assets/js/main.js"></script>
     <script>
     var list = [];
+    var info = [];
     var xhr = new XMLHttpRequest();
-    var flag = true;
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			if (isNaN(this.responseText)){
 				
 				try {
-					list = JSON.parse(this.responseText);
-					if (flag) {
-						updatelist();
-						flag = false;
-					} else {
-						updateinfo();
+					var temp = JSON.parse(this.responseText);
+					if (temp.length > 0) {
+						if (temp[0].hasOwnProperty("cost")){
+							info = temp;
+							updateinfo();
+						} else {
+							list = temp;
+							updatelist();
+						}
 					}
 				} catch(e) {
 					console.log(e);
@@ -156,22 +159,22 @@
     	var body = document.getElementById('infotable');
     	body.innerHTML = "";
     	
-    	for (var i = 0; i < list.length; i++) {
+    	for (var i = 0; i < info.length; i++) {
     		
     		var ver = document.createElement("tr");
     		
     		var id = document.createElement("td");
-    	    var ptxt = document.createTextNode(list[i].cost);
+    	    var ptxt = document.createTextNode(info[i].cost);
     	    id.appendChild(ptxt);
     	    ver.appendChild(id); 
     	    
     		var name = document.createElement("td");
-    	    var ntxt = document.createTextNode(list[i].startDate);
+    	    var ntxt = document.createTextNode(info[i].startDate);
     	    name.appendChild(ntxt);
     	    ver.appendChild(name);
     	    
     		var active = document.createElement("td");
-    	    var atxt = document.createTextNode(list[i].endDate);
+    	    var atxt = document.createTextNode(info[i].endDate);
     	    active.appendChild(atxt);
     	    ver.appendChild(active);
     	    body.appendChild(ver);
@@ -184,6 +187,8 @@
         xhr.send(this.responseText);
         var infoname = document.getElementById("infotitle");
         infoname.innerHTML = name;
+        var body = document.getElementById('infotable');
+    	body.innerHTML = "";
     	$("#empInfo").modal();
     }
     
