@@ -11,12 +11,12 @@ import javax.ws.rs.core.MediaType;
 @Path("/main")
 public class MainResource {
 	
-	
+	//
 	@GET
-	@Path("/search/{name}")
+	@Path("/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@PathParam("name") String n){
-		return null;
+	public List<Employee> search(@PathParam("name") String fullname, @PathParam("crdnr") int crdnr){
+		return Database.searchEmployees(crdnr, fullname);
 	}
 	
 	@GET

@@ -26,6 +26,18 @@ public class Database {
 		+ "WHERE r.crdnr = h.res_id "
 		+ "AND r.crdnr = " + crdnr;
 	}
+	//
+	private static String search(int crdnr, String fullname) {
+		return "ALTER TABLE di08.humres ADD COLUMN employees tsvector;"
+			+ "UPDATE di08.humres"
+			+ "SET employees = to_tsvector(english, coalesce(res_id, \")||''|| coalesce(fullname, \")));"
+			+ "CREATE INDEX employees ON di08.humres"
+			+ "USING GIN(employees);"
+			+ "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(employee, query) AS rank"
+			+ "FROM di08.humres h, to_tsquery('" + crdnr + "&" + fullname + "') query"
+			+ "WHERE employees @@ query"
+			+ "ORDER BY rank DESC;";
+	}
 	
 	public static List<Employee> getEmployees(String query) {
 		ResultSet res = getData("", query);
@@ -58,11 +70,22 @@ public class Database {
 		return l;
 	}
 	
-	/*
-	public static List<Employee> searchEmployees() {
-		return getEmployees()
+	
+	public static List<Employee> searchEmployees(int crdnr, String fullname) {
+		ResultSet res = getData("", Database.search(crdnr, fullname));
+		List<Employee> l = new ArrayList<>();
+		try {
+			while(!res.isLast()) {
+				res.next();
+				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return l;
+		
 	}
-*/
+
 	public static ResultSet getData(String db, String query){
 		try {
 			Class.forName("org.postgresql.Driver");

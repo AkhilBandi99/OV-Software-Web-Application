@@ -26,10 +26,10 @@
                 <div class="col-md-12" style="padding:0px;">
                     <div class="card" id="card-style">
                         <div class="card-body">
-                            <div class="col-md-12 d-flex align-items-center"><img src="assets/img/OV.png" style="height:70px;margin-right:12px;"><input type="text" placeholder="Employee Number" style="margin:6px;"><input type="text" placeholder="Full Name" style="margin:6px;">
+                            <div class="col-md-12 d-flex align-items-center"><img src="assets/img/OV.png" style="height:70px;margin-right:12px;"><input id = "searchid" type="text" placeholder="Employee Number" style="margin:6px;"><input id = "searchname" type="text" placeholder="Full Name" style="margin:6px;">
                                 <div class="dropdown d-inline-flex"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Status</button>
                                     <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">Active</a><a class="dropdown-item" role="presentation" href="#">Not active</a><a class="dropdown-item" role="presentation" href="#">Not active yet</a></div>
-                                </div><button class="btn btn-primary" type="button" style="margin-left:6px;">Search</button>
+                                </div><button onclick = searchupdate() class="btn btn-primary" type="button" style="margin-left:6px;">Search</button>
                                 <div class="btn-group ml-auto" role="group"><button class="btn btn-primary" type="button" style="margin:6px;">Import</button><button class="btn btn-primary" type="button" style="margin:6px;">Export</button></div>
                             </div>
                         </div>
@@ -44,8 +44,8 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Employee Number</th>
-                                            <th>Full Name</th>
+                                            <td>Employee Number</td>
+                                            <td>Full Name</td>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -163,6 +163,37 @@
     	    body.appendChild(ver);
     	}
     	
+    }
+    //
+    function searchupdate() {
+    	let crdnr = document.getElementById("searchid").value;
+    	let fullname = document.getElementById("searchname").value;
+    	xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
+    	xhr.send(this.responseText);
+    	xhr.onload = function() {
+    		if (xhr.readyState == 4 && xhr.status == 200) {
+    			console.log(this.responseText);
+    			if (isNaN(this.responseText)){
+    				
+    				try {
+    					list = JSON.parse(this.responseText);
+    					if (flag) {
+    						updatelist();
+    						flag = false;
+    					} else {
+    						updateinfo();
+    					}
+    				} catch(e) {
+    					console.log(e);
+    				}
+    			}
+    			else {
+    				if(this.responseText == 0) {
+    					window.location.replace(".");
+    				}
+    			}				
+    		}
+    	}
     }
     
     function updateinfo() {
