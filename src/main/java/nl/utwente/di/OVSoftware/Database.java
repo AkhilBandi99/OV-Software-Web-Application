@@ -54,7 +54,6 @@ public class Database {
 				l.add(new Payrates(res.getDouble(1), res.getString(2), res.getString(3)));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return l;
 	}
