@@ -28,15 +28,15 @@ public class Database {
 	}
 	//
 	private static String search(int crdnr, String fullname) {
-		return "ALTER TABLE di08.humres ADD COLUMN employees tsvector;"
-			+ "UPDATE di08.humres"
-			+ "SET employees = to_tsvector(english, coalesce(res_id, \")||''|| coalesce(fullname, \")));"
-			+ "CREATE INDEX employees ON di08.humres"
-			+ "USING GIN(employees);"
-			+ "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(employee, query) AS rank"
-			+ "FROM di08.humres h, to_tsquery('" + crdnr + "&" + fullname + "') query"
-			+ "WHERE employees @@ query"
-			+ "ORDER BY rank DESC;";
+		return "ALTER TABLE di08.humres ADD COLUMN employees tsvector; "
+			+ "UPDATE di08.humres "
+			+ "SET employees = to_tsvector(english, coalesce(res_id, \")||''|| coalesce(fullname, \"))); "
+			+ "CREATE INDEX employees ON di08.humres "
+			+ "USING GIN(employees); "
+			+ "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(employee, query) AS rank "
+			+ "FROM di08.humres h, to_tsquery('" + crdnr + "&" + fullname + "') query "
+			+ "WHERE employees @@ query "
+			+ "ORDER BY rank DESC; ";
 	}
 	
 	public static List<Employee> getEmployees(String query) {
@@ -47,8 +47,7 @@ public class Database {
 				res.next();
 				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException | NullPointerException e) {
 		}
 		return l;
 	}
@@ -65,7 +64,7 @@ public class Database {
 				res.next();
 				l.add(new Payrates(res.getDouble(1), res.getString(2), res.getString(3)));
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException e) {
 		}
 		return l;
 	}
@@ -79,8 +78,7 @@ public class Database {
 				res.next();
 				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException | NullPointerException e) {
 		}
 		return l;
 		
