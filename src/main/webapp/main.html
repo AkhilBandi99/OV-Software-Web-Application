@@ -141,10 +141,16 @@
     	    var atxt = document.createTextNode("WIP");
     	    active.appendChild(atxt);
     	    ver.appendChild(active);
-
+    	    var x = list[i].id;
+			ver.setAttribute('onclick', "getId(" + x + ")");
     	    body.appendChild(ver);
     	}
     	
+    }
+    
+    function getId(x){
+    	console.log(x);
+    	$("#empInfo").modal();
     }
     
     xhr.open("GET", "./OV/test");
