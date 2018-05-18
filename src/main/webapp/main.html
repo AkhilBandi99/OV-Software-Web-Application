@@ -127,7 +127,6 @@
     function updatelist() {
     	var body = document.getElementById('EmployeeList');
     	body.innerHTML = "";
-    	console.log(body.innerHTML);
     	
     	for (var i = 0; i < list.length; i++) {
     		
@@ -156,7 +155,6 @@
     function updateinfo() {
     	var body = document.getElementById('infotable');
     	body.innerHTML = "";
-    	console.log(body.innerHTML);
     	
     	for (var i = 0; i < list.length; i++) {
     		
@@ -182,9 +180,10 @@
     }
     
     function getId(x, name){
-    	console.log(x);
     	xhr.open("GET", "./OV/main/employees/" + x);
         xhr.send(this.responseText);
+        var infoname = document.getElementById("infotitle");
+        infoname.innerHTML = name;
     	$("#empInfo").modal();
     }
     
