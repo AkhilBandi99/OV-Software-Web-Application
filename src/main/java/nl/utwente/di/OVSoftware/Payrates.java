@@ -1,17 +1,17 @@
 package nl.utwente.di.OVSoftware;
 
 public class Payrates {
-	private final int cost;
+	private final double cost;
 	private final String startDate;
 	private final String endDate;
 	
-	public Payrates(int c, String s, String e) {
+	public Payrates(double c, String s, String e) {
 		cost = c;
 		startDate = s;
 		endDate = e;
 	}
 
-	public int getCost() {
+	public double getCost() {
 		return cost;
 	}
 

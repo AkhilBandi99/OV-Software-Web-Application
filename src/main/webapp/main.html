@@ -57,7 +57,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Steve Jobs</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                            <h4 id=infotitle class="modal-title">Steve Jobs</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
                                         <div class="modal-body" style="padding:0;">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -68,7 +68,7 @@
                                                             <th>Until</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody id=infotable>
                                                         <tr>
                                                             <td>40€</td>
                                                             <td>01.01.17</td>
@@ -99,13 +99,19 @@
     <script>
     var list = [];
     var xhr = new XMLHttpRequest();
+    var flag = true;
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			if (isNaN(this.responseText)){
 				
 				try {
 					list = JSON.parse(this.responseText);
-					updatelist();
+					if (flag) {
+						updatelist();
+						flag = false;
+					} else {
+						updateinfo();
+					}
 				} catch(e) {
 					console.log(e);
 				}
@@ -141,15 +147,44 @@
     	    var atxt = document.createTextNode(list[i].status);
     	    active.appendChild(atxt);
     	    ver.appendChild(active);
-    	    var x = list[i].id;
-			ver.setAttribute('onclick', "getId(" + x + ")");
+			ver.setAttribute('onclick', "getId(" + list[i].id + ", \"" + list[i].name + "\")");
     	    body.appendChild(ver);
     	}
     	
     }
     
-    function getId(x){
+    function updateinfo() {
+    	var body = document.getElementById('infotable');
+    	body.innerHTML = "";
+    	console.log(body.innerHTML);
+    	
+    	for (var i = 0; i < list.length; i++) {
+    		
+    		var ver = document.createElement("tr");
+    		
+    		var id = document.createElement("td");
+    	    var ptxt = document.createTextNode(list[i].cost);
+    	    id.appendChild(ptxt);
+    	    ver.appendChild(id); 
+    	    
+    		var name = document.createElement("td");
+    	    var ntxt = document.createTextNode(list[i].startDate);
+    	    name.appendChild(ntxt);
+    	    ver.appendChild(name);
+    	    
+    		var active = document.createElement("td");
+    	    var atxt = document.createTextNode(list[i].endDate);
+    	    active.appendChild(atxt);
+    	    ver.appendChild(active);
+    	    body.appendChild(ver);
+    	}
+    	
+    }
+    
+    function getId(x, name){
     	console.log(x);
+    	xhr.open("GET", "./OV/main/employees/" + x);
+        xhr.send(this.responseText);
     	$("#empInfo").modal();
     }
     

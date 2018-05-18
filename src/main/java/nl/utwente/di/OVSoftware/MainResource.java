@@ -26,4 +26,11 @@ public class MainResource {
 		return Database.allEmployees();
 	}
 	
+	@GET
+	@Path("/employees/{crdnr}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Payrates> getEmployees(@PathParam("crdnr") int n){
+		return Database.getPayratesSpecificEmployee(n);
+	}
+	
 }
