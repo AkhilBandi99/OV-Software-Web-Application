@@ -19,7 +19,14 @@ public class Database {
 			+ "FROM di08.humres h "
 			+ "WHERE h.\"freefield 16\" = 'N' "
 			+ "ORDER BY h.res_id";
-
+	
+	private static String specpr(int crdnr) { 
+		return "SELECT r.purchaseprice, r.vandatum, r.totdatum"
+		+ "FROM di08.employeerates r, di08.humres h"
+		+ "WHERE r.crdnr = h.res_id"
+		+ "AND r.crdnr = " + crdnr;
+	}
+	
 	public static List<Employee> getEmployees(String query) {
 		ResultSet res = getData("", query);
 		List<Employee> l = new ArrayList<>();
@@ -36,6 +43,20 @@ public class Database {
 	
 	public static List<Employee> allEmployees(){
 		return getEmployees(all);
+	}
+	
+	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){
+		ResultSet res = getData("", Database.specpr(crdnr));
+		List<Payrates> l = new ArrayList<>();
+		try {
+			while(!res.isLast()) {
+				res.next();
+				l.add(new Payrates(res.getInt(1), res.getString(2), res.getString(3)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return l;
 	}
 	
 	/*
