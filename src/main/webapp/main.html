@@ -7,6 +7,16 @@
     <title>Module4</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+
+     <style>
+
+    #card-style {
+        box-shadow: 3px 3px #e0e0e0;
+    }
+
+    </style>
+
+
 </head>
 
 <body>
@@ -14,7 +24,7 @@
         <div class="container">
             <div class="row" style="padding-top:12px;padding-bottom:6px;">
                 <div class="col-md-12" style="padding:0px;">
-                    <div class="card">
+                    <div class="card" id="card-style">
                         <div class="card-body">
                             <div class="col-md-12 d-flex align-items-center"><img src="assets/img/OV.png" style="height:70px;margin-right:12px;"><input type="text" placeholder="Employee Number" style="margin:6px;"><input type="text" placeholder="Full Name" style="margin:6px;">
                                 <div class="dropdown d-inline-flex"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Status</button>
@@ -41,14 +51,14 @@
                                     </thead>
                                     <tbody id="EmployeeList">
                                         <tr>
-                                            <td>894291</td>
-                                            <td>Steve Jobs</td>
-                                            <td>Active</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         <tr>
-                                            <td>382328</td>
-                                            <td>Bill Gates</td>
-                                            <td>Not active yet</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -57,7 +67,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Steve Jobs</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                            <h4 id=infotitle class="modal-title"></h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
                                         <div class="modal-body" style="padding:0;">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -68,16 +78,16 @@
                                                             <th>Until</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody id=infotable>
                                                         <tr>
-                                                            <td>40€</td>
-                                                            <td>01.01.17</td>
-                                                            <td>31.12.17</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
                                                         </tr>
                                                         <tr>
-                                                            <td>30€</td>
-                                                            <td>01.01.18</td>
-                                                            <td>31.12.18</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -99,13 +109,19 @@
     <script>
     var list = [];
     var xhr = new XMLHttpRequest();
+    var flag = true;
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			if (isNaN(this.responseText)){
 				
 				try {
 					list = JSON.parse(this.responseText);
-					updatelist();
+					if (flag) {
+						updatelist();
+						flag = false;
+					} else {
+						updateinfo();
+					}
 				} catch(e) {
 					console.log(e);
 				}
@@ -121,7 +137,6 @@
     function updatelist() {
     	var body = document.getElementById('EmployeeList');
     	body.innerHTML = "";
-    	console.log(body.innerHTML);
     	
     	for (var i = 0; i < list.length; i++) {
     		
@@ -141,10 +156,45 @@
     	    var atxt = document.createTextNode(list[i].status);
     	    active.appendChild(atxt);
     	    ver.appendChild(active);
-
+			ver.setAttribute('onclick', "getId(" + list[i].id + ", \"" + list[i].name + "\")");
     	    body.appendChild(ver);
     	}
     	
+    }
+    
+    function updateinfo() {
+    	var body = document.getElementById('infotable');
+    	body.innerHTML = "";
+    	
+    	for (var i = 0; i < list.length; i++) {
+    		
+    		var ver = document.createElement("tr");
+    		
+    		var id = document.createElement("td");
+    	    var ptxt = document.createTextNode(list[i].cost);
+    	    id.appendChild(ptxt);
+    	    ver.appendChild(id); 
+    	    
+    		var name = document.createElement("td");
+    	    var ntxt = document.createTextNode(list[i].startDate);
+    	    name.appendChild(ntxt);
+    	    ver.appendChild(name);
+    	    
+    		var active = document.createElement("td");
+    	    var atxt = document.createTextNode(list[i].endDate);
+    	    active.appendChild(atxt);
+    	    ver.appendChild(active);
+    	    body.appendChild(ver);
+    	}
+    	
+    }
+    
+    function getId(x, name){
+    	xhr.open("GET", "./OV/main/employees/" + x);
+        xhr.send(this.responseText);
+        var infoname = document.getElementById("infotitle");
+        infoname.innerHTML = name;
+    	$("#empInfo").modal();
     }
     
     xhr.open("GET", "./OV/test");
