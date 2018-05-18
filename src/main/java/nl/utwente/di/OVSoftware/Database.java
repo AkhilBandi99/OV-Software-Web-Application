@@ -26,7 +26,7 @@ public class Database {
 		+ "WHERE r.crdnr = h.res_id "
 		+ "AND r.crdnr = " + crdnr;
 	}
-	
+	//
 	private static String search(int crdnr, String fullname) {
 		return "ALTER TABLE di08.humres ADD COLUMN employees tsvector;"
 			+ "UPDATE di08.humres"

@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/main")
 public class MainResource {
 	
-	
+	//
 	@GET
 	@Path("/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
