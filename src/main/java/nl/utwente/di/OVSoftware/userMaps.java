@@ -7,7 +7,6 @@ public class userMaps {
 	private HashMap<String, String> users = new HashMap<>();
 	
 	public userMaps() {
-		this.newUser("Akhil", "Bandi");
 		this.newUser("a", "a");
 	}
 	

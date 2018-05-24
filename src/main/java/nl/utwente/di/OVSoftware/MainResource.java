@@ -1,6 +1,5 @@
 package nl.utwente.di.OVSoftware;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -30,8 +29,7 @@ public class MainResource {
 	@Path("/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> search(@PathParam("crdnr") int n, @PathParam("name") String c){
-		return Database.searchEmployees(n, c);
-		
+		return Database.searchEmployees(n, c);		
 	}
 	
 }

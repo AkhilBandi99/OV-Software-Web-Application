@@ -26,17 +26,94 @@ public class Database {
 		+ "WHERE r.crdnr = h.res_id "
 		+ "AND r.crdnr = " + crdnr;
 	}
-	//
+	
+	private static int tsvector() {
+		try {
+			Class.forName("org.postgresql.Driver");
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		int tsvector = 0;
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			Statement statement = conn.createStatement();
+			tsvector = statement.executeUpdate("ALTER TABLE di08.humres " 
+												+ "ADD ts tsvector;");
+			statement.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tsvector;
+	}
+	
+	private static int update() {
+		try {
+			Class.forName("org.postgresql.Driver");
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		int update = 0;
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			Statement statement = conn.createStatement();
+			update = statement.executeUpdate("UPDATE di08.humres "
+												+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, 'NULL'));");
+			statement.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return update;
+	}
+	
+	private static int index() {
+		try {
+			Class.forName("org.postgresql.Driver");
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		int index = 0;
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			Statement statement = conn.createStatement();
+			index = statement.executeUpdate("CREATE INDEX index ON di08.humres USING GIN(ts)");
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return index;
+	}
+	
 	private static String search(int crdnr, String fullname) {
-		return "ALTER TABLE di08.humres ADD COLUMN employees tsvector; "
-			+ "UPDATE di08.humres "
-			+ "SET employees = to_tsvector(english, coalesce(res_id, \")||''|| coalesce(fullname, \"))); "
-			+ "CREATE INDEX employees ON di08.humres "
-			+ "USING GIN(employees); "
-			+ "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(employee, query) AS rank "
-			+ "FROM di08.humres h, to_tsquery('" + crdnr + "&" + fullname + "') query "
-			+ "WHERE employees @@ query "
-			+ "ORDER BY rank DESC; ";
+		if(crdnr != -1 && fullname != "NULL") {
+			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+			+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query "
+			+ "WHERE ts @@ query "
+			//+ "OR h.fullname ILIKE '%"+ fullname +"%' "
+			//+ "OR h.res_id LIKE '%" + crdnr +"%' "
+			+ "ORDER BY rank DESC;";
+		} else if(crdnr == -1 && !fullname.equals("-1")) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+			+ "FROM di08.humres h, to_tsquery('" + fullname + "') query "
+			+ "WHERE ts @@ query "
+			+ "OR h.fullname ILIKE '%"+ fullname +"%' "
+			+ "ORDER BY rank DESC;";
+		} else if(crdnr != -1 && fullname.equals("-1")) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+			+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query "
+			+ "WHERE ts @@ query "
+			//+ "AND h.res_id LIKE '%"+ crdnr +"%' "
+			+ "ORDER BY rank DESC;";
+		} else {
+			return null;
+		}
 	}
 	
 	public static List<Employee> getEmployees(String query) {
@@ -48,6 +125,7 @@ public class Database {
 				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
 		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
 		}
 		return l;
 	}
@@ -65,22 +143,31 @@ public class Database {
 				l.add(new Payrates(res.getDouble(1), res.getString(2), res.getString(3)));
 			}
 		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
 		}
 		return l;
 	}
 	
 	
 	public static List<Employee> searchEmployees(int crdnr, String fullname) {
-		ResultSet res = getData("", Database.search(crdnr, fullname));
-		List<Employee> l = new ArrayList<>();
-		try {
-			while(!res.isLast()) {
-				res.next();
-				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+		if(Database.update() != 0) {
+			ResultSet res = getData("", Database.search(crdnr, fullname));
+			List<Employee> l = new ArrayList<>();
+			try {
+				if(res != null) {
+					while(!res.isLast()) {
+						res.next();
+						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+					}
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException | NullPointerException e) {
+			return l;
+		} else {
+			List<Employee> l = new ArrayList<>();
+			return l;
 		}
-		return l;
 		
 	}
 

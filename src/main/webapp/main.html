@@ -168,19 +168,25 @@
     function searchupdate() {
     	let crdnr = document.getElementById("searchid").value;
     	let fullname = document.getElementById("searchname").value;
-    	xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
-    	xhr.send(this.responseText);
+    	if(crdnr != "" && fullname != "") {
+    		xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
+    	} else if(crdnr == "" && fullname != "") {
+			xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname);
+    	} else if(crdnr != "" && fullname == "") {
+			xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1);
+		}
+    	xhr.send();
     	xhr.onload = function() {
     		if (xhr.readyState == 4 && xhr.status == 200) {
-    			console.log(this.responseText);
     			if (isNaN(this.responseText)){
-    				
+    				console.log(this.responseText);
     				try {
-    					list = JSON.parse(this.responseText);
-    					if (flag) {
+    					var temp = JSON.parse(this.responseText);
+    					if (temp.length > 0) {
+    						list = temp;
     						updatelist();
-    						flag = false;
     					} else {
+    						info = temp;
     						updateinfo();
     					}
     				} catch(e) {
