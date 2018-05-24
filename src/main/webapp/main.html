@@ -164,10 +164,11 @@
     	}
     	
     }
-    //
+    
     function searchupdate() {
     	let crdnr = document.getElementById("searchid").value;
     	let fullname = document.getElementById("searchname").value;
+<<<<<<< HEAD
     	if(crdnr != "" && fullname != "") {
     		xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
     	} else if(crdnr == "" && fullname != "") {
@@ -200,6 +201,11 @@
     			}				
     		}
     	}
+=======
+    	xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
+    	xhr.send(this.responseText);
+    	
+>>>>>>> branch 'master' of https://git.snt.utwente.nl/s1898922/mod04di08.git
     }
     
     function updateinfo() {
