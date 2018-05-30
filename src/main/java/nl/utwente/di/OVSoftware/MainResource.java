@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/main")
 public class MainResource {
@@ -30,6 +31,13 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> search(@PathParam("crdnr") int n, @PathParam("name") String c){
 		return Database.searchEmployees(n, c);		
+	}
+	
+	@GET
+	@Path("/export.csv")
+	@Produces("text/csv")
+	public List<Payrates> export(){
+		return Database.getAllPayrates();
 	}
 	
 }
