@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Database {
 	
-	private static int i = 1;
+	private static int i = 0;
 
 	private static String retr = "SELECT h.res_id, h.fullname, r.purchaseprice, r.vandatum, r.totdatum "
 			+ "FROM di08.humres h, di08.employeerates r "
