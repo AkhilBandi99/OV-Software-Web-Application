@@ -37,7 +37,7 @@ public class MainResource {
 	@Path("/export.csv")
 	@Produces("text/csv")
 	public List<Payrates> export(){
-		return Database.getPayratesSpecificEmployee(108);
+		return Database.getAllPayrates();
 	}
 	
 }
