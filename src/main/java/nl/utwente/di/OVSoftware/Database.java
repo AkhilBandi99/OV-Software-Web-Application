@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Database {
 	
-	private static int i = 0;
+	private static int i = 1;
 
 	private static String retr = "SELECT h.res_id, h.fullname, r.purchaseprice, r.vandatum, r.totdatum "
 			+ "FROM di08.humres h, di08.employeerates r "
@@ -55,22 +55,9 @@ public class Database {
 			i = 1;
 			return tsvector;
 		} else {
+			i = 1;
 			return 1;
 		}
-	}
-	
-	public static List<Payrates> getAllPayrates() {
-		ResultSet res = getData("", allPayrates);
-		List<Payrates> l = new ArrayList<>();
-		try {
-			while(!res.isLast()) {
-				res.next();
-				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
 	}
 	
 	private static int update() {
@@ -132,29 +119,31 @@ public class Database {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			i = 1;
+			index = 1;
 			return index;
 		}
 	}
 	
 	private static String search(int crdnr, String fullname) {
-		if(crdnr != -1 && fullname != "NULL") {
+		if(crdnr != -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
 			+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query "
 			+ "WHERE ts @@ query "
-			//+ "OR h.fullname ILIKE '%"+ fullname +"%' "
-			//+ "OR h.res_id LIKE '%" + crdnr +"%' "
+			+ "OR (h.fullname ILIKE '%"+ fullname +"%' "
+			+ "AND h.res_id::varchar LIKE '%" + crdnr +"%') "
+			+ "ORDER BY rank DESC;";
+		} else if(crdnr != -1 && fullname.equals("-1")) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+			+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query "
+			+ "WHERE ts @@ query "
+			+ "OR h.res_id::varchar LIKE '%"+ crdnr +"%' "
 			+ "ORDER BY rank DESC;";
 		} else if(crdnr == -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
 			+ "FROM di08.humres h, to_tsquery('" + fullname + "') query "
 			+ "WHERE ts @@ query "
 			+ "OR h.fullname ILIKE '%"+ fullname +"%' "
-			+ "ORDER BY rank DESC;";
-		} else if(crdnr != -1 && fullname.equals("-1")) {
-			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-			+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query "
-			+ "WHERE ts @@ query "
-			//+ "AND h.res_id LIKE '%"+ crdnr +"%' "
 			+ "ORDER BY rank DESC;";
 		} else {
 			return null;
@@ -193,6 +182,19 @@ public class Database {
 		return l;
 	}
 	
+	public static List<Payrates> getAllPayrates() {
+		ResultSet res = getData("", allPayrates);
+		List<Payrates> l = new ArrayList<>();
+		try {
+			while(!res.isLast()) {
+				res.next();
+				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+			}
+		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return l;
+	}
 	
 	public static List<Employee> searchEmployees(int crdnr, String fullname) {
 		if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
