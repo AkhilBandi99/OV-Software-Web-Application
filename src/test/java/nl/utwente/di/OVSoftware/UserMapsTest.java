@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class userMapsTest {
+class UserMapsTest {
 
-    private  userMaps userMaps;
+    private UserMaps UserMaps;
 
     @BeforeEach
     void setUp() {
-        userMaps = new userMaps();
+        UserMaps = new UserMaps();
     }
 
     @AfterEach
@@ -21,14 +21,14 @@ class userMapsTest {
 
     @Test
     void newUser() {
-        assertFalse(userMaps.findUser("b","b"));
-        userMaps.newUser("b","b");
-        assertFalse(userMaps.findUser("b","b"));
+        assertFalse(UserMaps.findUser("b","b"));
+        UserMaps.newUser("b","b");
+        assertFalse(UserMaps.findUser("b","b"));
     }
 
     @Test
     void findUser() {
-        assertTrue(userMaps.findUser("a", "a"));
-        assertFalse(userMaps.findUser("b","b"));
+        assertTrue(UserMaps.findUser("a", "a"));
+        assertFalse(UserMaps.findUser("b","b"));
     }
 }

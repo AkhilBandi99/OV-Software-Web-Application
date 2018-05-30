@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/login/{user}/{pass}")
 public class LoginResource {
 	
-	userMaps validUser = new userMaps();
+	UserMaps validUser = new UserMaps();
 
 	@GET 
 	@Produces(MediaType.TEXT_PLAIN)
