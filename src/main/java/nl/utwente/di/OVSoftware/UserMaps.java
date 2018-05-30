@@ -3,10 +3,10 @@ package nl.utwente.di.OVSoftware;
 import java.util.HashMap;
 import java.util.Set;
 
-public class userMaps {
+public class UserMaps {
 	private HashMap<String, String> users = new HashMap<>();
 	
-	public userMaps() {
+	public UserMaps() {
 		this.newUser("a", "a");
 	}
 	
