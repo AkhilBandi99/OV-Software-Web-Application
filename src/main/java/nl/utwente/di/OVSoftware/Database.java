@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
+	
+	private static int i = 0;
 
 	private static String retr = "SELECT h.res_id, h.fullname, r.purchaseprice, r.vandatum, r.totdatum "
 			+ "FROM di08.humres h, di08.employeerates r "
@@ -28,25 +30,30 @@ public class Database {
 	}
 	
 	private static int tsvector() {
-		try {
-			Class.forName("org.postgresql.Driver");
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if(i == 0) {
+			try {
+				Class.forName("org.postgresql.Driver");
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+			int tsvector = 0;
+			try {
+				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+				Statement statement = conn.createStatement();
+				tsvector = statement.executeUpdate("ALTER TABLE di08.humres " 
+													+ "ADD ts tsvector;");
+				statement.close();
+	
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			i = 1;
+			return tsvector;
+		} else {
+			return 1;
 		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		int tsvector = 0;
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			Statement statement = conn.createStatement();
-			tsvector = statement.executeUpdate("ALTER TABLE di08.humres " 
-												+ "ADD ts tsvector;");
-			statement.close();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tsvector;
 	}
 	
 	private static int update() {
@@ -72,23 +79,44 @@ public class Database {
 	}
 	
 	private static int index() {
-		try {
-			Class.forName("org.postgresql.Driver");
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if(i == 0) {
+			try {
+				Class.forName("org.postgresql.Driver");
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+			int index = 0;
+			try {
+				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+				Statement statement = conn.createStatement();
+				index = statement.executeUpdate("CREATE INDEX index ON di08.humres USING GIN(ts)");
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			i = 1;
+			return index;
+		} else {
+			try {
+				Class.forName("org.postgresql.Driver");
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+			int index = 0;
+			try {
+				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+				Statement statement = conn.createStatement();
+				index = statement.executeUpdate("REINDEX TABLE di08.humres");
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return index;
 		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		int index = 0;
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			Statement statement = conn.createStatement();
-			index = statement.executeUpdate("CREATE INDEX index ON di08.humres USING GIN(ts)");
-			statement.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return index;
 	}
 	
 	private static String search(int crdnr, String fullname) {
@@ -150,7 +178,7 @@ public class Database {
 	
 	
 	public static List<Employee> searchEmployees(int crdnr, String fullname) {
-		if(Database.update() != 0) {
+		if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
 			ResultSet res = getData("", Database.search(crdnr, fullname));
 			List<Employee> l = new ArrayList<>();
 			try {
