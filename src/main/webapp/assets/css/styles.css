@@ -94,3 +94,13 @@ html, body {
   background-color:#f1f7fc;
 }
 
+#fileLoader
+{
+  display:none;
+}
+
+#or{
+  text-align: center;
+}
+
+
