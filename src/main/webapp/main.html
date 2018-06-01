@@ -261,12 +261,18 @@
 
     });
     
-    xhr.open("GET", "./OV/test");
-    xhr.send();
+    
     
     function requestContent() {
-    	xhr.open("GET", "./OV/main/employees");
+    	xhr.open("GET", "./OV/test");
    		xhr.send();
+    	window.setTimeout(requestContent2,100);
+
+    }
+    
+	function requestContent2() {
+    	xhr.open("GET", "./OV/main/employees");
+    	xhr.send();
     }
     </script>
 </body>
