@@ -19,7 +19,7 @@
 
 </head>
 
-<body>
+<body onload="requestContent()">
     <div>
         <div class="container">
             <div class="row" style="padding-top:12px;padding-bottom:6px;">
@@ -27,10 +27,12 @@
                     <div class="card" id="card-style">
                         <div class="card-body">
                             <div class="col-md-12 d-flex align-items-center"><img src="assets/img/OV.png" style="height:70px;margin-right:12px;"><input id = "searchid" type="text" placeholder="Employee Number" style="margin:6px;"><input id = "searchname" type="text" placeholder="Full Name" style="margin:6px;">
-                                <div class="dropdown d-inline-flex"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Status</button>
-                                    <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">Active</a><a class="dropdown-item" role="presentation" href="#">Not active</a><a class="dropdown-item" role="presentation" href="#">Not active yet</a></div>
+                                <div class="dropdown d-inline-flex"><button id="statusButton" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Status</button>
+                                    <div id="statusDropdown" class="dropdown-menu" role="menu"><a id = "statusA" onclick = statusFilterA() class="dropdown-item" role="presentation" value = "1">Active</a><a id = "statusI" onclick = statusFilterI() class="dropdown-item" role="presentation" value = "2">Not Active</a><a id = "statusH" onclick = statusFilterH() class="dropdown-item" role="presentation" value = "3">Not Active Yet</a></div>
                                 </div><button onclick = searchupdate() class="btn btn-primary" type="button" style="margin-left:6px;">Search</button>
-                                <div class="btn-group ml-auto" role="group"><form id="upload" enctype="multipart/form-data" method="post" action="./OV/main/import"><button class="btn btn-primary" type="button" onclick="openFileDialog();" style="margin:6px;">Import</button><input type="file" id="fileLoader" onchange="this.form.submit()" name="files" title="Load File" accept=".csv" /></form><button class="btn btn-primary" type="button" onclick="location.href='./OV/main/export.csv'" style="margin:6px;">Export</button></div>
+                                <div class="btn-group ml-auto" role="group"><div class="dropdown d-inline-flex" style="margin:6px;"><button id="officeButtton" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="margin-right:6px;margin-left:6px;">Office</button>
+                                    <div id="officeDropdown" class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">Amersfoort</a><a class="dropdown-item" role="presentation" href="#">Apeldoorn</a><a class="dropdown-item" role="presentation" href="#">Den Haag</a><a class="dropdown-item" role="presentation" href="#">Münster</a><a class="dropdown-item" role="presentation" href="#">Oldenzaal</a></div>
+                                </div><form id="upload" enctype="multipart/form-data" method="post" action="/OV/main/import"><button class="btn btn-primary" type="button" onclick="openFileDialog();" style="margin:6px;">Import</button><input type="file" id="fileLoader" onchange="this.form.submit()" name="files" title="Load File" /></form><button class="btn btn-primary" type="button" onclick="location.href='./OV/main/export.csv'" style="margin:6px;">Export</button></div>
                             </div>
                         </div>
                     </div>
@@ -109,6 +111,9 @@
     <script>
     var list = [];
     var info = [];
+    var A;
+    var I;
+    var H;
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -132,6 +137,8 @@
 			}		
 		}
 	}
+    
+    
     
     function updatelist() {
     	var body = document.getElementById('EmployeeList');
@@ -205,6 +212,28 @@
     	
     }
     
+    function newPayrate() {
+    	
+    }
+    
+    function statusFilterA() {
+    	let status = document.getElementById("statusA").value;
+    	xhr.open("GET", "./OV/main/status/A");
+    	xhr.send();
+    }
+    
+    function statusFilterI() {
+    	let status = document.getElementById("statusI").value;
+    	xhr.open("GET", "./OV/main/status/I");
+    	xhr.send();
+    }
+    
+    function statusFilterH() {
+    	let status = document.getElementById("statusH").value;
+    	xhr.open("GET", "./OV/main/status/H");
+    	xhr.send();
+    }
+    
     function getId(x, name){
     	xhr.open("GET", "./OV/main/employees/" + x);
         xhr.send(this.responseText);
@@ -214,12 +243,32 @@
     	body.innerHTML = "";
     	$("#empInfo").modal();
     }
+
+    $(function(){
+
+        $("#officeDropdown a").click(function(){
+
+            $("#officeButtton").text($(this).text());
+            $("#officeButtton").val($(this).text());
+
+        });
+
+        $("#statusDropdown a").click(function(){
+
+            $("#statusButton").text($(this).text());
+            $("#statusButton").val($(this).text());
+
+        });
+
+    });
     
     xhr.open("GET", "./OV/test");
-    xhr.send(this.responseText);
+    xhr.send();
     
-    //xhr.open("GET", "./OV/main/employees");
-    //xhr.send(this.responseText);
+    function requestContent() {
+    	xhr.open("GET", "./OV/main/employees");
+   		xhr.send();
+    }
     </script>
 </body>
 
