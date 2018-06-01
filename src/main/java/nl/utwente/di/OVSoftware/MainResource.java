@@ -100,15 +100,15 @@ public class MainResource {
 				if (words.length == 4) {
 					int id = Integer.parseInt(words[0]);
 					double cost = Double.parseDouble(words[1]);
-					list.add(new Payrates(id, cost, words[2], words[1]));
+					list.add(new Payrates(id, cost, words[2], words[3]));
 				}
 			}
 			// delete the table
 			Database.emptyAllTables();
+			System.out.println(list.size());
 			// rewrite the database
-			for (Payrates p : list) {
-				Database.addPayrate(p.getId(), (int) p.getCost(), p.getStartDate(), p.getEndDate());
-			}
+			Database.addPayrts(list);
+			
 		}
 	}
 

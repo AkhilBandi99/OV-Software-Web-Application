@@ -23,7 +23,7 @@ public class Database {
 	}
 
 	private static String dropall() {
-		return "DELETE FROM di08.humres;" + "DELETE FROM di08.employeerates;";
+		return "DELETE FROM di08.employeerates;";
 	}
 
 	private static int tsvector() {
@@ -142,7 +142,7 @@ public class Database {
 				+ "' " + "ORDER BY h.res_id";
 	}
 
-	private static int addPayrts(int crdnr, int payrate, String startDt, String endDt) {
+	public static void addPayrts(List<Payrates> list) {
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -150,19 +150,19 @@ public class Database {
 			e.printStackTrace();
 		}
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		int add = 0;
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			for(Payrates p: list) {
 			Statement statement = conn.createStatement();
-			add = statement
-					.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
-							+ crdnr + "', '" + payrate + "', '" + startDt + "', '" + endDt + "');");
+			statement
+				.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
+							+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
 			statement.close();
-
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return add;
+		return;
 	}
 
 	public static List<Employee> getEmployees(String query) {
@@ -247,14 +247,6 @@ public class Database {
 			return l;
 		}
 
-	}
-
-	public static boolean addPayrate(int crdnr, int payrate, String startDt, String endDt) {
-		if (Database.addPayrts(crdnr, payrate, startDt, endDt) != 0) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	public static List<Employee> statusFilter(String s) {
