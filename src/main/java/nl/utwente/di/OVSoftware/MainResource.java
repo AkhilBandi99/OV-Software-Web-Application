@@ -16,7 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -31,6 +30,13 @@ import javassist.bytecode.analysis.Type;
 
 @Path("/main")
 public class MainResource {
+	
+	@GET
+	@Path("/status/{status}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Employee> status(@PathParam("status") String s) {
+		return Database.statusFilter(s);
+	}
 	
 	@GET
 	@Path("/employees")

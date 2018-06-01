@@ -10,12 +10,7 @@ import java.util.List;
 
 public class Database {
 	
-	private static int i = 0;
-
-	private static String retr = "SELECT h.res_id, h.fullname, r.purchaseprice, r.vandatum, r.totdatum "
-			+ "FROM di08.humres h, di08.employeerates r "
-			+ "WHERE h.res_id = r.crdnr AND h.\"freefield 16\" = 'N' "
-			+ "ORDER BY h.res_id";
+	private static int i = 1;
 	
 	private static String allPayrates = "SELECT * "
 			+ "FROM di08.employeerates";
@@ -130,32 +125,59 @@ public class Database {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
 			+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query "
 			+ "WHERE ts @@ query "
-			+ "OR (h.fullname ILIKE '%"+ fullname +"%' "
-			+ "AND h.res_id::varchar LIKE '%" + crdnr +"%') "
+			+ "OR (h.fullname ILIKE '"+ fullname +"%' "
+			+ "AND h.res_id::varchar LIKE '" + crdnr +"%') "
 			+ "ORDER BY rank DESC;";
 		} else if(crdnr != -1 && fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
 			+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query "
 			+ "WHERE ts @@ query "
-			+ "OR h.res_id::varchar LIKE '%"+ crdnr +"%' "
+			+ "OR h.res_id::varchar LIKE '"+ crdnr +"%' "
 			+ "ORDER BY rank DESC;";
 		} else if(crdnr == -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
 			+ "FROM di08.humres h, to_tsquery('" + fullname + "') query "
 			+ "WHERE ts @@ query "
-			+ "OR h.fullname ILIKE '%"+ fullname +"%' "
+			+ "OR h.fullname ILIKE '"+ fullname +"%' "
 			+ "ORDER BY rank DESC;";
 		} else {
 			return null;
 		}
 	}
 	
+	public static String status(String status) {
+		return "SELECT h.res_id, h.fullname, h.emp_stat "
+				+ "FROM di08.humres h "
+				+ "WHERE h.emp_stat = '"+ status + "' "
+				+ "ORDER BY h.res_id";
+	}
+	
+	private static int addPayrts(int crdnr, int payrate, String startDt, String endDt) {
+		try {
+			Class.forName("org.postgresql.Driver");
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		int add = 0;
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			Statement statement = conn.createStatement();
+			add = statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"+ crdnr +"', '"+ payrate +"', '"+ startDt +"', '"+ endDt +"');");
+			statement.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return add;
+	}
+	
 	public static List<Employee> getEmployees(String query) {
 		ResultSet res = getData("", query);
 		List<Employee> l = new ArrayList<>();
 		try {
-			while(!res.isLast()) {
-				res.next();
+			while(res.next()) {
 				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
 		} catch (SQLException | NullPointerException e) {
@@ -172,8 +194,7 @@ public class Database {
 		ResultSet res = getData("", Database.specpr(crdnr));
 		List<Payrates> l = new ArrayList<>();
 		try {
-			while(!res.isLast()) {
-				res.next();
+			while(res.next()) {
 				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
 			}
 		} catch (SQLException | NullPointerException e) {
@@ -186,8 +207,7 @@ public class Database {
 		ResultSet res = getData("", allPayrates);
 		List<Payrates> l = new ArrayList<>();
 		try {
-			while(!res.isLast()) {
-				res.next();
+			while(res.next()) {
 				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
 			}
 		} catch (SQLException | NullPointerException e) {
@@ -202,8 +222,7 @@ public class Database {
 			List<Employee> l = new ArrayList<>();
 			try {
 				if(res != null) {
-					while(!res.isLast()) {
-						res.next();
+					while(res.next()) {
 						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 					}
 				}
@@ -216,6 +235,27 @@ public class Database {
 			return l;
 		}
 		
+	}
+	
+	public static boolean addPayrate(int crdnr, int payrate, String startDt, String endDt) {
+		if(Database.addPayrts(crdnr, payrate, startDt, endDt) != 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static List<Employee> statusFilter(String s) {
+		ResultSet res = getData("", Database.status(s));
+		List<Employee> l = new ArrayList<>();
+		try {
+			while(res.next()) {
+				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+			}
+		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return l;
 	}
 
 	public static ResultSet getData(String db, String query){
