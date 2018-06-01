@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module4</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="login-clean">
+        <form method="post">
+            <h2 class="sr-only">Login Form</h2><img src="assets/img/OV.png" style="width:100%;">
+            <div class="illustration"></div>
+            <div class="form-group"><input id = "username" class="form-control" type="text" name="username" placeholder="Username"></div>
+            <div class="form-group"><input id = "password" class="form-control" type="password" name="password" placeholder="Password"></div>
+            <label id="warning" style="color:red;">Either username or password is wrong or does not exist, please try again.</label>
+            <div class="form-group"><button onclick = login() class="btn btn-primary btn-block">Log in</button>
+            </div><a href="#" class="forgot">Forgot your email or password?</a>
+        </form>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+	var username;
+	var password;
+	
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log(this.responseText);
+			if(this.responseText == 0) {
+				window.open("./relogin.html", "_self");
+			} else {
+				//somehow redirect to the second page
+				window.open("./main.html", "_self");
+			}
+		}
+	}
+	
+    // function for when login button button is pressed
+    function login() {
+    	username = document.getElementById("username").value;
+    	password = document.getElementById("password").value;
+    	console.log(username);
+    	console.log(password);
+    	xhr.open("GET", "./OV/login/" + username + "/" + password);
+    	xhr.send(this.responseText);
+    }
+    
+	</script>
+</body>
+
+</html>
