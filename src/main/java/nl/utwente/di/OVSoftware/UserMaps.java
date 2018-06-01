@@ -23,8 +23,6 @@ public class UserMaps {
 				} else {
 					break;
 				}
-			} else {
-				break;
 			}
 		}
 		return false;
