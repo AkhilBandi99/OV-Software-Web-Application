@@ -84,7 +84,6 @@ public class MainResource {
 				list.add(new Payrates(id, cost, words[2], words[1]));
 			}
 		}
-		System.out.println(list.size());
 	}
 	
 	
