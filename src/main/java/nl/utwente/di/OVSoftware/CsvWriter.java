@@ -21,24 +21,20 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 @Provider
-@Produces("text/csv")
 @Consumes("text/csv")
+@Produces("text/csv")
 
 
-public class CsvWriter implements MessageBodyWriter, MessageBodyReader {
+
+public class CsvWriter implements MessageBodyWriter<Object> {
 
 	@Override
-	public long getSize(Object arg0, Class arg1, Type arg2, Annotation[] arg3, MediaType arg4) {
-		return 0;
-	}
-	
-	@Override
-	public boolean isReadable(Class arg0, Type arg1, Annotation[] arg2, MediaType arg3) {
-		return true;
+	public long getSize(Object arg0, Class<?> arg1, Type arg2, Annotation[] arg3, MediaType arg4) {
+		return -1;
 	}
 
 	@Override
-	public boolean isWriteable(Class arg0, Type arg1, Annotation[] arg2, MediaType arg3) {
+	public boolean isWriteable(Class<?> arg0, Type arg1, Annotation[] arg2, MediaType arg3) {
 		return true;
 	}
 
@@ -54,15 +50,4 @@ public class CsvWriter implements MessageBodyWriter, MessageBodyReader {
 			}
 		}
 	}
-
-	@Override
-	public List<Object> readFrom(Class arg0, Type type, Annotation[] arg2, MediaType arg3, MultivaluedMap arg4,
-			InputStream in) throws IOException, WebApplicationException {
-		CsvMapper m = new CsvMapper();
-        Class csvClass = (Class) (((ParameterizedType) type).getActualTypeArguments())[0];
-        CsvSchema s = m.schemaFor(csvClass).withHeader();
-        List<Object> l = m.reader(csvClass).with(s).readValues(in).readAll();
-        return null;
-	}
-
 }
