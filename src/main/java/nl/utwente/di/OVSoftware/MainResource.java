@@ -32,7 +32,7 @@ import javassist.bytecode.analysis.Type;
 
 @Path("/main")
 public class MainResource {
-	
+
 	@GET
 	@Path("/status/{status}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -42,57 +42,57 @@ public class MainResource {
 		}
 		return null;
 	}
-	
+
 	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> getEmployees(@Context HttpServletRequest r){
+	public List<Employee> getEmployees(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.allEmployees();
 		}
 		return null;
 	}
-	
+
 	@GET
 	@Path("/employees/{crdnr}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n){
+	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n) {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.getPayratesSpecificEmployee(n);
 		}
 		return null;
 	}
-	
+
 	@GET
 	@Path("/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c){
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n,
+			@PathParam("name") String c) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c);		
+			return Database.searchEmployees(n, c);
 		}
 		return null;
 	}
-	
+
 	@GET
 	@Path("/export.csv")
 	@Produces("text/csv")
-	public List<Payrates>  exportcsv(@Context HttpServletRequest r){
+	public List<Payrates> exportcsv(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.getAllPayrates();
 		}
 		return null;
 	}
-	
-	
-	
+
 	@POST
-	@Path("/import")	
+	@Path("/import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public void importcsv(@Context HttpServletRequest r, @FormDataParam("file") InputStream in) {
 		if (Login.Security(r.getSession()) == 1) {
 			List<Payrates> list = new ArrayList<>();
 			Scanner s = new Scanner(in);
-			while (!s.nextLine().equals("id,cost,startDate,endDate"));
+			while (!s.nextLine().equals("id,cost,startDate,endDate"))
+				;
 			String line = " ";
 			while (s.hasNextLine() || line.equals("")) {
 				line = s.nextLine();
@@ -103,8 +103,13 @@ public class MainResource {
 					list.add(new Payrates(id, cost, words[2], words[1]));
 				}
 			}
+			// delete the table
+			Database.emptyAllTables();
+			// rewrite the database
+			for (Payrates p : list) {
+				Database.addPayrate(p.getId(), (int) p.getCost(), p.getStartDate(), p.getEndDate());
+			}
 		}
 	}
-	
-	
+
 }
