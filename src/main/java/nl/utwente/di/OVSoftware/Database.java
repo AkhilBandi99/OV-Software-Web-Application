@@ -11,6 +11,7 @@ import java.util.List;
 public class Database {
 
 	private static int i = 1;
+	private static List<Integer> ListOnPage = new ArrayList<>();
 
 	private static String allPayrates = "SELECT * " + "FROM di08.employeerates";
 
@@ -169,8 +170,10 @@ public class Database {
 		ResultSet res = getData("", query);
 		List<Employee> l = new ArrayList<>();
 		try {
-			while (res.next()) {
-				l.add(new Employee(res.getInt(1), res.getString(2), res.getString(3)));
+			ListOnPage.clear();
+			while(res.next()) {
+				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+				ListOnPage.add(res.getInt(1));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
@@ -182,11 +185,11 @@ public class Database {
 		return getEmployees(all);
 	}
 
-	public static List<Payrates> getPayratesSpecificEmployee(int crdnr) {
+	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){
 		ResultSet res = getData("", Database.specpr(crdnr));
 		List<Payrates> l = new ArrayList<>();
 		try {
-			while (res.next()) {
+			while(res.next()) {
 				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
 			}
 		} catch (SQLException | NullPointerException e) {
@@ -199,8 +202,8 @@ public class Database {
 		ResultSet res = getData("", allPayrates);
 		List<Payrates> l = new ArrayList<>();
 		try {
-			while (res.next()) {
-				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+			while(res.next()) {
+				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
@@ -229,13 +232,15 @@ public class Database {
 	}
 
 	public static List<Employee> searchEmployees(int crdnr, String fullname) {
-		if (Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
+		if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
 			ResultSet res = getData("", Database.search(crdnr, fullname));
 			List<Employee> l = new ArrayList<>();
 			try {
-				if (res != null) {
-					while (res.next()) {
-						l.add(new Employee(res.getInt(1), res.getString(2), res.getString(3)));
+				ListOnPage.clear();
+				if(res != null) {
+					while(res.next()) {
+						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+						ListOnPage.add(res.getInt(1));
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
@@ -246,16 +251,20 @@ public class Database {
 			List<Employee> l = new ArrayList<>();
 			return l;
 		}
-
+		
 	}
 
 	public static List<Employee> statusFilter(String s) {
 		ResultSet res = getData("", Database.status(s));
 		List<Employee> l = new ArrayList<>();
 		try {
-			while (res.next()) {
-				l.add(new Employee(res.getInt(1), res.getString(2), res.getString(3)));
+			while(res.next()) {
+				if(ListOnPage.contains(res.getObject(1))) {
+					l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+					ListOnPage.add(res.getInt(1));
+				}
 			}
+			ListOnPage.clear();
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
