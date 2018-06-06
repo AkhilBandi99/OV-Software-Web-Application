@@ -276,9 +276,14 @@
     function requestContent() {
     	xhr.open("GET", "./OV/test");
    		xhr.send();
+<<<<<<< HEAD
     	window.setTimeout(requestContent2,100);
 		}
+=======
+    	window.setTimeout(requestContent2,200);
+>>>>>>> branch 'master' of http://git@git.snt.utwente.nl/s1898922/mod04di08.git
 
+<<<<<<< HEAD
 	function newPayrate() {
 
 		}
@@ -346,6 +351,21 @@
 			xhr.send(); 
 		}
 	</script>
+=======
+    }
+    
+	function requestContent2() {
+    	xhr.open("GET", "./OV/main/employees");
+    	xhr.send();
+    	window.setTimeout(requestContent3,200);
+    }
+	
+	function requestContent3() {
+    	xhr.open("GET", "./OV/main/databases");
+    	xhr.send();
+    }
+    </script>
+>>>>>>> branch 'master' of http://git@git.snt.utwente.nl/s1898922/mod04di08.git
 </body>
 
 </html>
