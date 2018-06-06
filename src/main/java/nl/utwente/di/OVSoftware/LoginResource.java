@@ -12,7 +12,7 @@ public class LoginResource {
 	
 	UserMaps validUser = new UserMaps();
 
-	@GET 
+	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public int getClichedMessage(@PathParam("user") String user, @PathParam("pass") String pass, @Context HttpServletRequest r) {
 		if(validUser.findUser(user, pass)) {
@@ -20,9 +20,9 @@ public class LoginResource {
 			return 1;
 		} else {
 			return 0;
-			
+
 		}
-		
+
 	}
 	
 }
