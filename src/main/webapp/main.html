@@ -116,9 +116,10 @@
     var I;
     var H;
     var xhr = new XMLHttpRequest();
+    var rqueue = ["./OV/test", "./OV/main/employees", "./OV/main/databases"];
+    var rcounter = 0;
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			console.log(this.responseText);
 			if(this.responseText == "0") {
 				window.location.replace(".");
 			}
@@ -139,7 +140,8 @@
 				}
 			} catch(e) {
 				
-			}		
+			}	
+			requestContent();
 		}
 	}
     
@@ -278,22 +280,14 @@
     
     
     function requestContent() {
-    	xhr.open("GET", "./OV/test");
+    	console.log("a");
+    	if (rcounter < rqueue.length) {
+    	xhr.open("GET", rqueue[rcounter]);
    		xhr.send();
-    	window.setTimeout(requestContent2,200);
+   		rcounter++;
+    	}
+    }
 
-    }
-    
-	function requestContent2() {
-    	xhr.open("GET", "./OV/main/employees");
-    	xhr.send();
-    	window.setTimeout(requestContent3,200);
-    }
-	
-	function requestContent3() {
-    	xhr.open("GET", "./OV/main/databases");
-    	xhr.send();
-    }
     </script>
 </body>
 
