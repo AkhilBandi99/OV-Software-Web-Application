@@ -111,12 +111,14 @@
     <script>
     var list = [];
     var info = [];
+    var dropdownitems = [];
     var A;
     var I;
     var H;
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log(this.responseText);
 			if(this.responseText == "0") {
 				window.location.replace(".");
 			}
@@ -126,10 +128,14 @@
 					if (temp[0].hasOwnProperty("cost")){
 						info = temp;
 						updateinfo();
-					} else {
+					} else if (temp[0].hasOwnProperty("status")) {
 						list = temp;
 						updatelist();
+					} else {
+						dropdownitems = temp;
+						addDropdown();
 					}
+					
 				}
 			} catch(e) {
 				
@@ -261,6 +267,16 @@
 
     });
     
+    function addDropdown(){
+    	dropdown = document.getElementById("officeDropdown")
+    	dropdown.innerHTML = "";
+    	for (var i = 0; i < dropdownitems.length; i++){
+    		dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">" + dropdownitems[i] + "</a>";
+    	}
+    	
+    }
+    
+    
     function requestContent() {
     	xhr.open("GET", "./OV/test");
    		xhr.send();
@@ -268,9 +284,14 @@
 
     }
     
-    
 	function requestContent2() {
     	xhr.open("GET", "./OV/main/employees");
+    	xhr.send();
+    	window.setTimeout(requestContent3,100);
+    }
+	
+	function requestContent3() {
+    	xhr.open("GET", "./OV/main/databases");
     	xhr.send();
     }
     </script>

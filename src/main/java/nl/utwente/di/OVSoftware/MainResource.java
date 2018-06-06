@@ -32,6 +32,8 @@ import javassist.bytecode.analysis.Type;
 
 @Path("/main")
 public class MainResource {
+	
+	DatabaseMaps tables = new DatabaseMaps();
 
 	@GET
 	@Path("/status/{status}")
@@ -112,4 +114,23 @@ public class MainResource {
 		}
 	}
 
+	@GET
+	@Path("/databases")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getDatabases(@Context HttpServletRequest r) {
+		if (Login.Security(r.getSession()) == 1) {
+			return tables.getDatabases();
+		}
+		return null;
+	}
+	
+	@POST
+	@Path("/databases/{selection}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
+		if (Login.Security(r.getSession()) == 1) {
+			r.getSession().setAttribute("Database", n);
+		}
+	}
+	
 }
