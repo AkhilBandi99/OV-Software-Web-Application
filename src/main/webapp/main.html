@@ -165,9 +165,11 @@
 		var I;
 		var H;
 		var xhr = new XMLHttpRequest();
+		var rqueue = [ "./OV/test", "./OV/main/employees",
+				"./OV/main/databases" ];
+		var rcounter = 0;
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
-				console.log(this.responseText);
 				if (this.responseText == "0") {
 					window.location.replace(".");
 				}
@@ -188,7 +190,18 @@
 				} catch (e) {
 					console.log("caught exception : " + e);
 				}
+				requestContent();
 			}
+		}
+
+		function addDropdown() {
+			dropdown = document.getElementById("officeDropdown")
+			dropdown.innerHTML = "";
+			for (var i = 0; i < dropdownitems.length; i++) {
+				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">"
+						+ dropdownitems[i] + "</a>";
+			}
+
 		}
 
 		function updatelist() {
@@ -254,7 +267,6 @@
 				var ntxt = document.createTextNode(info[i].startDate);
 				name.appendChild(ntxt);
 				ver.appendChild(name);
-
 				var active = document.createElement("td");
 				var atxt = document.createTextNode(info[i].endDate);
 				active.appendChild(atxt);
@@ -324,24 +336,12 @@
 		});
 
 		function requestContent() {
-			xhr.open("GET", "./OV/test");
-			xhr.send();
-			window.setTimeout(requestContent2, 100);
-		}
-
-		function requestContent2() {
-			xhr.open("GET", "./OV/main/employees");
-			xhr.send();
-			window.setTimeout(requestContent3, 100);
-		}
-
-		function requestContent3() {
-			xhr.open("GET", "./OV/main/databases");
-			xhr.send();
-		}
-		
-		function logout(){
-			
+			console.log("a");
+			if (rcounter < rqueue.length) {
+				xhr.open("GET", rqueue[rcounter]);
+				xhr.send();
+				rcounter++;
+			}
 		}
 	</script>
 </body>
