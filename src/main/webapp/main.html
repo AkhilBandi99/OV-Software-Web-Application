@@ -158,34 +158,39 @@
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script>
-		var list = [];
-		var info = [];
-		var A;
-		var I;
-		var H;
-		var xhr = new XMLHttpRequest();
-		xhr.onload = function() {
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				if (this.responseText == "0") {
-					window.location.replace(".");
-				}
-				try {
-					var temp = JSON.parse(this.responseText);
-					if (temp.length > 0) {
-						if (temp[0].hasOwnProperty("cost")) {
-							info = temp;
-							updateinfo();
-						} else {
-							list = temp;
-							updatelist();
-						}
+    var list = [];
+    var info = [];
+    var dropdownitems = [];
+    var A;
+    var I;
+    var H;
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log(this.responseText);
+			if(this.responseText == "0") {
+				window.location.replace(".");
+			}
+			try {
+				var temp = JSON.parse(this.responseText);
+				if (temp.length > 0) {
+					if (temp[0].hasOwnProperty("cost")){
+						info = temp;
+						updateinfo();
+					} else if (temp[0].hasOwnProperty("status")) {
+						list = temp;
+						updatelist();
+					} else {
+						dropdownitems = temp;
+						addDropdown();
 					}
-				} catch (e) {
-
 				}
+			} catch (e) {
+				console.log("caught exception : " + e);
 			}
 		}
-
+    }
+    
 		function updatelist() {
 			var body = document.getElementById('EmployeeList');
 			body.innerHTML = "";
@@ -249,39 +254,54 @@
 				var ntxt = document.createTextNode(info[i].startDate);
 				name.appendChild(ntxt);
 				ver.appendChild(name);
-
+				
 				var active = document.createElement("td");
 				var atxt = document.createTextNode(info[i].endDate);
 				active.appendChild(atxt);
 				ver.appendChild(active);
 				body.appendChild(ver);
 			}
+		}
+    
+    function addDropdown(){
+    	dropdown = document.getElementById("officeDropdown")
+    	dropdown.innerHTML = "";
+    	for (var i = 0; i < dropdownitems.length; i++){
+    		dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">" + dropdownitems[i] + "</a>";
+    	}
+    	
+    }
+    
+    
+    function requestContent() {
+    	xhr.open("GET", "./OV/test");
+   		xhr.send();
+    	window.setTimeout(requestContent2,100);
+		}
+
+	function newPayrate() {
 
 		}
 
-		function newPayrate() {
-
-		}
-
-		function statusFilterA() {
+	function statusFilterA() {
 			let status = document.getElementById("statusA").value;
 			xhr.open("GET", "./OV/main/status/A");
 			xhr.send();
 		}
 
-		function statusFilterI() {
+	function statusFilterI() {
 			let status = document.getElementById("statusI").value;
 			xhr.open("GET", "./OV/main/status/I");
 			xhr.send();
 		}
 
-		function statusFilterH() {
+	function statusFilterH() {
 			let status = document.getElementById("statusH").value;
 			xhr.open("GET", "./OV/main/status/H");
 			xhr.send();
 		}
 
-		function getId(x, name) {
+	function getId(x, name) {
 			xhr.open("GET", "./OV/main/employees/" + x);
 			xhr.send(this.responseText);
 			var infoname = document.getElementById("infotitle");
@@ -313,12 +333,17 @@
 			xhr.open("GET", "./OV/test");
 			xhr.send();
 			window.setTimeout(requestContent2, 100);
-
 		}
 
 		function requestContent2() {
 			xhr.open("GET", "./OV/main/employees");
 			xhr.send();
+			window.setTimeout(requestContent3,100);
+		}
+		
+		function requestContent3() {
+			xhr.open("GET", "./OV/main/databases"); 
+			xhr.send(); 
 		}
 	</script>
 </body>
