@@ -108,7 +108,7 @@ public class MainResource {
 			System.out.println(list.size());
 			// rewrite the database
 			Database.addPayrts(list);
-			
+			s.close();
 		}
 	}
 

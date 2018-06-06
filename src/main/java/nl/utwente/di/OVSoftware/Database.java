@@ -42,7 +42,7 @@ public class Database {
 				Statement statement = conn.createStatement();
 				tsvector = statement.executeUpdate("ALTER TABLE di08.humres " + "ADD ts tsvector;");
 				statement.close();
-
+				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -69,7 +69,7 @@ public class Database {
 			update = statement.executeUpdate("UPDATE di08.humres "
 					+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, 'NULL'));");
 			statement.close();
-
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -91,6 +91,7 @@ public class Database {
 				Statement statement = conn.createStatement();
 				index = statement.executeUpdate("CREATE INDEX index ON di08.humres USING GIN(ts)");
 				statement.close();
+				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -110,6 +111,7 @@ public class Database {
 				Statement statement = conn.createStatement();
 				index = statement.executeUpdate("REINDEX TABLE di08.humres");
 				statement.close();
+				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -160,6 +162,7 @@ public class Database {
 							+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
 			statement.close();
 			}
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
