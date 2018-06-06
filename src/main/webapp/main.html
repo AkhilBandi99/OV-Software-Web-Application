@@ -280,14 +280,14 @@
     function requestContent() {
     	xhr.open("GET", "./OV/test");
    		xhr.send();
-    	window.setTimeout(requestContent2,100);
+    	window.setTimeout(requestContent2,200);
 
     }
     
 	function requestContent2() {
     	xhr.open("GET", "./OV/main/employees");
     	xhr.send();
-    	window.setTimeout(requestContent3,100);
+    	window.setTimeout(requestContent3,200);
     }
 	
 	function requestContent3() {
