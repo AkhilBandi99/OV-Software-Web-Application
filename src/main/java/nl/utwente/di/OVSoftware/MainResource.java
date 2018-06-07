@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import nl.utwente.di.OVSoftware.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -26,11 +28,11 @@ public class MainResource {
 	DatabaseMaps tables = new DatabaseMaps();
 
 	@GET
-	@Path("/status/{status}")
+	@Path("/status/{status}/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s) {
+	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s);
+			return Database.statusFilter(s, i, f);
 		}
 		return null;
 	}
@@ -56,12 +58,11 @@ public class MainResource {
 	}
 
 	@GET
-	@Path("/search/{crdnr}/{name}")
+	@Path("/search/{crdnr}/{name}/status/{status}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n,
-			@PathParam("name") String c) {
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c);
+			return Database.searchEmployees(n, c, s);
 		}
 		return null;
 	}
@@ -122,7 +123,15 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
-
 	
+	public static void main(String[] args) {
+		List<Payrates> temp = new ArrayList<Payrates>();
+		temp.add(new Payrates(1, 60,"2016-02-01", "2017-02-05"));
+		temp.add(new Payrates(1, 60,"2019-02-06", "2019-02-07"));
+		temp.add(new Payrates(1, 60,"2017-02-06", "2018-02-05"));
+		temp.add(new Payrates(2, 60,"2016-02-03", "2017-02-05"));
+		temp.add(new Payrates(1, 60,"2018-02-06", "2019-02-05"));
+		System.out.println(Payrates.checkIntegrity(temp));
+	}
 	
 }
