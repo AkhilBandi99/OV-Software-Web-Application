@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="google-signin-client_id" content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
 <title>Module4</title>
 <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/css/styles.css">
@@ -157,6 +158,7 @@
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/main.js"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 	<script>
 		var list = [];
 		var info = [];
@@ -284,6 +286,28 @@
 			}
 
 		}
+
+		function logout() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+            });
+            xhr.open("GET", "./OV/logout");
+            xhr.send();
+            window.open("./login.html", "_self");
+        }
+
+		function requestContent() {
+			xhr.open("GET", "./OV/test");
+			xhr.send();
+			window.setTimeout(requestContent2, 200);
+		}
+
+		function onLoad() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init();
+            });
+        }
 
 		function newPayrate() {
 
