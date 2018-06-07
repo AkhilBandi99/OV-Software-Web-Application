@@ -36,12 +36,9 @@
 										aria-expanded="false" type="button"
 										style="margin-right: 6px; margin-left: 6px;">Status</button>
 									<div id="statusDropdown" class="dropdown-menu" role="menu">
-										<a id="statusA" onclick=statusFilterA() class="dropdown-item"
-											role="presentation">Active</a><a id="statusI"
-											onclick=statusFilterI() class="dropdown-item"
-											role="presentation">Not Active</a><a id="statusH"
-											onclick=statusFilterH() class="dropdown-item"
-											role="presentation">Not Active Yet</a>
+										<a id="statusA" value = "A" onclick=statusFilterA() class="dropdown-item" role="presentation">Active</a>
+											<a id="statusI" value = "I" onclick=statusFilterI() class="dropdown-item" role="presentation">Not Active</a>
+											<a id="statusH" value = "H" onclick=statusFilterH() class="dropdown-item" role="presentation">Not Active Yet</a>
 									</div>
 								</div>
 								<button onclick=searchupdate() class="btn btn-primary"
@@ -55,8 +52,8 @@
 										<div id="officeDropdown" class="dropdown-menu" role="menu">
 											<a class="dropdown-item" role="presentation" href="#">Amersfoort</a><a
 												class="dropdown-item" role="presentation" href="#">Apeldoorn</a><a
-												class="dropdown-item" role="presentation" href="#">Den
-												Haag</a><a class="dropdown-item" role="presentation" href="#">Münster</a><a
+												class="dropdown-item" role="presentation" href="#">DenHaag</a>
+												<a class="dropdown-item" role="presentation" href="#">Münster</a><a
 												class="dropdown-item" role="presentation" href="#">Oldenzaal</a>
 										</div>
 									</div>
@@ -164,6 +161,7 @@
 		var A;
 		var I;
 		var H;
+		var status = -1;
 		var xhr = new XMLHttpRequest();
 		var rqueue = [ "./OV/test", "./OV/main/employees",
 				"./OV/main/databases" ];
@@ -241,11 +239,11 @@
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
-				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname);
+				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname + "/status/" + status);
 			} else if (crdnr == "" && fullname != "") {
-				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname);
+				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname + "/status/" + status);
 			} else if (crdnr != "" && fullname == "") {
-				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1);
+				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1 + "/status/" + status);
 			}
 			xhr.send();
 		}
@@ -290,6 +288,7 @@
 		}
 
 		function statusFilterA() {
+			status = document.getElementById("statusA").getAttribute("value");
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
@@ -305,6 +304,7 @@
 		}
 
 		function statusFilterI() {
+			status = document.getElementById("statusI").getAttribute("value");
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
@@ -320,6 +320,7 @@
 		}
 
 		function statusFilterH() {
+			status = document.getElementById("statusH").getAttribute("value");
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {

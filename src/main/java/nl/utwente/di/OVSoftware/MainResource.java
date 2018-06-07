@@ -56,12 +56,11 @@ public class MainResource {
 	}
 
 	@GET
-	@Path("/search/{crdnr}/{name}")
+	@Path("/search/{crdnr}/{name}/status/{status}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n,
-			@PathParam("name") String c) {
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c);
+			return Database.searchEmployees(n, c, s);
 		}
 		return null;
 	}
