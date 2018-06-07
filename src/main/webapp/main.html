@@ -37,11 +37,11 @@
 										style="margin-right: 6px; margin-left: 6px;">Status</button>
 									<div id="statusDropdown" class="dropdown-menu" role="menu">
 										<a id="statusA" onclick=statusFilterA() class="dropdown-item"
-											role="presentation" value="1">Active</a><a id="statusI"
+											role="presentation">Active</a><a id="statusI"
 											onclick=statusFilterI() class="dropdown-item"
-											role="presentation" value="2">Not Active</a><a id="statusH"
+											role="presentation">Not Active</a><a id="statusH"
 											onclick=statusFilterH() class="dropdown-item"
-											role="presentation" value="3">Not Active Yet</a>
+											role="presentation">Not Active Yet</a>
 									</div>
 								</div>
 								<button onclick=searchupdate() class="btn btn-primary"
@@ -290,20 +290,47 @@
 		}
 
 		function statusFilterA() {
-			let status = document.getElementById("statusA").value;
-			xhr.open("GET", "./OV/main/status/A");
+			let crdnr = document.getElementById("searchid").value;
+			let fullname = document.getElementById("searchname").value;
+			if (crdnr != "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/A/search/" + crdnr + "/" + fullname);
+			} else if (crdnr == "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/A/search/" + -1 + "/" + fullname);
+			} else if (crdnr != "" && fullname == "") {
+				xhr.open("GET", "./OV/main/status/A/search/" + crdnr + "/" + -1);
+			} else {
+				xhr.open("GET", "./OV/main/status/A/search/" + -1 + "/" + -1);
+			}
 			xhr.send();
 		}
 
 		function statusFilterI() {
-			let status = document.getElementById("statusI").value;
-			xhr.open("GET", "./OV/main/status/I");
+			let crdnr = document.getElementById("searchid").value;
+			let fullname = document.getElementById("searchname").value;
+			if (crdnr != "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/I/search/" + crdnr + "/" + fullname);
+			} else if (crdnr == "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/I/search/" + -1 + "/" + fullname);
+			} else if (crdnr != "" && fullname == "") {
+				xhr.open("GET", "./OV/main/status/I/search/" + crdnr + "/" + -1);
+			} else {
+				xhr.open("GET", "./OV/main/status/I/search/" + -1 + "/" + -1);
+			}
 			xhr.send();
 		}
 
 		function statusFilterH() {
-			let status = document.getElementById("statusH").value;
-			xhr.open("GET", "./OV/main/status/H");
+			let crdnr = document.getElementById("searchid").value;
+			let fullname = document.getElementById("searchname").value;
+			if (crdnr != "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/H/search/" + crdnr + "/" + fullname);
+			} else if (crdnr == "" && fullname != "") {
+				xhr.open("GET", "./OV/main/status/H/search/" + -1 + "/" + fullname);
+			} else if (crdnr != "" && fullname == "") {
+				xhr.open("GET", "./OV/main/status/H/search/" + crdnr + "/" + -1);
+			} else {
+				xhr.open("GET", "./OV/main/status/H/search/" + -1 + "/" + -1);
+			}
 			xhr.send();
 		}
 

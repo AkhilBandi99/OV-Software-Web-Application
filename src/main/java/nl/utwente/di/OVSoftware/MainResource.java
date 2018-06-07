@@ -26,11 +26,11 @@ public class MainResource {
 	DatabaseMaps tables = new DatabaseMaps();
 
 	@GET
-	@Path("/status/{status}")
+	@Path("/status/{status}/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s) {
+	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s);
+			return Database.statusFilter(s, i, f);
 		}
 		return null;
 	}
