@@ -28,11 +28,11 @@ public class MainResource {
 	DatabaseMaps tables = new DatabaseMaps();
 
 	@GET
-	@Path("/status/{status}")
+	@Path("/status/{status}/search/{crdnr}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s) {
+	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s);
+			return Database.statusFilter(s, i, f);
 		}
 		return null;
 	}
@@ -58,12 +58,11 @@ public class MainResource {
 	}
 
 	@GET
-	@Path("/search/{crdnr}/{name}")
+	@Path("/search/{crdnr}/{name}/status/{status}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n,
-			@PathParam("name") String c) {
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c);
+			return Database.searchEmployees(n, c, s);
 		}
 		return null;
 	}
