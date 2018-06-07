@@ -33,24 +33,34 @@
 	var password;
 	
     var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-			if(this.responseText == 0) {
-				document.getElementById("warning").innerHTML = 'Either username or password is wrong or does not exist, please try again.';
-			} else {
-				//somehow redirect to the second page
-				window.open("./main.html", "_self");
-			}
-	};
-	
-    // function for when login button button is pressed
+    
     function login() {
-    	username = document.getElementById("username").value;
-    	password = document.getElementById("password").value;
-    	console.log(username);
-    	console.log(password);
-    	xhr.open("GET", "./OV/login/" + username + "/" + password);
-    	xhr.send(this.responseText);
-    }
+		username = document.getElementById("username").value;
+		password = document.getElementById("password").value;
+		console.log(username.length == 0);
+		console.log(password.length == 0);
+		if (username.length == 0 || password.length == 0){
+			$("#warning")
+			.text(
+					"Please do not leave one of the space empty.");
+		} else {
+			$
+			.get({
+				url : "./OV/login/" + username + "/" + password,
+				success : function(response) {
+					if (response == 0) {
+						$("#warning")
+								.text(
+										"Either username or password is wrong or does not exist, please try again.");
+					} else {
+						window.open("./main.html", "_self");
+					}
+					console.log(response);
+				}
+			})
+		}
+		
+	}
 
     function onSignIn(googleUser) {
         var id_token = googleUser.getAuthResponse().id_token;
