@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import nl.utwente.di.OVSoftware.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -122,7 +124,41 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
-
 	
+	public static void main(String[] args) {
+		List<Payrates> temp = new ArrayList<Payrates>();
+		temp.add(new Payrates(1, 60,"2016-02-01", "2017-02-05"));
+		temp.add(new Payrates(1, 60,"2017-02-06", "2018-02-05"));
+		temp.add(new Payrates(2, 60,"2016-02-03", "2017-02-05"));
+		temp.add(new Payrates(1, 60,"2018-02-06", "2017-02-05"));
+		System.out.println(checkDates(temp));
+	}
+
+	public static int checkDates(List<Payrates> head) {
+		System.out.println(head);
+		List<Payrates> list = new ArrayList<Payrates>(head);
+		while(!list.isEmpty()) {
+			int id = list.get(0).getId();
+			List<Payrates> temp = new ArrayList<Payrates>();
+			int i = 0;
+			int i2 = 0;
+			while (i < list.size()) {
+				Payrates item = list.get(i);
+				if (item.getId() == id) {
+					temp.add(item);
+					list.remove(i);
+				} else {
+					i++;
+				}
+			}
+			while (i2 < temp.size() - 1) {
+				if (!temp.get(i2).isNextDate(temp.get(++i2).getStartDate())) {
+					System.out.println(temp.get(i2 - 1).getId() + " " + temp.get(i2 - 1).getEndDate() + " " + temp.get(i2).getId() + " " +  temp.get(i2).getStartDate());
+					return head.indexOf(temp.get(i2 - 1));
+				}
+			}
+		}
+		return -1;
+	}
 	
 }
