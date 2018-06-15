@@ -164,6 +164,7 @@
 		var I;
 		var H;
 		var status = -1;
+		var payratesList = [];
 		var xhr = new XMLHttpRequest();
 		var rqueue = [ "./OV/test", "./OV/main/employees",
 				"./OV/main/databases" ];
@@ -253,6 +254,7 @@
 		function updateinfo() {
 			var body = document.getElementById('infotable');
 			body.innerHTML = "";
+			payratesList = [];
 
 			for (var i = 0; i < info.length; i++) {
 
@@ -272,19 +274,11 @@
 				active.appendChild(atxt);
 				ver.appendChild(active);
 				body.appendChild(ver);
+				payratesList.push([info[i].cost, info[i].startDate, info[i].endDate]);
 			}
+			console.log(payratesList);
 		}
-
-		function addDropdown() {
-			dropdown = document.getElementById("officeDropdown")
-			dropdown.innerHTML = "";
-			for (var i = 0; i < dropdownitems.length; i++) {
-				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">"
-						+ dropdownitems[i] + "</a>";
-			}
-
-		}
-
+		
 		function logout() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
@@ -306,10 +300,6 @@
                 gapi.auth2.init();
             });
         }
-
-		function newPayrate() {
-
-		}
 
 		function statusFilterA() {
 			status = document.getElementById("statusA").getAttribute("value");
@@ -358,7 +348,14 @@
 			}
 			xhr.send();
 		}
-
+		
+		function editPayrate() {
+			if(payrateList.length != 0) {
+				xhr.open("GET", "./OV/main/editPayrate/" + payrateList);
+			}
+			xhr.send();
+		}
+		
 		function getId(x, name) {
 			xhr.open("GET", "./OV/main/employees/" + x);
 			xhr.send(this.responseText);

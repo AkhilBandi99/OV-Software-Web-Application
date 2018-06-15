@@ -1,18 +1,12 @@
 package nl.utwente.di.OVSoftware;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import nl.utwente.di.OVSoftware.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -66,6 +60,15 @@ public class MainResource {
 		}
 		return null;
 	}
+	/*
+	@POST
+	@Path("/editPayrate/{payrateList}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void newPayrate(@Context HttpServletRequest r, @PathParam("payrateList") List<Payrates> l) {
+		if (Login.Security(r.getSession()) == 1) {
+			Database.addPayrts(l);
+		}
+	}*/
 
 	@GET
 	@Path("/export.csv")
