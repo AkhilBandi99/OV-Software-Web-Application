@@ -242,7 +242,19 @@ public class Database {
 		List<Employee> l = new ArrayList<>();
 		try {
 			while(res.next()) {
-				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+				String status = "Unknown";
+				switch (res.getString(3)){
+					case "A":
+						status = "Active";
+						break;
+					case "I":
+						status = "Not Active";
+						break;
+					case "H":
+						status = "Not Active Yet";
+						break;
+				}
+				l.add(new Employee(res.getInt(1), res.getString(2), status));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
