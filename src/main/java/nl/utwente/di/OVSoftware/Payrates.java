@@ -41,7 +41,7 @@ public class Payrates implements Comparable<Payrates>{
 	public double getCost() {
 		return cost;
 	}
-	
+
 	public boolean isNextDate(String next) {
 		Calendar temp = (Calendar) endDate.clone();
 		temp.add(Calendar.DATE, 1);
@@ -51,7 +51,7 @@ public class Payrates implements Comparable<Payrates>{
 	public String getStartDate() {
 		return format(startDate);
 	}
-	
+
 	public String format(Calendar date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(date.getTime());
@@ -65,14 +65,15 @@ public class Payrates implements Comparable<Payrates>{
 	public int compareTo(Payrates o) {
 		return startDate.compareTo(o.startDate);
 	}
-	
+
 	public boolean checkDates() {
 		return startDate.before(endDate);
 	}
-	
+
 	public String toString() {
 		return getId() + " " + getCost() + " " + getStartDate() + " " + getEndDate();
 	}
+
 	
 	public static void checkIntegrity(List<Payrates> mainlist) throws DateException {
 		List<Payrates> head = new ArrayList<>(mainlist);
@@ -80,6 +81,7 @@ public class Payrates implements Comparable<Payrates>{
 		checkPayrate(mainlist);
 		checkDates(head, mainlist);
 	}
+
 	
 	public static void checkPayrate(List<Payrates> head) throws DateException {
 		int i = 0;

@@ -11,7 +11,7 @@ import java.util.List;
 public class Database {
 
 	private static int i = 1;
-	private static List<Integer> ListOnPage = new ArrayList<>();
+	private static List<Employee> ListOnPage = new ArrayList<>();
 
 	private static String allPayrates = "SELECT * " + "FROM di08.employeerates";
 
@@ -22,6 +22,7 @@ public class Database {
 		return "SELECT r.crdnr, r.purchaseprice, r.vandatum, r.totdatum " + "FROM di08.employeerates r, di08.humres h "
 				+ "WHERE r.crdnr = h.res_id " + "AND r.crdnr = " + crdnr;
 	}
+
 
 	private static String dropall() {
 		return "DELETE FROM di08.employeerates;";
@@ -121,28 +122,95 @@ public class Database {
 		}
 	}
 
+	private static String searchWstat(int crdnr, String fullname, String status) {
+		if (crdnr != -1 && !fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "AND h.emp_stat = '" + status + "'"
+						+ "ORDER BY rank DESC;";
+			} else {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "ORDER BY rank DESC;";
+			}
+		} else if (crdnr != -1 && fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "AND h.emp_stat = '" + status + "'"
+						+ "ORDER BY rank DESC;";
+			} else {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "ORDER BY rank DESC;";
+			}
+		} else if (crdnr == -1 && !fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.fullname ILIKE '" + fullname + "%') "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "AND h.emp_stat = '" + status + "'"
+						+ "ORDER BY rank DESC;";
+			} else {
+				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.fullname ILIKE '" + fullname + "%') "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "ORDER BY rank DESC;";
+			}
+		} else {
+			return "";
+		}
+	}
+	
 	private static String search(int crdnr, String fullname) {
 		if (crdnr != -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " + "WHERE ts @@ query "
-					+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%') "
+					+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
+					+ "WHERE (ts @@ query "
+					+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
+					+ "AND h.\"freefield 16\" = 'N' "
 					+ "ORDER BY rank DESC;";
 		} else if (crdnr != -1 && fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " + "WHERE ts @@ query "
-					+ "OR h.res_id::varchar LIKE '" + crdnr + "%' " + "ORDER BY rank DESC;";
+					+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
+					+ "WHERE (ts @@ query "
+					+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
+					+ "AND h.\"freefield 16\" = 'N' "
+					+ "ORDER BY rank DESC;";
 		} else if (crdnr == -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " + "WHERE ts @@ query "
-					+ "OR h.fullname ILIKE '" + fullname + "%' " + "ORDER BY rank DESC;";
+					+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
+					+ "WHERE (ts @@ query "
+					+ "OR h.fullname ILIKE '" + fullname + "%') "
+					+ "AND h.\"freefield 16\" = 'N' "
+					+ "ORDER BY rank DESC;";
 		} else {
-			return null;
+			return "";
 		}
 	}
 
 	public static String status(String status) {
-		return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h " + "WHERE h.emp_stat = '" + status
-				+ "' " + "ORDER BY h.res_id";
+		return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h " 
+				+ "WHERE h.emp_stat = '" + status + "' " 
+				+ "AND h.\"freefield 16\" = 'N' "
+				+ "ORDER BY h.res_id";
 	}
 
 	public static void addPayrts(List<Payrates> list) {
@@ -173,14 +241,14 @@ public class Database {
 		ResultSet res = getData("", query);
 		List<Employee> l = new ArrayList<>();
 		try {
-			ListOnPage.clear();
 			while(res.next()) {
 				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
-				ListOnPage.add(res.getInt(1));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
+		ListOnPage.clear();
+		ListOnPage.addAll(l);
 		return l;
 	}
 
@@ -234,21 +302,37 @@ public class Database {
 		return true;
 	}
 
-	public static List<Employee> searchEmployees(int crdnr, String fullname) {
+	public static List<Employee> searchEmployees(int crdnr, String fullname, String status) {
 		if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
-			ResultSet res = getData("", Database.search(crdnr, fullname));
+			ResultSet res;
+			if(!status.equals("-1")) {
+				res = getData("", Database.searchWstat(crdnr, fullname, status));
+			} else {
+				res = getData("", Database.search(crdnr, fullname));
+			}
 			List<Employee> l = new ArrayList<>();
 			try {
-				ListOnPage.clear();
 				if(res != null) {
 					while(res.next()) {
 						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
-						ListOnPage.add(res.getInt(1));
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
 			}
+			ListOnPage.clear();
+			ResultSet result = getData("", Database.search(crdnr, fullname));
+			List<Employee> f = new ArrayList<>();
+			try {
+				if(result != null) {
+					while(result.next()) {
+						f.add(new Employee(result.getInt(1), result.getString(2),result.getString(3)));
+					}
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
+			};
+			ListOnPage.addAll(f);
 			return l;
 		} else {
 			List<Employee> l = new ArrayList<>();
@@ -257,17 +341,17 @@ public class Database {
 		
 	}
 
-	public static List<Employee> statusFilter(String s) {
-		ResultSet res = getData("", Database.status(s));
+	public static List<Employee> statusFilter(String status, int crdnr, String fullname) {
+		ResultSet res = getData("", Database.status(status));
 		List<Employee> l = new ArrayList<>();
 		try {
 			while(res.next()) {
-				if(ListOnPage.contains(res.getObject(1))) {
-					l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
-					ListOnPage.add(res.getInt(1));
+				for(int i = 0; i < ListOnPage.size(); i++) {
+					if(res.getInt(1) == ListOnPage.get(i).getId()) {
+						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+					}
 				}
 			}
-			ListOnPage.clear();
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -292,6 +376,10 @@ public class Database {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static void changePayrate(int empNumber, String startDate, String endDate, double newPayrate){
+		getData("","UPDATE di08.employeerates SET purchaseprice="+newPayrate+" WHERE crdnr = "+empNumber+" AND totdatum=" +endDate + " AND vandatum= "+startDate);
 	}
 
 }
