@@ -23,6 +23,7 @@ public class Database {
 				+ "WHERE r.crdnr = h.res_id " + "AND r.crdnr = " + crdnr;
 	}
 
+
 	private static String dropall() {
 		return "DELETE FROM di08.employeerates;";
 	}
@@ -375,6 +376,10 @@ public class Database {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static void changePayrate(int empNumber, String startDate, String endDate, double newPayrate){
+		getData("","UPDATE di08.employeerates SET purchaseprice="+newPayrate+" WHERE crdnr = "+empNumber+" AND totdatum=" +endDate + " AND vandatum= "+startDate);
 	}
 
 }
