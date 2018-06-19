@@ -133,15 +133,4 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
-	
-	public static void main(String[] args) {
-		List<Payrates> temp = new ArrayList<Payrates>();
-		temp.add(new Payrates(1, 60,"2016-02-01", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2019-02-06", "2019-02-07"));
-		temp.add(new Payrates(1, 60,"2017-02-06", "2018-02-05"));
-		temp.add(new Payrates(2, 60,"2016-02-03", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2018-02-06", "2019-02-05"));
-		
-	}
-	
 }
