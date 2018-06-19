@@ -213,28 +213,52 @@ public class Database {
 				+ "ORDER BY h.res_id";
 	}
 
-	public static void addPayrts(List<Payrates> list) {
-		//if(Payrates.) {
-			try {
-				Class.forName("org.postgresql.Driver");
-	
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-			try {
-				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				for(Payrates p: list) {
+	public static void importPayrts(List<Payrates> list) {
+		try {
+			Class.forName("org.postgresql.Driver");
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			for(Payrates p: list) {
 				Statement statement = conn.createStatement();
 				statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
 								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
 				statement.close();
-				}
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
-		//}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	public static void editPayrt(List<Payrates> list) {
+		try {
+			Class.forName("org.postgresql.Driver");
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			//if(Payrates.checkIntegrity(list)) {
+				for(Payrates p: list) {
+					Statement statement = conn.createStatement();
+					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
+					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
+								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+					statement.close();
+					conn.close();
+				}
+			//}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return;
 	}
 
@@ -377,10 +401,6 @@ public class Database {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public static void changePayrate(int empNumber, String startDate, String endDate, double newPayrate){
-		getData("","UPDATE di08.employeerates SET purchaseprice="+newPayrate+" WHERE crdnr = "+empNumber+" AND totdatum=" +endDate + " AND vandatum= "+startDate);
 	}
 
 }
