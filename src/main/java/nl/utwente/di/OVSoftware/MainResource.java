@@ -99,7 +99,6 @@ public class MainResource {
 					list.add(new Payrates(id, cost, words[2], words[3]));
 				}
 			}
-
 			try {
 				Payrates.checkIntegrity(list);
 				
@@ -111,7 +110,6 @@ public class MainResource {
 			} catch(DateException e){
 				ret = e.getMessage();
 			}
-
 			s.close();
 		}
 		return ret;
