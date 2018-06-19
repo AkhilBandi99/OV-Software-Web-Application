@@ -1,11 +1,14 @@
 package nl.utwente.di.OVSoftware;
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -71,32 +74,26 @@ public class Payrates implements Comparable<Payrates>{
 		return getId() + " " + getCost() + " " + getStartDate() + " " + getEndDate();
 	}
 
-	public static String checkIntegrity(List<Payrates> mainlist) {
+	
+	public static void checkIntegrity(List<Payrates> mainlist) throws DateException {
 		List<Payrates> head = new ArrayList<>(mainlist);
 		Collections.sort(head);
-		String d = checkPayrate(mainlist);
-		if (d != null) {
-			return d + " Start date after end date";
-		}
-		String i = checkDates(head, mainlist);
-		if (i != null) {
-			return i + " Start date is not next day from previous end date";
-		}
-		return null;
+		checkPayrate(mainlist);
+		checkDates(head, mainlist);
 	}
 
-	public static String checkPayrate(List<Payrates> head) {
+	
+	private static void checkPayrate(List<Payrates> head) throws DateException {
 		int i = 0;
 		while (i < head.size()) {
 			if (!head.get(i).checkDates()) {
-				return i + 1 + ": " + head.get(i).getStartDate() + " " + head.get(i).getEndDate();
+				throw new DateException (i + 1 + ": " + head.get(i).getStartDate() + " " + head.get(i).getEndDate() + " Start date after end date");
 			}
 			i++;
 		}
-		return null;
 	}
-
-	public static String checkDates(List<Payrates> head, List<Payrates> mainlist) {
+	
+	private static void checkDates(List<Payrates> head, List<Payrates> mainlist) throws DateException {
 		List<Payrates> list = new ArrayList<Payrates>(head);
 		while(!list.isEmpty()) {
 			int id = list.get(0).getId();
@@ -114,12 +111,11 @@ public class Payrates implements Comparable<Payrates>{
 			}
 			while (i2 < temp.size() - 1) {
 				if (!temp.get(i2).isNextDate(temp.get(i2 + 1).getStartDate())) {
-					return (mainlist.indexOf(temp.get(i2 + 1)) + 1) + ": " + temp.get(i2).getEndDate() + " " + temp.get(i2 + 1).getStartDate();
+					throw new DateException((mainlist.indexOf(temp.get(i2 + 1)) + 1) + ": " + temp.get(i2).getEndDate() + " " + temp.get(i2 + 1).getStartDate() + " Start date is not next day from previous end date");
 				}
 				i2++;
 			}
 		}
-		return null;
 	}
 	
 }
