@@ -237,7 +237,8 @@ public class Database {
 		return;
 	}
 	
-	public static void editPayrt(List<Payrates> list) {
+	public static void editPayrts(List<Payrates> list) {
+		String ret = null;
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -247,19 +248,45 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			//if(Payrates.checkIntegrity(list)) {
+			try {
+				Payrates.checkIntegrity(list);
+<<<<<<< HEAD
+				
+				// delete the table
+				Database.emptyAllTables();
+				//System.out.println(list.size());
+				// rewrite the database
+				Database.importPayrts(list);
+			} catch(DateException e){
+				ret = e.getMessage();
+			}
+			if(ret == null) {
+				Statement statement = conn.createStatement();
+				statement.executeUpdate("DELETE FROM di08.employeerates WHERE crdnr = " + list.get(0).getId());
+=======
+
+>>>>>>> branch 'editbranch' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 				for(Payrates p: list) {
-					Statement statement = conn.createStatement();
-					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
 					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
 								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+<<<<<<< HEAD
+				}
+				statement.close();
+				conn.close();
+=======
 					statement.close();
 					conn.close();
-				}
-			//}
+				
+>>>>>>> branch 'editbranch' of https://git.snt.utwente.nl/s1898922/mod04di08.git
+			}
+			} catch(DateException e) {
+				
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		ret = null;
 		return;
 	}
 
@@ -268,7 +295,19 @@ public class Database {
 		List<Employee> l = new ArrayList<>();
 		try {
 			while(res.next()) {
-				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+				String status = "Unknown";
+				switch (res.getString(3)){
+					case "A":
+						status = "Active";
+						break;
+					case "I":
+						status = "Not Active";
+						break;
+					case "H":
+						status = "Not Active Yet";
+						break;
+				}
+				l.add(new Employee(res.getInt(1), res.getString(2), status));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();

@@ -4,7 +4,7 @@ import javax.servlet.http.HttpSession;
 
 public class Login {
 	
-	public static Long TIMEOUT = (long) 30000;
+	public static Long TIMEOUT = (long) 300000;
 
 	public static int Security(HttpSession s) {
 		Object x = s.getAttribute("Timeout");

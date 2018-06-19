@@ -74,30 +74,26 @@
 
 		}
 
-		function onSignIn(googleUser) {
-			var id_token = googleUser.getAuthResponse().id_token;
-			xhr.open('POST', './OV/googleLogin');
-			xhr.setRequestHeader('Content-Type',
-					'application/x-www-form-urlencoded');
-			xhr.send(id_token);
-		}
+    function onSignIn(googleUser) {
+        var id_token = googleUser.getAuthResponse().id_token;
+        xhr.open('POST', './OV/googleLogin');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(id_token);
+        xhr.onload = function() {
+    		if (xhr.readyState == 4 && xhr.status == 200) {
+    			console.log(this.responseText);
+    			if(this.responseText == 0) {
+    				window.open("./relogin.html", "_self");
+    				console.log("fail");
+    			} else {
+    				//somehow redirect to the second page
+    				window.open("./main.html", "_self");
+    			}
+    		}
+        }
 
-		function sanitizeInput(input) {
-			var out = '';
-			for (i = 0; i < input.length; i++) {
-				inp = input.charCodeAt(i);
-				// remove special character else than '_'
-				if ((inp >= 65 && inp <= 90) || (inp >= 97 && inp <= 122)
-						|| (inp == 95) || (inp >= 48 && inp <= 57)) {
-					out += String.fromCharCode(inp);
-				} else {
-					inp = '%'
-							+ (Math.floor((Math.random() * 99) + 1)).toString();
-					out += inp;
-				}
-			}
-			return out;
-		}
+    }
+    
 	</script>
 </body>
 
