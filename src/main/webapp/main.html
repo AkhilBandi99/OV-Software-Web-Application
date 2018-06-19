@@ -295,9 +295,10 @@
 			let payrate = document.getElementById("newPayrt").value;
 			let stDt = document.getElementById("startDate").value;
 			let edDt = document.getElementById("endDate").value;
-			let data = {"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt};
+			info.push({"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt});
+			let data = info;
 			if(payrate != "" && stDt != "" && edDt != "") {
- 				xhr.open("POST", "./OV/main/addPayrate/");
+ 				xhr.open("POST", "./OV/main/editPayrates/");
 				xhr.setRequestHeader('Accept', 'application/json');
 				xhr.setRequestHeader("Content-type", "applicatioin/json");
 				console.log(data);

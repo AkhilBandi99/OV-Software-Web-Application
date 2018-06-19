@@ -237,6 +237,7 @@ public class Database {
 	}
 	
 	public static void editPayrts(List<Payrates> list) {
+		String ret = null;
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -248,7 +249,7 @@ public class Database {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			try {
 				Payrates.checkIntegrity(list);
-			
+
 				for(Payrates p: list) {
 					Statement statement = conn.createStatement();
 					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
@@ -265,6 +266,7 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		ret = null;
 		return;
 	}
 
