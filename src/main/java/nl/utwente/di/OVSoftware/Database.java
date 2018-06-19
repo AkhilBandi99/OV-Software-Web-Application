@@ -237,6 +237,7 @@ public class Database {
 	}
 	
 	public static void editPayrts(List<Payrates> list) {
+		String ret = null;
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -246,7 +247,18 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			if(Payrates.checkIntegrity(list)) {
+			try {
+				Payrates.checkIntegrity(list);
+				
+				// delete the table
+				Database.emptyAllTables();
+				//System.out.println(list.size());
+				// rewrite the database
+				Database.importPayrts(list);
+			} catch(DateException e){
+				ret = e.getMessage();
+			}
+			if(ret == null) {
 				for(Payrates p: list) {
 					Statement statement = conn.createStatement();
 					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
@@ -259,6 +271,7 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		ret = null;
 		return;
 	}
 
