@@ -246,7 +246,9 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			if(Payrates.checkIntegrity(list)) {
+			try {
+				Payrates.checkIntegrity(list);
+			
 				for(Payrates p: list) {
 					Statement statement = conn.createStatement();
 					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
@@ -254,8 +256,12 @@ public class Database {
 								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
 					statement.close();
 					conn.close();
-				}
+				
 			}
+			} catch(DateException e) {
+				
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
