@@ -68,7 +68,7 @@ public class Database {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			Statement statement = conn.createStatement();
 			update = statement.executeUpdate("UPDATE di08.humres "
-					+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, 'NULL'));");
+					+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, ''));");
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
@@ -182,9 +182,9 @@ public class Database {
 	private static String search(int crdnr, String fullname) {
 		if (crdnr != -1 && !fullname.equals("-1")) {
 			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
+					+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
 					+ "WHERE (ts @@ query "
-					+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
+					+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
 					+ "AND h.\"freefield 16\" = 'N' "
 					+ "ORDER BY rank DESC;";
 		} else if (crdnr != -1 && fullname.equals("-1")) {
@@ -213,7 +213,7 @@ public class Database {
 				+ "ORDER BY h.res_id";
 	}
 
-	public static void addPayrts(List<Payrates> list) {
+	public static void importPayrts(List<Payrates> list) {
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -224,13 +224,38 @@ public class Database {
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			for(Payrates p: list) {
-			Statement statement = conn.createStatement();
-			statement
-				.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
-							+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
-			statement.close();
+				Statement statement = conn.createStatement();
+				statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
+								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+				statement.close();
 			}
 			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	public static void editPayrt(List<Payrates> list) {
+		try {
+			Class.forName("org.postgresql.Driver");
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		try {
+			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+			//if(Payrates.checkIntegrity(list)) {
+				for(Payrates p: list) {
+					Statement statement = conn.createStatement();
+					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
+					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
+								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+					statement.close();
+					conn.close();
+				}
+			//}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -242,19 +267,7 @@ public class Database {
 		List<Employee> l = new ArrayList<>();
 		try {
 			while(res.next()) {
-				String status = "Unknown";
-				switch (res.getString(3)){
-					case "A":
-						status = "Active";
-						break;
-					case "I":
-						status = "Not Active";
-						break;
-					case "H":
-						status = "Not Active Yet";
-						break;
-				}
-				l.add(new Employee(res.getInt(1), res.getString(2), status));
+				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
@@ -388,10 +401,6 @@ public class Database {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public static void changePayrate(int empNumber, String startDate, String endDate, double newPayrate){
-		getData("","UPDATE di08.employeerates SET purchaseprice="+newPayrate+" WHERE crdnr = "+empNumber+" AND totdatum=" +endDate + " AND vandatum= "+startDate);
 	}
 
 }

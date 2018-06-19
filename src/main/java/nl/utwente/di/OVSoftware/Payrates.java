@@ -83,7 +83,7 @@ public class Payrates implements Comparable<Payrates>{
 	}
 
 	
-	public static void checkPayrate(List<Payrates> head) throws DateException {
+	private static void checkPayrate(List<Payrates> head) throws DateException {
 		int i = 0;
 		while (i < head.size()) {
 			if (!head.get(i).checkDates()) {
@@ -93,7 +93,7 @@ public class Payrates implements Comparable<Payrates>{
 		}
 	}
 	
-	public static void checkDates(List<Payrates> head, List<Payrates> mainlist) throws DateException {
+	private static void checkDates(List<Payrates> head, List<Payrates> mainlist) throws DateException {
 		List<Payrates> list = new ArrayList<Payrates>(head);
 		while(!list.isEmpty()) {
 			int id = list.get(0).getId();

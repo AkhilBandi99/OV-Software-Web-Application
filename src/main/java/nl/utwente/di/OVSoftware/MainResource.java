@@ -1,16 +1,17 @@
 package nl.utwente.di.OVSoftware;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import nl.utwente.di.OVSoftware.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -61,11 +62,11 @@ public class MainResource {
 		return null;
 	}
 
-	@PUT
+	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void editPayrates(Payrates payrates){
-		Database.changePayrate(payrates.getId(),payrates.getStartDate(),payrates.getEndDate(),payrates.getCost());
+	public void editPayrates(List<Payrates> payrates){
+		Database.editPayrt(payrates);
 	}
 
 	@GET
@@ -105,11 +106,10 @@ public class MainResource {
 				Database.emptyAllTables();
 				//System.out.println(list.size());
 				// rewrite the database
-				Database.addPayrts(list);
+				Database.importPayrts(list);
 			} catch(DateException e){
 				ret = e.getMessage();
 			}
-
 			s.close();
 		}
 		return ret;
@@ -133,15 +133,4 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
-	
-	public static void main(String[] args) {
-		List<Payrates> temp = new ArrayList<Payrates>();
-		temp.add(new Payrates(1, 60,"2016-02-01", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2019-02-06", "2019-02-07"));
-		temp.add(new Payrates(1, 60,"2017-02-06", "2018-02-05"));
-		temp.add(new Payrates(2, 60,"2016-02-03", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2018-02-06", "2019-02-05"));
-		
-	}
-	
 }
