@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/css/styles.css">
 
+	<!-- Icons -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
 <style>
 #card-style {
 	box-shadow: 3px 3px #e0e0e0;
@@ -121,6 +124,7 @@
 															<th>Payrate</th>
 															<th>From</th>
 															<th>Until</th>
+															<th></th>
 														</tr>
 													</thead>
 													<tbody id=infotable>
@@ -271,9 +275,30 @@
 				var atxt = document.createTextNode(info[i].endDate);
 				active.appendChild(atxt);
 				ver.appendChild(active);
-				body.appendChild(ver);
+
+
+				var edit = document.createElement("td");
+				var editIcon = document.createElement("span");
+                editIcon.className ="fas fa-pencil-alt";
+                editIcon.setAttribute("onclick", "edit(" + i + ")")
+                edit.appendChild(editIcon);
+                ver.appendChild(edit);
+
+                body.appendChild(ver);
+
 			}
 		}
+
+		 function edit(i){
+		    updateinfo();
+		    var row = document.getElementById('infotable').children.item(i);
+		    for(k = 0; k < 3; k++) {
+		        var element = row.children.item(k);
+                var temp = element.innerHTML;
+		        element.innerHTML = "<div contenteditable>" + temp + "</div>";
+
+            }
+        }
 
 		function addDropdown() {
 			dropdown = document.getElementById("officeDropdown")
