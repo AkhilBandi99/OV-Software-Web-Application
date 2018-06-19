@@ -12,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -60,15 +61,13 @@ public class MainResource {
 		}
 		return null;
 	}
-	/*
+
 	@POST
-	@Path("/editPayrate/{payrateList}")
+	@Path("/editPayrates")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void newPayrate(@Context HttpServletRequest r, @PathParam("payrateList") List<Payrates> l) {
-		if (Login.Security(r.getSession()) == 1) {
-			Database.addPayrts(l);
-		}
-	}*/
+	public void editPayrates(List<Payrates> payrates){
+		Database.editPayrt(payrates);
+	}
 
 	@GET
 	@Path("/export.csv")
@@ -103,7 +102,7 @@ public class MainResource {
 			Database.emptyAllTables();
 			System.out.println(list.size());
 			// rewrite the database
-			Database.addPayrts(list);
+			Database.importPayrts(list);
 			s.close();
 		}
 	}
