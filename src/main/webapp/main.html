@@ -274,7 +274,6 @@
 				ver.appendChild(active);
 				body.appendChild(ver);
 			}
-			console.log(info);
 		}
 		
 		function newPayrtField() {
@@ -291,20 +290,27 @@
 		}
 		
 		function saveChanges() {
+			let infoname = document.getElementById("infotitle").innerHTML;
 			let crdnr = info[0].id;
 			let payrate = document.getElementById("newPayrt").value;
 			let stDt = document.getElementById("startDate").value;
 			let edDt = document.getElementById("endDate").value;
-			info.push({"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt});
+			var out = "";
+			for (var k = 0; k < info.length; k++){
+				out +=	info[k].id + "," + info[k].cost + "," + info[k].startDate + "," + info[k].endDate + "\n";
+			}
+			out +=	crdnr + "," + payrate + "," + stDt + "," + edDt + "\n";
+			//info.push({"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt});
 			let data = info;
 			if(payrate != "" && stDt != "" && edDt != "") {
  				xhr.open("POST", "./OV/main/editPayrates/");
-				xhr.setRequestHeader('Accept', 'application/json');
-				xhr.setRequestHeader("Content-type", "applicatioin/json");
+				xhr.setRequestHeader('Accept', 'text/plain');
+				xhr.setRequestHeader("Content-type", "text/plain");
 				console.log(data);
-				xhr.send(JSON.stringify(data));
+				xhr.send(out);
 			}
-			updateinfo();
+			setTimeout(function(){getId(crdnr, infoname)}, 500);
+			
 		}
 		
 		function logout() {

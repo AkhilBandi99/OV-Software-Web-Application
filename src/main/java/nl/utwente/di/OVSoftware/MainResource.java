@@ -64,9 +64,19 @@ public class MainResource {
 
 	@POST
 	@Path("/editPayrates")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void editPayrates(List<Payrates> payrates){
-		Database.editPayrts(payrates);
+	@Consumes(MediaType.TEXT_PLAIN)
+	public void editPayrates(String payrates){
+
+		System.out.println(payrates);
+		Scanner s = new Scanner(payrates);
+		List<Payrates> prts = new ArrayList<>();
+		while(s.hasNextLine()) {
+			String line = s.nextLine();
+			String[] elems = line.split(",");
+			prts.add(new Payrates(Integer.parseInt(elems[0]), Double.parseDouble(elems[1]), elems[2], elems[3]));
+		}
+		s.close();
+		Database.editPayrts(prts);
 	}
 
 	@GET

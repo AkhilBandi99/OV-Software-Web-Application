@@ -259,14 +259,14 @@ public class Database {
 				ret = e.getMessage();
 			}
 			if(ret == null) {
+				Statement statement = conn.createStatement();
+				statement.executeUpdate("DELETE FROM di08.employeerates WHERE crdnr = " + list.get(0).getId());
 				for(Payrates p: list) {
-					Statement statement = conn.createStatement();
-					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
 					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
 								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
-					statement.close();
-					conn.close();
 				}
+				statement.close();
+				conn.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

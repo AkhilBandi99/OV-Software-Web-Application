@@ -67,6 +67,19 @@
         xhr.open('POST', './OV/googleLogin');
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send(id_token);
+        xhr.onload = function() {
+    		if (xhr.readyState == 4 && xhr.status == 200) {
+    			console.log(this.responseText);
+    			if(this.responseText == 0) {
+    				window.open("./relogin.html", "_self");
+    				console.log("fail");
+    			} else {
+    				//somehow redirect to the second page
+    				window.open("./main.html", "_self");
+    			}
+    		}
+        }
+
     }
     
 	</script>
