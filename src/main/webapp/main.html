@@ -21,13 +21,13 @@
 <body onload="requestContent()">
 	<div>
 		<div class="container">
-			<div class="row" style="padding-top: 12px; padding-bottom: 6px;">
+			<div class="row" style="padding-top: 12px; padding-bottom: 6px;padding-right: 20px; padding-left: 15px;">
 				<div class="col-md-12" style="padding: 0px;">
 					<div class="card" id="card-style">
 						<div class="card-body">
 							<div class="col-md-12 d-flex align-items-center">
 								<img src="assets/img/OV.png"
-									style="height: 70px; margin-right: 12px;"><input
+									style="height: 80px; margin-right: 12px;"><input
 									id="searchid" type="text" placeholder="Employee Number"
 									style="margin: 6px;"><input id="searchname" type="text"
 									placeholder="Full Name" style="margin: 6px;">
@@ -35,7 +35,7 @@
 									<button id="statusButton"
 										class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
 										aria-expanded="false" type="button"
-										style="margin-right: 6px; margin-left: 6px;">Status</button>
+										style="margin-right: 6px; margin-left: 6px; border-radius : 6px; ">Status</button>
 									<div id="statusDropdown" class="dropdown-menu" role="menu">
 										<a id="statusA" value = "A" onclick=statusFilterA() class="dropdown-item" role="presentation">Active</a>
 											<a id="statusI" value = "I" onclick=statusFilterI() class="dropdown-item" role="presentation">Not Active</a>
@@ -43,13 +43,13 @@
 									</div>
 								</div>
 								<button onclick=searchupdate() class="btn btn-primary"
-									type="button" style="margin-left: 6px;">Search</button>
+									type="button" style="margin-left: 6px;border-radius: 6px;">Search</button>
 								<div class="btn-group ml-auto" role="group">
 									<div class="dropdown d-inline-flex" style="margin: 6px;">
 										<button id="officeButtton"
 											class="btn btn-primary dropdown-toggle"
 											data-toggle="dropdown" aria-expanded="false" type="button"
-											style="margin-right: 6px; margin-left: 6px;">Office</button>
+											style="margin-right: 6px; margin-left: 6px;border-radius: 6px; padding-left: 20px;">Office</button>
 										<div id="officeDropdown" class="dropdown-menu" role="menu">
 											<a class="dropdown-item" role="presentation" href="#">Amersfoort</a><a
 												class="dropdown-item" role="presentation" href="#">Apeldoorn</a><a
@@ -61,15 +61,15 @@
 									<form id="upload" enctype="multipart/form-data" method="post"
 										action="./OV/main/import">
 										<button class="btn btn-primary" type="button"
-											onclick="openFileDialog();" style="margin: 6px;">Import</button>
+											onclick="openFileDialog();" style="margin: 6px; border-radius: 6px;">Import</button>
 										<input type="file" id="fileLoader"
 											onchange="this.form.submit()" name="files" title="Load File" />
 									</form>
 									<button class="btn btn-primary" type="button"
 										onclick="location.href='./OV/main/export.csv'"
-										style="margin: 6px;">Export</button>
+										style="margin: 6px; border-radius: 6px;">Export</button>
 									<button onclick=logout() class="btn btn-primary" type="button"
-										style="margin: 6px;">Log Out</button>
+										style="margin: 6px; border-radius: 6px;">Log Out</button>
 								</div>
 							</div>
 						</div>
@@ -113,7 +113,7 @@
 												<span aria-hidden="true">x</span>
 											</button>
 										</div>
-										<div class="modal-body" style="padding: 0;">
+										<div id = "infobody" class="modal-body" style="padding: 0;">
 											<div class="table-responsive">
 												<table class="table">
 													<thead>
@@ -139,9 +139,10 @@
 											</div>
 										</div>
 										<div class="modal-footer">
+											<button onclick = newPayrtField() class="btn btn-primary mr-auto" type="button">Add New Payrate</button>
 											<button class="btn btn-light" type="button"
 												data-dismiss="modal">Close</button>
-											<button class="btn btn-primary" type="button">Save</button>
+											<button onclick = saveChanges() class="btn btn-primary" type="button">Save</button>
 										</div>
 									</div>
 								</div>
@@ -273,18 +274,38 @@
 				ver.appendChild(active);
 				body.appendChild(ver);
 			}
+			console.log(info);
 		}
-
-		function addDropdown() {
-			dropdown = document.getElementById("officeDropdown")
-			dropdown.innerHTML = "";
-			for (var i = 0; i < dropdownitems.length; i++) {
-				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">"
-						+ dropdownitems[i] + "</a>";
+		
+		function newPayrtField() {
+			var body = document.getElementById('infotable');
+			updateinfo();
+			var row = body.insertRow(info.length);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			cell1.innerHTML = "<input id='newPayrt' type='text' placeholder='Payrate' size = '10'>";
+			cell2.innerHTML = "<input id='startDate' type='text' placeholder='Start Date' size = '10'>";
+			cell3.innerHTML = "<input id='endDate' type='text' placeholder='End Date' size = '10'>";
+			
+		}
+		
+		function saveChanges() {
+			let crdnr = info[0].id;
+			let payrate = document.getElementById("newPayrt").value;
+			let stDt = document.getElementById("startDate").value;
+			let edDt = document.getElementById("endDate").value;
+			let data = {"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt};
+			if(payrate != "" && stDt != "" && edDt != "") {
+ 				xhr.open("POST", "./OV/main/addPayrate/");
+				xhr.setRequestHeader('Accept', 'application/json');
+				xhr.setRequestHeader("Content-type", "applicatioin/json");
+				console.log(data);
+				xhr.send(JSON.stringify(data));
 			}
-
+			updateinfo();
 		}
-
+		
 		function logout() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
@@ -306,10 +327,6 @@
                 gapi.auth2.init();
             });
         }
-
-		function newPayrate() {
-
-		}
 
 		function statusFilterA() {
 			status = document.getElementById("statusA").getAttribute("value");
@@ -358,7 +375,14 @@
 			}
 			xhr.send();
 		}
-
+		/*
+		function editPayrate() {
+			if(payrateList.length != 0) {
+				xhr.open("GET", "./OV/main/editPayrate/" + payrateList);
+			}
+			xhr.send();
+		}*/
+		
 		function getId(x, name) {
 			xhr.open("GET", "./OV/main/employees/" + x);
 			xhr.send(this.responseText);
