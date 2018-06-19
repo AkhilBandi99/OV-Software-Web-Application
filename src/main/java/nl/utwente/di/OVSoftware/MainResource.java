@@ -66,7 +66,7 @@ public class MainResource {
 	@Path("/editPayrates")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void editPayrates(List<Payrates> payrates){
-		Database.editPayrt(payrates);
+		Database.editPayrts(payrates);
 	}
 
 	@GET
@@ -99,13 +99,6 @@ public class MainResource {
 					list.add(new Payrates(id, cost, words[2], words[3]));
 				}
 			}
-<<<<<<< HEAD
-			// delete the table
-			Database.emptyAllTables();
-			System.out.println(list.size());
-			// rewrite the database
-			Database.importPayrts(list);
-=======
 			try {
 				Payrates.checkIntegrity(list);
 				
@@ -113,12 +106,11 @@ public class MainResource {
 				Database.emptyAllTables();
 				//System.out.println(list.size());
 				// rewrite the database
-				Database.addPayrts(list);
+				Database.importPayrts(list);
 			} catch(DateException e){
 				ret = e.getMessage();
 			}
 
->>>>>>> branch 'master' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 			s.close();
 		}
 		return ret;

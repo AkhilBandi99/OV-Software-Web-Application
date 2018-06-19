@@ -236,7 +236,7 @@ public class Database {
 		return;
 	}
 	
-	public static void editPayrt(List<Payrates> list) {
+	public static void editPayrts(List<Payrates> list) {
 		try {
 			Class.forName("org.postgresql.Driver");
 
@@ -246,7 +246,7 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			//if(Payrates.checkIntegrity(list)) {
+			if(Payrates.checkIntegrity(list)) {
 				for(Payrates p: list) {
 					Statement statement = conn.createStatement();
 					statement.executeQuery("DELETE FROM di08.employeerates WHERE crdnr = " + p.getId());
@@ -255,7 +255,7 @@ public class Database {
 					statement.close();
 					conn.close();
 				}
-			//}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -267,7 +267,19 @@ public class Database {
 		List<Employee> l = new ArrayList<>();
 		try {
 			while(res.next()) {
-				l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+				String status = "Unknown";
+				switch (res.getString(3)){
+					case "A":
+						status = "Active";
+						break;
+					case "I":
+						status = "Not Active";
+						break;
+					case "H":
+						status = "Not Active Yet";
+						break;
+				}
+				l.add(new Employee(res.getInt(1), res.getString(2), status));
 			}
 		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
