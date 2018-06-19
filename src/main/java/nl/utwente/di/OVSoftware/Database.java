@@ -2,6 +2,7 @@ package nl.utwente.di.OVSoftware;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,8 +41,8 @@ public class Database {
 			int tsvector = 0;
 			try {
 				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				Statement statement = conn.createStatement();
-				tsvector = statement.executeUpdate("ALTER TABLE di08.humres " + "ADD ts tsvector;");
+				PreparedStatement statement = conn.prepareStatement("ALTER TABLE di08.humres " + "ADD ts tsvector;");
+				tsvector = statement.executeUpdate();
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
@@ -66,9 +67,9 @@ public class Database {
 		int update = 0;
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			Statement statement = conn.createStatement();
-			update = statement.executeUpdate("UPDATE di08.humres "
+			PreparedStatement statement = conn.prepareStatement("UPDATE di08.humres "
 					+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, ''));");
+			update = statement.executeUpdate();
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
@@ -89,8 +90,8 @@ public class Database {
 			int index = 0;
 			try {
 				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				Statement statement = conn.createStatement();
-				index = statement.executeUpdate("CREATE INDEX index ON di08.humres USING GIN(ts)");
+				PreparedStatement statement = conn.prepareStatement("CREATE INDEX index ON di08.humres USING GIN(ts)");
+				index = statement.executeUpdate();
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
@@ -109,8 +110,8 @@ public class Database {
 			int index = 0;
 			try {
 				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				Statement statement = conn.createStatement();
-				index = statement.executeUpdate("REINDEX TABLE di08.humres");
+				PreparedStatement statement = conn.prepareStatement("REINDEX TABLE di08.humres");
+				index = statement.executeUpdate();
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
@@ -224,9 +225,9 @@ public class Database {
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			for(Payrates p: list) {
-				Statement statement = conn.createStatement();
-				statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
-								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+				PreparedStatement statement = conn.prepareStatement("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
+						+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
+				statement.executeUpdate();
 				statement.close();
 			}
 			conn.close();
@@ -317,8 +318,8 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			Statement statement = conn.createStatement();
-			statement.executeUpdate(dropall());
+			PreparedStatement statement = conn.prepareStatement(dropall());
+			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -393,8 +394,8 @@ public class Database {
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		try {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			Statement statement = conn.createStatement();
-			ResultSet res = statement.executeQuery(query);
+			PreparedStatement statement = conn.prepareStatement(query);
+			ResultSet res = statement.executeQuery();
 			return res;
 
 		} catch (SQLException e) {
