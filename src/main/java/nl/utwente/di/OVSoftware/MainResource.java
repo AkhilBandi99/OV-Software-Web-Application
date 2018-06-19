@@ -82,12 +82,13 @@ public class MainResource {
 	@POST
 	@Path("/import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public void importcsv(@Context HttpServletRequest r, @FormDataParam("file") InputStream in) {
+	@Produces(MediaType.TEXT_PLAIN)
+	public String importcsv(@Context HttpServletRequest r, @FormDataParam("files") InputStream in) {
+		String ret = null;
 		if (Login.Security(r.getSession()) == 1) {
 			List<Payrates> list = new ArrayList<>();
 			Scanner s = new Scanner(in);
-			while (!s.nextLine().equals("id,cost,startDate,endDate"))
-				;
+			while (!s.nextLine().equals("id,cost,startDate,endDate"));
 			String line = " ";
 			while (s.hasNextLine() || line.equals("")) {
 				line = s.nextLine();
@@ -98,13 +99,29 @@ public class MainResource {
 					list.add(new Payrates(id, cost, words[2], words[3]));
 				}
 			}
+<<<<<<< HEAD
 			// delete the table
 			Database.emptyAllTables();
 			System.out.println(list.size());
 			// rewrite the database
 			Database.importPayrts(list);
+=======
+			try {
+				Payrates.checkIntegrity(list);
+				
+				// delete the table
+				Database.emptyAllTables();
+				//System.out.println(list.size());
+				// rewrite the database
+				Database.addPayrts(list);
+			} catch(DateException e){
+				ret = e.getMessage();
+			}
+
+>>>>>>> branch 'master' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 			s.close();
 		}
+		return ret;
 	}
 
 	@GET
@@ -125,15 +142,4 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
-	
-	public static void main(String[] args) {
-		List<Payrates> temp = new ArrayList<Payrates>();
-		temp.add(new Payrates(1, 60,"2016-02-01", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2019-02-06", "2019-02-07"));
-		temp.add(new Payrates(1, 60,"2017-02-06", "2018-02-05"));
-		temp.add(new Payrates(2, 60,"2016-02-03", "2017-02-05"));
-		temp.add(new Payrates(1, 60,"2018-02-06", "2019-02-05"));
-		System.out.println(Payrates.checkIntegrity(temp));
-	}
-	
 }
