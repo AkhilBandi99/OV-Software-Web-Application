@@ -110,6 +110,7 @@
                                         <tr>
                                             <td>Username</td>
                                             <td>Password</td>
+                                            <td></td>
                                         </tr>
                                         </thead>
                                         <tbody id="OVAccountList">
@@ -135,73 +136,89 @@
 <script src="assets/js/main.js"></script>
 <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 <script>
-    var list = [];
-    var info = [];
+    var ovacc = [];
+    var googleacc = [];
     var dropdownitems = [];
-    var A;
-    var I;
-    var H;
     var status = -1;
     var xhr = new XMLHttpRequest();
-    var rqueue = [ "./OV/test", "./OV/main/employees",
-        "./OV/main/databases" ];
+    var rqueue = [ "./OV/admin/googleusers", "./OV/admin/ovusers"];
     var rcounter = 0;
     xhr.onload = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            if (this.responseText == "0") {
-                window.location.replace(".");
+            // session ends
+        	if (this.responseText == "0"){
+            	window.location.replace(".");
+            	console.log(this.responseText);
             }
-            try {
-                var temp = JSON.parse(this.responseText);
-                if (temp.length > 0) {
-                    if (temp[0].hasOwnProperty("cost")) {
-                        info = temp;
-                        updateinfo();
-                    } else if (temp[0].hasOwnProperty("status")) {
-                        list = temp;
-                        updatelist();
-                    } else {
-                        dropdownitems = temp;
-                        addDropdown();
-                    }
-                }
-            } catch (e) {
-                console.log("caught exception : " + e);
-            }
-            requestContent();
+        	console.log(this.responseText);
+        	try {
+				var temp = JSON.parse(this.responseText);
+				if (temp.length > 0) {
+					
+					if (temp[0].hasOwnProperty("email")) {
+						googleacc = temp;
+		                updateGoogleAccount();
+					} else if (temp[0].hasOwnProperty("username")) {
+						ovacc = temp;
+		                updateOVAccount();
+					} 
+				}
+			} catch (e) {
+				console.log("caught exception : " + e);
+			}
+			requestContent();
         }
     }
-
-
-    function updatelist() {
-        var body = document.getElementById('EmployeeList');
-        body.innerHTML = "";
-
-        for (var i = 0; i < list.length; i++) {
-
-            var ver = document.createElement("tr");
-
-            var id = document.createElement("td");
-            var ptxt = document.createTextNode(list[i].id);
-            id.appendChild(ptxt);
-            ver.appendChild(id);
-
-            var name = document.createElement("td");
-            var ntxt = document.createTextNode(list[i].name);
-            name.appendChild(ntxt);
-            ver.appendChild(name);
-
-            var active = document.createElement("td");
-            var atxt = document.createTextNode(list[i].status);
-            active.appendChild(atxt);
-            ver.appendChild(active);
-            ver.setAttribute('onclick', "getId(" + list[i].id + ", \""
-                + list[i].name + "\")");
-            body.appendChild(ver);
+    
+    function requestContent() {
+        console.log("processing request content");
+        if (rcounter < rqueue.length) {
+            xhr.open("GET", rqueue[rcounter]);
+            xhr.send();
+            rcounter++;
         }
-
     }
+    
+    function updateGoogleAccount() {
+		var body = document.getElementById('GoogleAccountList');
+		body.innerHTML = "";
 
+		for (var i = 0; i < googleacc.length; i++) {
+
+			var ver = document.createElement("tr");
+			
+			// create email display
+			var em = document.createElement("td");
+			var etxt = document.createTextNode(googleacc[i].email);
+			em.appendChild(etxt);
+			ver.appendChild(em);
+			body.appendChild(ver);
+		}
+	}
+    
+    function updateOVAccount(){
+    	var body = document.getElementById('OVAccountList');
+		body.innerHTML = "";
+
+		for (var i = 0; i < ovacc.length; i++) {
+
+			var ver = document.createElement("tr");
+			
+			// create user display
+			var user = document.createElement("td");
+			var utxt = document.createTextNode(ovacc[i].username);
+			user.appendChild(utxt);
+			ver.appendChild(user);
+			
+			// create pass display
+			var pass = document.createElement("td");
+			var ptxt = document.createTextNode(ovacc[i].password);
+			pass.appendChild(ptxt);
+			ver.appendChild(pass);
+			
+			body.appendChild(ver);
+		}
+    }
 
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
@@ -226,16 +243,12 @@
         });
     }
 
+	function deleteUser(){
+		
+	}
 
-
-    function requestContent() {
-        console.log("a");
-        if (rcounter < rqueue.length) {
-            xhr.open("GET", rqueue[rcounter]);
-            xhr.send();
-            rcounter++;
-        }
-    }
+    
+    
 </script>
 </body>
 
