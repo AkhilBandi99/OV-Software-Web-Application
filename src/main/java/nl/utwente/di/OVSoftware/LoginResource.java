@@ -16,8 +16,6 @@ import java.util.Collections;
 
 @Path("/")
 public class LoginResource {
-	
-	UserMaps validUser = new UserMaps();
 
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
