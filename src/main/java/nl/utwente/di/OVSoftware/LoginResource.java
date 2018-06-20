@@ -23,7 +23,7 @@ public class LoginResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/login/{user}/{pass}")
 	public int getClichedMessage(@PathParam("user") String user, @PathParam("pass") String pass, @Context HttpServletRequest r) {
-		if(validUser.findUser(user, pass)) {
+		if(Database.OVAccountAccepted(user,pass)) {
 			r.getSession().setAttribute("Timeout", System.currentTimeMillis());
 			return 1;
 		} else {
@@ -62,7 +62,7 @@ public class LoginResource {
 		}
 		if (idToken != null) {
 			GoogleIdToken.Payload payload = idToken.getPayload();
-			if(payload.getHostedDomain().equals("student.utwente.nl")){
+			if(Database.googleAccountAccepted(payload.getEmail())){
 				request.getSession().setAttribute("Timeout", System.currentTimeMillis());
 				return 1;
 			}
