@@ -24,10 +24,18 @@ public class AdminResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/users")
-	public List<OVAccount> getAllUsers(@Context HttpServletRequest r) {
+	@Path("/ovusers")
+	public List<OVAccount> getAllOVUsers(@Context HttpServletRequest r) {
 		List<OVAccount> ovlist = Database.getOVAccounts();
 		return ovlist;
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/googleusers")
+	public List<GoogleAccount> getAllGoogleUsers(@Context HttpServletRequest r){
+		List<GoogleAccount> googlelist = Database.getGoogleAccounts();
+		return googlelist;
 	}
 	
 }
