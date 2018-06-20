@@ -1,5 +1,7 @@
 package nl.utwente.di.OVSoftware;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -318,6 +320,20 @@ public class Database {
 		return l;
 	}
 
+    public static boolean googleAccountAccepted(String email){
+        String query = "SELECT * FROM di08.googleaccounts WHERE email='"+email+"'";
+        ResultSet res = getData("",query);
+        List<OVAccount> l = new ArrayList<>();
+        try {
+            while(res.next()) {
+                return true;
+            }
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 	public static List<OVAccount> getOVAccounts(){
 		String query = "SELECT * FROM di08.localaccounts";
 		ResultSet res = getData("",query);
@@ -331,6 +347,28 @@ public class Database {
 		}
 		return l;
 	}
+
+
+    public static boolean OVAccountAccepted(String username, String password){
+		String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+        String query = "SELECT * FROM di08.localaccounts WHERE username='"+username+"' AND password='"+hashed+"'";
+        ResultSet res = getData("",query);
+        List<OVAccount> l = new ArrayList<>();
+        try {
+            while(res.next()) {
+                return true;
+            }
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void createOVAccount(String username, String password){
+		String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+		String query = "INSERT INTO di08.localaccounts VALUES('"+username+"','"+hashed+"'";
+		getData("",query);
+    }
 
 	public static List<Employee> allEmployees() {
 		return getEmployees(all);

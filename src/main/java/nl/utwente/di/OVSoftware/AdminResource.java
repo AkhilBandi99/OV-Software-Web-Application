@@ -20,8 +20,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 @Path("/admin")
 public class AdminResource {
 	
-	UserMaps users = new UserMaps();
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/ovusers")
