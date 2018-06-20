@@ -94,6 +94,24 @@
 
     }
     
+    function sanitizeInput(input) {
+		var out = '';
+		for (i = 0; i < input.length; i++) {
+			inp = input.charCodeAt(i);
+			// remove special character else than '_'
+			if ((inp >= 65 && inp <= 90) || (inp >= 97 && inp <= 122)
+					|| (inp == 95) || (inp >= 48 && inp <= 57)) {
+				out += String.fromCharCode(inp);
+			} else {
+				inp = '%'
+						+ (Math.floor((Math.random() * 99) + 1)).toString();
+				out += inp;
+			}
+		}
+		return out;
+	}
+
+    
 	</script>
 </body>
 
