@@ -304,6 +304,34 @@ public class Database {
 		return l;
 	}
 
+	public static List<GoogleAccount> getGoogleAccounts(){
+		String query = "SELECT * FROM di08.googleaccounts";
+		ResultSet res = getData("",query);
+		List<GoogleAccount> l = new ArrayList<>();
+		try {
+			while(res.next()) {
+				l.add(new GoogleAccount(res.getString(1)));
+			}
+		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return l;
+	}
+
+	public static List<OVAccount> getOVAccounts(){
+		String query = "SELECT * FROM di08.localaccounts";
+		ResultSet res = getData("",query);
+		List<OVAccount> l = new ArrayList<>();
+		try {
+			while(res.next()) {
+				l.add(new OVAccount(res.getString(1),res.getString(2)));
+			}
+		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return l;
+	}
+
 	public static List<Employee> allEmployees() {
 		return getEmployees(all);
 	}
