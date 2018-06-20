@@ -17,6 +17,7 @@ public class MyApplication extends Application {
         classes.add(LoginResource.class);
         classes.add(MainResource.class);
         classes.add(CsvWriter.class);
+        classes.add(AdminResource.class);
         return classes;
     }
 }
