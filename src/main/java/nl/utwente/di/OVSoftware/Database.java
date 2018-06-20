@@ -250,8 +250,6 @@ public class Database {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			try {
 				Payrates.checkIntegrity(list);
-<<<<<<< HEAD
-				
 				// delete the table
 				Database.emptyAllTables();
 				//System.out.println(list.size());
@@ -263,26 +261,15 @@ public class Database {
 			if(ret == null) {
 				Statement statement = conn.createStatement();
 				statement.executeUpdate("DELETE FROM di08.employeerates WHERE crdnr = " + list.get(0).getId());
-=======
 
->>>>>>> branch 'editbranch' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 				for(Payrates p: list) {
 					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
 								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
-<<<<<<< HEAD
+
 				}
 				statement.close();
 				conn.close();
-=======
-					statement.close();
-					conn.close();
-				
->>>>>>> branch 'editbranch' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 			}
-			} catch(DateException e) {
-				
-			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

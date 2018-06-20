@@ -7,10 +7,4 @@ public class DateException extends Exception {
 	public DateException(String s) {
 		super(s);
 	}
-<<<<<<< src/main/java/nl/utwente/di/OVSoftware/DateException.java
-	
-	
-=======
->>>>>>> src/main/java/nl/utwente/di/OVSoftware/DateException.java
-
 }
