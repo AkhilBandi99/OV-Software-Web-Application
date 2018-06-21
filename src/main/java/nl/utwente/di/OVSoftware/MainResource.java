@@ -75,7 +75,6 @@ public class MainResource {
 		}
 		s.close();
 		Database.editPayrts(prts);
-		System.out.println(prts);
 	}
 
 	
