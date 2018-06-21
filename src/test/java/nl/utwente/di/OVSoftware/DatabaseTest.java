@@ -13,7 +13,7 @@ class DatabaseTest {
 
     @Test
     void allEmployees() {
-        assertNotNull(Database.allEmployees());
+        assertNotNull(Database.getEmployees());
     }
 
     @Test

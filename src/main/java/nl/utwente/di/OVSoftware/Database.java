@@ -7,30 +7,226 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Database {
 
 	private static int i = 1;
 	private static List<Employee> ListOnPage = new ArrayList<>();
-
-	private static String allPayrates = "SELECT * " + "FROM di08.employeerates";
-
-	private static String all = "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
-			+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.res_id";
-
-	private static String specpr(int crdnr) {
-		return "SELECT r.crdnr, r.purchaseprice, r.vandatum, r.totdatum " + "FROM di08.employeerates r, di08.humres h "
-				+ "WHERE r.crdnr = h.res_id " + "AND r.crdnr = " + crdnr + "ORDER BY r.vandatum";
+	
+	//Creates a connection to the database
+	private static Connection MakeConnection() throws SQLException, ClassNotFoundException {
+		Class.forName("org.postgresql.Driver");
+		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
+		Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+		return conn;
 	}
 
-
-	private static String dropall() {
-		return "DELETE FROM di08.employeerates;";
+	//Gets all payrates
+	private static ResultSet allPayrates(Connection conn) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"SELECT * " + 
+				"FROM di08.employeerates");
+		ResultSet res = p.executeQuery();
+		return res;
 	}
 
+	//Gets all employees
+	private static ResultSet allEmployees(Connection conn) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"SELECT h.res_id, h.fullname, h.emp_stat " +
+				"FROM di08.humres h " +
+				"WHERE h.\"freefield 16\" = 'N' " +
+				"ORDER BY h.res_id");
+		ResultSet res = p.executeQuery();
+		return res;
+	}
+
+	//Gets a specific employees Payrates
+	private static ResultSet specpr(Connection conn, int crdnr) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"SELECT r.crdnr, r.purchaseprice, r.vandatum, r.totdatum " + 
+				"FROM di08.employeerates r, di08.humres h " +
+				"WHERE r.crdnr = h.res_id " + 
+				"AND r.crdnr = ?" );
+		p.setInt(1, crdnr);
+		ResultSet res = p.executeQuery();
+		return res;
+	}
+
+	//Drops all employees in the database
+	private static void dropall(Connection conn) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"DELETE FROM di08.employeerates;");
+		p.execute();
+	}
+	
+	//Drops all Payrates for an employee
+	private static void delPayrate(Connection conn, int crdnr) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+		"DELETE FROM di08.employeerates WHERE crdnr = ?");
+		p.setInt(1, crdnr);
+		p.execute();
+	}
+	
+	//Search for either crdnr fullname or status
+	private static ResultSet searchWstat(Connection conn, int crdnr, String fullname, String status) {
+		try {
+		if (crdnr != -1 && !fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?|?) query " +
+						"WHERE (ts @@ query " +
+						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, fullname);
+				p.setString(3, fullname + "%");
+				p.setString(4, crdnr + "");
+				p.setString(5, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery('?|?') query " +
+						"WHERE (ts @@ query " +
+						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, fullname + "%");
+				p.setString(3, fullname);
+				p.setInt(4, crdnr);
+				ResultSet res = p.executeQuery();
+				return res;
+			}
+		} else if (crdnr != -1 && fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.res_id::varchar LIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, crdnr + "");
+				p.setString(3, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery(?) query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.res_id::varchar LIKE ?) "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, crdnr + "");
+				ResultSet res = p.executeQuery();
+				return res;
+			}
+		} else if (crdnr == -1 && !fullname.equals("-1")) {
+			if(!status.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.fullname ILIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank DESC;");
+				p.setString(1, fullname);
+				p.setString(2, fullname + "%");
+				p.setString(3, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+						+ "FROM di08.humres h, to_tsquery(?) query " 
+						+ "WHERE (ts @@ query "
+						+ "OR h.fullname ILIKE ?) "
+						+ "AND h.\"freefield 16\" = 'N' "
+						+ "ORDER BY rank DESC;");
+				p.setString(1, fullname);
+				p.setString(2, fullname + "%");
+				ResultSet res = p.executeQuery();
+				return res;
+			}
+		}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	
+	private static void addPayrates(Connection conn, List<Payrates> list) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");
+		System.out.println(list.size());
+		for (Payrates rate: list) {
+			System.out.println(rate);
+			p.setInt(1, rate.getId());
+			p.setDouble(2, rate.getCost());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Calendar startDate = Calendar.getInstance();
+			Calendar endDate = Calendar.getInstance();
+			try {
+				startDate.setTime(sdf.parse(rate.getStartDate()));
+				endDate.setTime(sdf.parse(rate.getEndDate()));
+				p.setDate(3, new java.sql.Date(startDate.getTimeInMillis()));
+				p.setDate(4, new java.sql.Date(endDate.getTimeInMillis()));
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			p.execute();
+		}
+	}
+	
+	//Edit the payrates for one employee with deletion
+	public static void editPayrates(List<Payrates> list) {
+		try {
+			Connection conn = MakeConnection();
+			delPayrate(conn, list.get(0).getId());
+			addPayrates(conn, list);
+		} catch(SQLException | ClassNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	//Import the payrates for all employee with deletion
+	public static void importPayrts(List<Payrates> list) {
+		try {
+			Connection conn = MakeConnection();
+				try {
+					dropall(conn);
+					addPayrates(conn, list);
+				} catch(SQLException e) {
+					try {
+						conn.rollback();
+					} catch (SQLException e1) {
+						
+					}
+				}
+			} catch(SQLException | ClassNotFoundException e) {
+				System.out.println(e);
+			}
+		
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int tsvector() {
 		if (i == 0) {
 			try {
@@ -125,367 +321,313 @@ public class Database {
 		}
 	}
 
-	private static String searchWstat(int crdnr, String fullname, String status) {
-		if (crdnr != -1 && !fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "AND h.emp_stat = '" + status + "'"
-						+ "ORDER BY rank DESC;";
-			} else {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;";
-			}
-		} else if (crdnr != -1 && fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "AND h.emp_stat = '" + status + "'"
-						+ "ORDER BY rank DESC;";
-			} else {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;";
-			}
-		} else if (crdnr == -1 && !fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.fullname ILIKE '" + fullname + "%') "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "AND h.emp_stat = '" + status + "'"
-						+ "ORDER BY rank DESC;";
-			} else {
-				return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.fullname ILIKE '" + fullname + "%') "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;";
-			}
-		} else {
-			return "";
-		}
-	}
 	
-	private static String search(int crdnr, String fullname) {
-		if (crdnr != -1 && !fullname.equals("-1")) {
-			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + crdnr + "|" + fullname + "') query " 
-					+ "WHERE (ts @@ query "
-					+ "OR (h.fullname ILIKE '" + fullname + "%' " + "AND h.res_id::varchar LIKE '" + crdnr + "%')) "
-					+ "AND h.\"freefield 16\" = 'N' "
-					+ "ORDER BY rank DESC;";
-		} else if (crdnr != -1 && fullname.equals("-1")) {
-			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + crdnr + "') query " 
-					+ "WHERE (ts @@ query "
-					+ "OR h.res_id::varchar LIKE '" + crdnr + "%') "
-					+ "AND h.\"freefield 16\" = 'N' "
-					+ "ORDER BY rank DESC;";
-		} else if (crdnr == -1 && !fullname.equals("-1")) {
-			return "SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-					+ "FROM di08.humres h, to_tsquery('" + fullname + "') query " 
-					+ "WHERE (ts @@ query "
-					+ "OR h.fullname ILIKE '" + fullname + "%') "
-					+ "AND h.\"freefield 16\" = 'N' "
-					+ "ORDER BY rank DESC;";
-		} else {
-			return "";
-		}
-	}
-
-	public static String status(String status) {
-		return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h " 
-				+ "WHERE h.emp_stat = '" + status + "' " 
-				+ "AND h.\"freefield 16\" = 'N' "
-				+ "ORDER BY h.res_id";
-	}
-
-	public static void importPayrts(List<Payrates> list) {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			for(Payrates p: list) {
-				PreparedStatement statement = conn.prepareStatement("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
-						+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
-				statement.executeUpdate();
-				statement.close();
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return;
-	}
 	
-	public static void editPayrts(List<Payrates> list) {
-		String ret = null;
+	private static ResultSet search(Connection conn, int crdnr, String fullname) {
 		try {
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if (crdnr != -1 && !fullname.equals("-1")) {
+			PreparedStatement p = conn.prepareStatement(
+					"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+					"FROM di08.humres h, to_tsquery(?|?) query " +
+					"WHERE (ts @@ query " +
+					"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
+					"AND h.\"freefield 16\" = 'N' " +
+					"ORDER BY rank DESC;");
+			p.setString(1, crdnr + "");
+			p.setString(2, fullname);
+			p.setString(3, fullname + "%");
+			p.setString(4, crdnr + "");
+			ResultSet res = p.executeQuery();
+			return res;
+		} else if (crdnr != -1 && fullname.equals("-1")) {
+			PreparedStatement p = conn.prepareStatement(
+					"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+					"FROM di08.humres h, to_tsquery(?) query " +
+					"WHERE (ts @@ query " +
+					"OR h.res_id::varchar LIKE ?) " +
+					"AND h.\"freefield 16\" = 'N' " +
+					"ORDER BY rank DESC;");
+			p.setString(1, crdnr + "");
+			p.setString(2, crdnr + "");
+			ResultSet res = p.executeQuery();
+			return res;
+		} else if (crdnr == -1 && !fullname.equals("-1")) {
+			PreparedStatement p = conn.prepareStatement(
+					"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+					"FROM di08.humres h, to_tsquery(?) query " +
+					"WHERE (ts @@ query " +
+					"OR h.fullname ILIKE ?) " +
+					"AND h.\"freefield 16\" = 'N' " +
+					"ORDER BY rank DESC;");
+			p.setString(1, fullname);
+			p.setString(2, fullname + "%");
+			ResultSet res = p.executeQuery();
+			return res;
 		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			try {
-				Payrates.checkIntegrity(list);
-			} catch(DateException e){
-				ret = e.getMessage();
-			}
-			if(ret == null) {
-				Statement statement = conn.createStatement();
-				statement.executeUpdate("DELETE FROM di08.employeerates WHERE crdnr = " + list.get(0).getId());
-
-				for(Payrates p: list) {
-					statement.executeUpdate("INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES ('"
-								+ p.getId() + "', '" + p.getCost() + "', '" + p.getStartDate() + "', '" + p.getEndDate() + "');");
-
-				}
-				statement.close();
-				conn.close();
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		ret = null;
-		return;
+		return null;
 	}
 
-	public static List<Employee> getEmployees(String query) {
-		ResultSet res = getData("", query);
-		List<Employee> l = new ArrayList<>();
+	public static ResultSet status(Connection conn, String status) throws SQLException {
+		PreparedStatement p = conn.prepareStatement(
+				"SELECT h.res_id, h.fullname, h.emp_stat " + 
+				"FROM di08.humres h " +
+				"WHERE h.emp_stat = ? " +
+				"AND h.\"freefield 16\" = 'N' " +
+				"ORDER BY h.res_id");
+		p.setString(1, status);
+		ResultSet res = p.executeQuery();
+		return res;
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+
+	public static List<Employee> getEmployees() {
+		Connection conn;
 		try {
-			while(res.next()) {
-				String status = "Unknown";
-				switch (res.getString(3)){
-					case "A":
-						status = "Active";
-						break;
-					case "I":
-						status = "Not Active";
-						break;
-					case "H":
-						status = "Not Active Yet";
-						break;
-				}
-				l.add(new Employee(res.getInt(1), res.getString(2), status));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		ListOnPage.clear();
-		ListOnPage.addAll(l);
-		return l;
-	}
-
-	public static List<GoogleAccount> getGoogleAccounts(){
-		String query = "SELECT * FROM di08.googleaccounts";
-		ResultSet res = getData("",query);
-		List<GoogleAccount> l = new ArrayList<>();
-		try {
-			while(res.next()) {
-				l.add(new GoogleAccount(res.getString(1)));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
-	}
-
-    public static boolean googleAccountAccepted(String email){
-        String query = "SELECT * FROM di08.googleaccounts WHERE email='"+email+"'";
-        ResultSet res = getData("",query);
-        List<OVAccount> l = new ArrayList<>();
-        try {
-            while(res.next()) {
-                return true;
-            }
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-	public static List<OVAccount> getOVAccounts(){
-		String query = "SELECT * FROM di08.localaccounts";
-		ResultSet res = getData("",query);
-		List<OVAccount> l = new ArrayList<>();
-		try {
-			while(res.next()) {
-				l.add(new OVAccount(res.getString(1),res.getString(2)));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
-	}
-
-
-    public static boolean OVAccountAccepted(String username, String password){
-        String query = "SELECT password FROM di08.localaccounts WHERE username='"+username+"'";
-        ResultSet res = getData("",query);
-        List<OVAccount> l = new ArrayList<>();
-        try {
-            while(res.next()) {
-                return BCrypt.checkpw(password,res.getString(1));
-            }
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static void createOVAccount(String username, String password){
-		String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
-		String query = "INSERT INTO di08.localaccounts VALUES('"+username+"','"+hashed+"'";
-		getData("",query);
-    }
-
-	public static List<Employee> allEmployees() {
-		return getEmployees(all);
-	}
-
-	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){
-		ResultSet res = getData("", Database.specpr(crdnr));
-		List<Payrates> l = new ArrayList<>();
-		try {
-			while(res.next()) {
-				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
-	}
-
-	public static List<Payrates> getAllPayrates() {
-		ResultSet res = getData("", allPayrates);
-		List<Payrates> l = new ArrayList<>();
-		try {
-			while(res.next()) {
-				l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
-			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
-	}
-
-	public static boolean emptyAllTables() {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			PreparedStatement statement = conn.prepareStatement(dropall());
-			statement.executeUpdate();
-			statement.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	public static List<Employee> searchEmployees(int crdnr, String fullname, String status) {
-		if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
-			ResultSet res;
-			if(!status.equals("-1")) {
-				res = getData("", Database.searchWstat(crdnr, fullname, status));
-			} else {
-				res = getData("", Database.search(crdnr, fullname));
-			}
+			conn = MakeConnection();
+			ResultSet res = allEmployees(conn);
 			List<Employee> l = new ArrayList<>();
 			try {
-				if(res != null) {
-					while(res.next()) {
-						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+				while(res.next()) {
+					String status = "Unknown";
+					switch (res.getString(3)){
+						case "A":
+							status = "Active";
+							break;
+						case "I":
+							status = "Not Active";
+							break;
+						case "H":
+							status = "Not Active Yet";
+							break;
 					}
+					l.add(new Employee(res.getInt(1), res.getString(2), status));
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
 			}
 			ListOnPage.clear();
-			ResultSet result = getData("", Database.search(crdnr, fullname));
-			List<Employee> f = new ArrayList<>();
+			ListOnPage.addAll(l);
+			return l;
+		} catch (ClassNotFoundException | SQLException e1) {
+			
+		}
+		return null;
+	}
+
+	public static List<GoogleAccount> getGoogleAccounts(){
+		Connection conn;
+		try {
+			conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM di08.googleaccounts");
+			ResultSet res = p.executeQuery();
+			conn.close();
+			List<GoogleAccount> l = new ArrayList<>();
 			try {
-				if(result != null) {
-					while(result.next()) {
-						f.add(new Employee(result.getInt(1), result.getString(2),result.getString(3)));
+				while(res.next()) {
+					l.add(new GoogleAccount(res.getString(1)));
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
+			}
+			return l;
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+		return null;
+	}
+
+    public static boolean googleAccountAccepted(String email){
+    	try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM di08.googleaccounts WHERE email=?");
+			p.setString(1, email);
+			ResultSet res = p.executeQuery();
+			conn.close();
+	        try {
+	            while(res.next()) {
+	                return true;
+	            }
+	        } catch (SQLException | NullPointerException e) {
+
+	        }
+		} catch (ClassNotFoundException | SQLException e1) {
+	
+		}
+        return false;
+    }
+
+	public static List<OVAccount> getOVAccounts(){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM di08.localaccounts");
+			ResultSet res = p.executeQuery();
+			conn.close();
+			List<OVAccount> l = new ArrayList<>();
+			try {
+				while(res.next()) {
+					l.add(new OVAccount(res.getString(1),res.getString(2)));
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException | SQLException e1) {
+			
+		}
+		return null;
+	}
+
+
+    public static boolean OVAccountAccepted(String username, String password){
+    	try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("SELECT password FROM di08.localaccounts WHERE username= ?");
+			System.out.println(username);
+			System.out.println(password);
+			p.setString(1, username);
+			ResultSet res = p.executeQuery();
+			conn.close();
+	        try {
+	            while(res.next()) {
+	                return BCrypt.checkpw(password,res.getString(1));
+	            }
+	        } catch (SQLException | NullPointerException e) {
+	            e.printStackTrace();
+	        }
+
+		} catch (ClassNotFoundException | SQLException e1) {
+			System.out.println(e1);
+		}
+        return false;
+    }
+
+    public static void createOVAccount(String username, String password){
+    	try {
+			String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.localaccounts VALUES(?,?");
+			p.setString(1, username);
+			p.setString(2, hashed);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+			
+		}
+    }
+
+
+	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){
+		try {
+			Connection conn = MakeConnection();
+			ResultSet res = specpr(conn, crdnr);
+			conn.close();
+			List<Payrates> l = new ArrayList<>();
+			try {
+				while(res.next()) {
+					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
+			}
+			return l;
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+		return null;
+	}
+
+	public static List<Payrates> getAllPayrates() {
+		Connection conn;
+		try {
+			conn = MakeConnection();
+			ResultSet res = allPayrates(conn);
+			List<Payrates> l = new ArrayList<>();
+			try {
+				while(res.next()) {
+					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+				}
+			} catch (SQLException | NullPointerException e) {
+				e.printStackTrace();
+			}
+			return l;
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+		return null;
+	}
+
+	public static List<Employee> searchEmployees(int crdnr, String fullname, String status) {
+		try {
+			if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
+				Connection conn = MakeConnection();
+				ResultSet res;
+				if(!status.equals("-1")) {
+					res = Database.searchWstat(conn, crdnr, fullname, status);
+				} else {
+					res = Database.search(conn, crdnr, fullname);
+				}
+				res.next();
+				res.next();
+				System.out.println(res.getInt(1));
+				List<Employee> l = new ArrayList<>();
+				try {
+					if(res != null) {
+						while(res.next()) {
+							l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+						}
+					}
+				} catch (SQLException | NullPointerException e) {
+					e.printStackTrace();
+				}
+				ListOnPage.clear();
+				ResultSet result = Database.search(conn, crdnr, fullname);
+				List<Employee> f = new ArrayList<>();
+				try {
+					if(result != null) {
+						while(result.next()) {
+							f.add(new Employee(result.getInt(1), result.getString(2),result.getString(3)));
+						}
+					}
+				} catch (SQLException | NullPointerException e) {
+					e.printStackTrace();
+				};
+				ListOnPage.addAll(f);
+				return l;
+			} else {
+				List<Employee> l = new ArrayList<>();
+				return l;
+			}
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+		return null;
+	}
+
+	public static List<Employee> statusFilter(String status, int crdnr, String fullname) {
+		Connection conn;
+		try {
+			conn = MakeConnection();
+			ResultSet res = Database.status(conn, status);
+			List<Employee> l = new ArrayList<>();
+			try {
+				while(res.next()) {
+					for(int i = 0; i < ListOnPage.size(); i++) {
+						if(res.getInt(1) == ListOnPage.get(i).getId()) {
+							l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
+						}
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
-			};
-			ListOnPage.addAll(f);
-			return l;
-		} else {
-			List<Employee> l = new ArrayList<>();
-			return l;
-		}
-		
-	}
-
-	public static List<Employee> statusFilter(String status, int crdnr, String fullname) {
-		ResultSet res = getData("", Database.status(status));
-		List<Employee> l = new ArrayList<>();
-		try {
-			while(res.next()) {
-				for(int i = 0; i < ListOnPage.size(); i++) {
-					if(res.getInt(1) == ListOnPage.get(i).getId()) {
-						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
-					}
-				}
 			}
-		} catch (SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-		return l;
-	}
+			return l;
+		} catch (ClassNotFoundException | SQLException e1) {
 
-	public static ResultSet getData(String db, String query) {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			PreparedStatement statement = conn.prepareStatement(query);
-			ResultSet res = statement.executeQuery();
-			return res;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}

@@ -37,7 +37,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> getEmployees(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.allEmployees();
+			return Database.getEmployees();
 		}
 		return null;
 	}
@@ -74,7 +74,7 @@ public class MainResource {
 			prts.add(new Payrates(Integer.parseInt(elems[0]), Double.parseDouble(elems[1]), elems[2], elems[3]));
 		}
 		s.close();
-		Database.editPayrts(prts);
+		Database.editPayrates(prts);
 	}
 
 	
@@ -110,11 +110,6 @@ public class MainResource {
 			}
 			try {
 				Payrates.checkIntegrity(list);
-				
-				// delete the table
-				Database.emptyAllTables();
-				//System.out.println(list.size());
-				// rewrite the database
 				Database.importPayrts(list);
 			} catch(DateException e){
 				ret = e.getMessage();
