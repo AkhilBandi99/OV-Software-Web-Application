@@ -36,5 +36,18 @@ public class AdminResource {
 		return googlelist;
 	}
 	
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/deletegoogle/?mail={mail}")
+	public int deleteGoogleUser(@PathParam("mail") String mail, @Context HttpServletRequest r) {
+		return 0;
+	}
+	
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/deleteov/?user={user}")
+	public int deleteOVUser(@PathParam("user") String user, @Context HttpServletRequest r) {
+		return 0;
+	}
 	
 }
