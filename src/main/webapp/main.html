@@ -328,9 +328,7 @@
 		    var row = document.getElementById('infotable').children.item(i);
 		    for(k = 0; k < 3; k++) {
 		        var element = row.children.item(k);
-		        console.log(element);
                 var temp = element.innerHTML;
-                console.log(temp);
 		        element.innerHTML = "<div id = 'editedPayrate' contenteditable = 'true'>" + temp + "</div>";
             }
 		    rowNum = i;
@@ -354,7 +352,6 @@
 		
 		// function when save button pressed
 		function saveChanges() {
-			console.log("save");
 			let infoname = document.getElementById("infotitle").innerHTML;
 			let crdnr = infoname.split(" ")[0];
 			var out = "";
@@ -372,8 +369,7 @@
 				if (edit1 != "" && edit2 != "" && edit3 != "") {
 						out += crdnr + "," + edit1 + "," + edit2 + "," + edit3 + "\n";
 				} 
-			} else if(document.getElementById("newPayrt") != null && document.getElementById("startDate") != null && document.getElementById("endDate") != null					
-					&& typeof elem1 === 'undefined' && typeof elem2 === 'undefined' && typeof elem3 === 'undefined') {
+			} else if(document.getElementById("newPayrt") != null && document.getElementById("startDate") != null && document.getElementById("endDate") != null) {
 				let payrate = document.getElementById("newPayrt").value;
 				let stDt = document.getElementById("startDate").value;
 				let edDt = document.getElementById("endDate").value;
@@ -385,7 +381,7 @@
 			xhr.setRequestHeader('Accept', 'text/plain');
 			xhr.setRequestHeader("Content-type", "text/plain");
 			xhr.send(out);
-			setTimeout(function(){getId(crdnr, infoname)}, 500);			
+			setTimeout(function(){getId(crdnr, infoname)}, 200);			
 		}
 		
 		function logout() {
