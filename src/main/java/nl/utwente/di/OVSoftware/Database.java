@@ -350,13 +350,12 @@ public class Database {
 
 
     public static boolean OVAccountAccepted(String username, String password){
-		String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
-        String query = "SELECT * FROM di08.localaccounts WHERE username='"+username+"' AND password='"+hashed+"'";
+        String query = "SELECT password FROM di08.localaccounts WHERE username='"+username+"'";
         ResultSet res = getData("",query);
         List<OVAccount> l = new ArrayList<>();
         try {
             while(res.next()) {
-                return true;
+                return BCrypt.checkpw(password,res.getString(1));
             }
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
