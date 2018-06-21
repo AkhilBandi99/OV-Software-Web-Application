@@ -54,12 +54,14 @@
                                 </div>
                                 <img src="assets/img/OV.png"
                                      style="height: 70px; margin-right: 12px;">
-                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="formCheck-1" /><label class="form-check-label" for="formCheck-1">Google Account</label></div>
-                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" id="formCheck-2" /><label class="form-check-label" for="formCheck-2">OV Account</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector">Google Account</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector">OV Account</label></div>
                                 <input
-                                        id="searchid" type="text" placeholder="Username"
-                                        style="margin: 6px;"><input id="searchname" type="text"
-                                                                    placeholder="Password" style="margin: 6px;">
+                                        id="username" type="text" placeholder="Username"
+                                        style="margin: 6px;"><input id="password" type="password"
+                                                                    placeholder="Password"  style="margin: 6px;">
+                                <input id="email" type="email"
+                                       placeholder="Email" style="margin: 6px;">
                                 <button onclick=searchupdate() class="btn btn-primary"
                                         type="button" style="margin-left: 6px;">Add</button>
                                 <div class="btn-group ml-auto" role="group">
@@ -110,7 +112,6 @@
                                         <tr>
                                             <td>Username</td>
                                             <td>Password</td>
-                                            <td></td>
                                         </tr>
                                         </thead>
                                         <tbody id="OVAccountList">
@@ -143,6 +144,9 @@
     var xhr = new XMLHttpRequest();
     var rqueue = [ "./OV/admin/googleusers", "./OV/admin/ovusers"];
     var rcounter = 0;
+    $("#username").hide();
+    $("#password").hide();
+    $("#email").show();
     xhr.onload = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // session ends
@@ -154,14 +158,14 @@
         	try {
 				var temp = JSON.parse(this.responseText);
 				if (temp.length > 0) {
-					
+
 					if (temp[0].hasOwnProperty("email")) {
 						googleacc = temp;
 		                updateGoogleAccount();
 					} else if (temp[0].hasOwnProperty("username")) {
 						ovacc = temp;
 		                updateOVAccount();
-					} 
+					}
 				}
 			} catch (e) {
 				console.log("caught exception : " + e);
@@ -169,24 +173,16 @@
 			requestContent();
         }
     }
-    
-    function requestContent() {
-        console.log("processing request content");
-        if (rcounter < rqueue.length) {
-            xhr.open("GET", rqueue[rcounter]);
-            xhr.send();
-            rcounter++;
-        }
-    }
-    
-    function updateGoogleAccount() {
-		var body = document.getElementById('GoogleAccountList');
-		body.innerHTML = "";
+
+
+    function updatelist() {
+        var body = document.getElementById('EmployeeList');
+        body.innerHTML = "";
 
 		for (var i = 0; i < googleacc.length; i++) {
 
 			var ver = document.createElement("tr");
-			
+
 			// create email display
 			var em = document.createElement("td");
 			var etxt = document.createTextNode(googleacc[i].email);
@@ -195,7 +191,7 @@
 			body.appendChild(ver);
 		}
 	}
-    
+
     function updateOVAccount(){
     	var body = document.getElement
     	ById('OVAccountList');
@@ -204,22 +200,40 @@
 		for (var i = 0; i < ovacc.length; i++) {
 
 			var ver = document.createElement("tr");
-			
+
 			// create user display
 			var user = document.createElement("td");
 			var utxt = document.createTextNode(ovacc[i].username);
 			user.appendChild(utxt);
 			ver.appendChild(user);
-			
+
 			// create pass display
 			var pass = document.createElement("td");
 			var ptxt = document.createTextNode(ovacc[i].password);
 			pass.appendChild(ptxt);
 			ver.appendChild(pass);
-			
+
 			body.appendChild(ver);
 		}
     }
+
+    function updateGoogleAccount() {
+        var body = document.getElementById('GoogleAccountList');
+        body.innerHTML = "";
+
+        for (var i = 0; i < googleacc.length; i++) {
+
+            var ver = document.createElement("tr");
+
+            // create email display
+            var em = document.createElement("td");
+            var etxt = document.createTextNode(googleacc[i].email);
+            em.appendChild(etxt);
+            ver.appendChild(em);
+            body.appendChild(ver);
+        }
+    }
+
 
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
@@ -245,11 +259,30 @@
     }
 
 	function deleteUser(){
-		
+
 	}
 
-    
-    
+
+    function requestContent() {
+        console.log("a");
+        if (rcounter < rqueue.length) {
+            xhr.open("GET", rqueue[rcounter]);
+            xhr.send();
+            rcounter++;
+        }
+    }
+
+    $( "#googleSelector" ).click(function() {
+        $("#username").hide();
+        $("#password").hide();
+        $("#email").show();
+    });
+
+    $( "#OVSelector" ).click(function() {
+        $("#username").show();
+        $("#password").show();
+        $("#email").hide();
+    });
 </script>
 </body>
 
