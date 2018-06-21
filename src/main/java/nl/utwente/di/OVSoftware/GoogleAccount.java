@@ -1,5 +1,8 @@
 package nl.utwente.di.OVSoftware;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class GoogleAccount {
     private final String email;
 
@@ -7,7 +10,8 @@ public class GoogleAccount {
         return email;
     }
 
-    public GoogleAccount (String email){
+    @JsonCreator
+    public GoogleAccount (@JsonProperty("email") String email){
         this.email = email;
     }
 }

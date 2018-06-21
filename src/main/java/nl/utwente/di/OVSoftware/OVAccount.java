@@ -1,8 +1,12 @@
 package nl.utwente.di.OVSoftware;
 
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OVAccount {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
     public String getUsername() {
         return username;
@@ -12,7 +16,8 @@ public class OVAccount {
         return password;
     }
 
-    public OVAccount (String username, String password){
+    @JsonCreator
+    public OVAccount (@JsonProperty("username") String username, @JsonProperty("password") String password){
         this.username=username;
         this.password=password;
     }

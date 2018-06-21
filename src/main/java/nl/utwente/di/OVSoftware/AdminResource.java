@@ -35,6 +35,34 @@ public class AdminResource {
 		List<GoogleAccount> googlelist = Database.getGoogleAccounts();
 		return googlelist;
 	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/ovuser")
+	public void createOVUser(OVAccount ovAccount){
+		Database.createOVAccount(ovAccount.getUsername(),ovAccount.getPassword());
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/googleuser")
+	public void createGoogleUser(GoogleAccount googleAccount){
+		//Database.createGoogleAccount(googleAccount.getEmail());
+	}
+
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/ovuser")
+	public void deleteOVUser(OVAccount ovAccount){
+		//Database.deleteOVAccount(ovAccount.getUsername(),ovAccount.getPassword());
+	}
+
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/googleuser")
+	public void deleteGoogleUser(GoogleAccount googleAccount){
+		//Database.deleteGoogleAccount(googleAccount.getEmail());
+	}
 	
 	
 }

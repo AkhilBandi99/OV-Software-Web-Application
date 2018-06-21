@@ -476,6 +476,7 @@ public class Database {
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
 			}
+			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
 			
 		}

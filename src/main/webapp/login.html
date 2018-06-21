@@ -33,8 +33,7 @@
 			<div class="form-group">
 				<div data-width="auto" class="g-signin2" data-onsuccess="onSignIn"></div>
 			</div>
-			<label id="warning" style="color: red;"></label> <a href="#"
-				class="forgot">Forgot your email or password?</a>
+			<label id="warning" style="color: red;"></label>
 		</form>
 	</div>
 	<script src="assets/js/jquery.min.js"></script>
@@ -83,10 +82,13 @@
     		if (xhr.readyState == 4 && xhr.status == 200) {
     			console.log(this.responseText);
     			if(this.responseText == 0) {
-    				window.open("./relogin.html", "_self");
-    				console.log("fail");
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut().then(function () {
+                        $("#warning")
+                            .text(
+                                "Your google account is not permitted to access");
+                    });
     			} else {
-    				//somehow redirect to the second page
     				window.open("./main.html", "_self");
     			}
     		}
