@@ -23,7 +23,7 @@ public class Database {
 
 	private static String specpr(int crdnr) {
 		return "SELECT r.crdnr, r.purchaseprice, r.vandatum, r.totdatum " + "FROM di08.employeerates r, di08.humres h "
-				+ "WHERE r.crdnr = h.res_id " + "AND r.crdnr = " + crdnr;
+				+ "WHERE r.crdnr = h.res_id " + "AND r.crdnr = " + crdnr + "ORDER BY r.vandatum";
 	}
 
 
@@ -252,11 +252,6 @@ public class Database {
 			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
 			try {
 				Payrates.checkIntegrity(list);
-				// delete the table
-				Database.emptyAllTables();
-				//System.out.println(list.size());
-				// rewrite the database
-				Database.importPayrts(list);
 			} catch(DateException e){
 				ret = e.getMessage();
 			}

@@ -65,9 +65,7 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public void editPayrates(String payrates){
-
-		System.out.println(payrates);
+	public void editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
 		List<Payrates> prts = new ArrayList<>();
 		while(s.hasNextLine()) {
@@ -77,6 +75,7 @@ public class MainResource {
 		}
 		s.close();
 		Database.editPayrts(prts);
+		System.out.println(prts);
 	}
 
 	
