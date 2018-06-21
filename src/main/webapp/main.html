@@ -186,7 +186,6 @@
 </div>
 <!-- /#page-content-wrapper -->
 
-</div>
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/main.js"></script>
@@ -199,6 +198,10 @@
 		var I;
 		var H;
 		var status = -1;
+		var elem1;
+		var elem2;
+		var elem3;
+		var rowNum = -1;
 		var xhr = new XMLHttpRequest();
 		var rqueue = [ "./OV/test", "./OV/main/employees",
 				"./OV/main/databases" ];
@@ -261,8 +264,8 @@
 				var atxt = document.createTextNode(list[i].status);
 				active.appendChild(atxt);
 				ver.appendChild(active);
-				ver.setAttribute('onclick', "getId(" + list[i].id + ", \""
-						+ list[i].name + "\")");
+				ver.setAttribute('onclick', "getId(" + list[i].id + ", \"" +
+						list[i].id + " " + list[i].name + "\")");
 				body.appendChild(ver);
 			}
 
@@ -320,6 +323,22 @@
 			}
 		}
 		
+		function edit(i){
+		    updateinfo();
+		    var row = document.getElementById('infotable').children.item(i);
+		    for(k = 0; k < 3; k++) {
+		        var element = row.children.item(k);
+		        console.log(element);
+                var temp = element.innerHTML;
+                console.log(temp);
+		        element.innerHTML = "<div id = 'editedPayrate' contenteditable = 'true'>" + temp + "</div>";
+            }
+		    rowNum = i;
+		    elem1 = row.children.item(0);
+		    elem2 = row.children.item(1);
+		    elem3 = row.children.item(2);
+        }
+		
 		function newPayrtField() {
 			var body = document.getElementById('infotable');
 			updateinfo();
@@ -334,27 +353,38 @@
 		}
 		
 		function saveChanges() {
+			console.log("save");
 			let infoname = document.getElementById("infotitle").innerHTML;
-			let crdnr = info[0].id;
-			let payrate = document.getElementById("newPayrt").value;
-			let stDt = document.getElementById("startDate").value;
-			let edDt = document.getElementById("endDate").value;
+			let crdnr = infoname.split(" ")[0];
 			var out = "";
 			for (var k = 0; k < info.length; k++){
-				out +=	info[k].id + "," + info[k].cost + "," + info[k].startDate + "," + info[k].endDate + "\n";
+				if (k != rowNum) {
+					out +=	info[k].id + "," + info[k].cost + "," + info[k].startDate + "," + info[k].endDate + "\n";
+				}
 			}
-			out +=	crdnr + "," + payrate + "," + stDt + "," + edDt + "\n";
-			//info.push({"id" : crdnr, "cost" : payrate, "startDate" : stDt, "endDate" : edDt});
-			let data = info;
-			if(payrate != "" && stDt != "" && edDt != "") {
- 				xhr.open("POST", "./OV/main/editPayrates/");
-				xhr.setRequestHeader('Accept', 'text/plain');
-				xhr.setRequestHeader("Content-type", "text/plain");
-				console.log(data);
-				xhr.send(out);
+			rowNum = -1;
+			if(document.getElementById("newPayrt") == null && document.getElementById("startDate") == null && document.getElementById("endDate") == null
+				&& typeof elem1 !== 'undefined' && typeof elem2 !== 'undefined' && typeof elem3 !== 'undefined') {
+				let edit1 = elem1.textContent;
+				let edit2 = elem2.textContent;
+				let edit3 = elem3.textContent;
+				if (edit1 != "" && edit2 != "" && edit3 != "") {
+						out += crdnr + "," + edit1 + "," + edit2 + "," + edit3 + "\n";
+				} 
+			} else if(document.getElementById("newPayrt") != null && document.getElementById("startDate") != null && document.getElementById("endDate") != null					
+					&& typeof elem1 === 'undefined' && typeof elem2 === 'undefined' && typeof elem3 === 'undefined') {
+				let payrate = document.getElementById("newPayrt").value;
+				let stDt = document.getElementById("startDate").value;
+				let edDt = document.getElementById("endDate").value;
+				if (payrate != "" && stDt != "" && edDt != "") {
+					out +=	crdnr + "," + payrate + "," + stDt + "," + edDt + "\n";
+				}
 			}
-			setTimeout(function(){getId(crdnr, infoname)}, 500);
-			
+			xhr.open("POST", "./OV/main/editPayrates/");
+			xhr.setRequestHeader('Accept', 'text/plain');
+			xhr.setRequestHeader("Content-type", "text/plain");
+			xhr.send(out);
+			setTimeout(function(){getId(crdnr, infoname)}, 500);			
 		}
 		
 		function logout() {
@@ -378,10 +408,6 @@
                 gapi.auth2.init();
             });
         }
-
-		function newPayrate() {
-
-		}
 
 		function statusFilterA() {
 			status = document.getElementById("statusA").getAttribute("value");
@@ -430,15 +456,9 @@
 			}
 			xhr.send();
 		}
-		/*
-		function editPayrate() {
-			if(payrateList.length != 0) {
-				xhr.open("GET", "./OV/main/editPayrate/" + payrateList);
-			}
-			xhr.send();
-		}*/
 		
 		function getId(x, name) {
+			info = [];
 			xhr.open("GET", "./OV/main/employees/" + x);
 			xhr.send(this.responseText);
 			var infoname = document.getElementById("infotitle");
@@ -467,7 +487,6 @@
 		});
 
 		function requestContent() {
-			console.log("a");
 			if (rcounter < rqueue.length) {
 				xhr.open("GET", rqueue[rcounter]);
 				xhr.send();
