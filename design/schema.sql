@@ -1,15 +1,19 @@
 CREATE DATABASE OV_payrates;
 
-CREATE TABLE Humres (
-res_id integer,
+Humres (res_id integer,
 fullname varchar(200),
 emp_stat char(20),
 freefield_16 varchar(20),
-PRIMARY KEY(res_id));
+PK (res_id));
 
-CREATE TABLE Employeerates (
-crdnr integer,
-purchaseprice double,
+Employee (crdnr integer,
+PurchasePrice double,
 vandatum Date,
 totdatum Date,
-FOREIGN KEY(crdnr) REF Humres(res_id));
+FK (crdnr) REF Humres(res_id));
+
+Local_accounts (username string,
+password string
+PK (username));
+
+Google_accounts (e_mail string);
