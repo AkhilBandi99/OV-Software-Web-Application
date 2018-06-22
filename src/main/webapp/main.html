@@ -113,8 +113,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <td>Employee Number</td>
-                                    <td>Full Name</td>
+                                    <td onclick = sort(0)>Employee Number</td>
+                                    <td onclick = sort(1)>Full Name</td>
                                     <td>Status</td>
                                 </tr>
                                 </thead>
@@ -202,6 +202,8 @@
 		var elem2;
 		var elem3;
 		var rowNum = -1;
+		var ascNum = false;
+		var ascName = false;
 		var xhr = new XMLHttpRequest();
 		var rqueue = [ "./OV/test", "./OV/main/employees",
 				"./OV/main/databases" ];
@@ -383,6 +385,24 @@
 			xhr.send(out);
 			setTimeout(function(){getId(crdnr, infoname)}, 200);			
 		}
+		
+		function sort(n) {
+			if(n == 0 && ascNum == false) {
+				xhr.open("GET", "./OV/main/sort/00");
+				ascNum = true;
+			} else if(n == 0 && ascNum == true) {
+				xhr.open("GET", "./OV/main/sort/01");
+				ascNum = false;
+			} else if(n == 1 && ascName == false) {
+				xhr.open("GET", "./OV/main/sort/10");
+				ascName = true;
+			} else if(n == 1 && ascName == true) {
+				xhr.open("GET", "./OV/main/sort/11");
+				ascName = false;
+			}
+			xhr.send();
+		}
+
 		
 		function logout() {
             var auth2 = gapi.auth2.getAuthInstance();

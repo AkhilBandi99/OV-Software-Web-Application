@@ -51,6 +51,16 @@ public class MainResource {
 		}
 		return null;
 	}
+	
+	@GET
+	@Path("/sort/{num}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
+		if (Login.Security(r.getSession()) == 1) {
+			return Database.sortTable(n);
+		}
+		return null;
+	}
 
 	@GET
 	@Path("/search/{crdnr}/{name}/status/{status}")
@@ -76,7 +86,6 @@ public class MainResource {
 		s.close();
 		Database.editPayrates(prts);
 	}
-
 	
 	@GET
 	@Path("/export.csv")
