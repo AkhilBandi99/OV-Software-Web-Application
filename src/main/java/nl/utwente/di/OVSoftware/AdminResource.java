@@ -54,16 +54,17 @@ public class AdminResource {
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/ovuser/{username}")
+	@Path("/ovuser")
 	public void deleteOVUser(OVAccount ovAccount){
-		//Database.deleteOVAccount(ovAccount.getUsername());
+		Database.deleteOVAccount(ovAccount.getUsername());
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/googleuser/{email}")
+	@Path("/googleuser")
 	public void deleteGoogleUser(GoogleAccount googleAccount){
-		//Database.deleteGoogleAccount(googleAccount.getEmail());
+		System.out.println("googletest");
+		Database.deleteGoogleAccount(googleAccount.getEmail());
 	}
 	
 	

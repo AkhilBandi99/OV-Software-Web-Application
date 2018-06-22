@@ -223,7 +223,7 @@
             var trash = document.createElement("td");
             var trashIcon = document.createElement("span");
             trash.className = "fas fa-trash-alt";
-            trash.setAttribute("onclick", "deleteOVUser(" + utxt + ")");
+            trash.setAttribute("onclick", "deleteOVUser(\""+ovacc[i].username+"\")");
             trash.appendChild(trashIcon);
             ver.appendChild(trash);
 
@@ -252,7 +252,7 @@
             var trash = document.createElement("td");
             var trashIcon = document.createElement("span");
             trash.className = "fas fa-trash-alt";
-            trash.setAttribute("onclick", "deleteGoogleUser(" + etxt + ")");
+            trash.setAttribute("onclick", "deleteGoogleUser(\""+googleacc[i].email+"\")");
             trash.appendChild(trashIcon);
             ver.appendChild(trash);
 
@@ -304,18 +304,23 @@
 
 
     function deleteGoogleUser(mail){
-        var email = mail;
-        // create a json object and store it in email
-        xhr.open("DELETE", "./OV/admin/deletegoogle/" + email);
-        xhr.send();
+        $.ajax({
+            url: "./OV/admin/googleuser",
+            contentType: 'application/json; charset=utf-8',
+            type: "DELETE",
+            data: JSON.stringify({"email": mail}),
+            dataType: 'json'
+        });
     }
 
     function deleteOVUser(user) {
-        var username = user;
-        // create a json object and store it in username
-        xhr.open("DELETE", "./OV/admin/deleteov/" + username);
-        xhr.send();
-
+        $.ajax({
+            url: "./OV/admin/ovuser",
+            type: "DELETE",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({"username": user}),
+            dataType: 'json'
+        });
     }
 
 

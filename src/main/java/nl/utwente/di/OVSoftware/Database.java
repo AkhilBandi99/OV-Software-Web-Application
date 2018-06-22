@@ -532,6 +532,30 @@ public class Database {
 		}
 	}
 
+	public static void deleteOVAccount(String username){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.localaccounts WHERE username=?");
+			p.setString(1, username);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+	}
+
+	public static void deleteGoogleAccount(String email){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.googleaccounts WHERE email=?");
+			p.setString(1, email);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+	}
+
 
 	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){
 		try {
