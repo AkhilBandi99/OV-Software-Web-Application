@@ -138,4 +138,13 @@ public class MainResource {
 			r.getSession().setAttribute("Database", n);
 		}
 	}
+	
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void deletePayrate(Payrates p) {
+		
+	}
+	
+	
 }

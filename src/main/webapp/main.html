@@ -334,7 +334,9 @@
 				var trash = document.createElement("td");
 				var trashIcon = document.createElement("span");
 				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deletePayrate(" + ")");
+				trash.setAttribute("onclick", "deletePayrate(" + info[i].id
+						+ "," + info[i].cost + ",'" + info[i].startDate + "','"
+						+ info[i].endDate + "')");
 				trash.appendChild(trashIcon);
 				ver.appendChild(trash);
 
@@ -533,9 +535,10 @@
 				rcounter++;
 			}
 		}
-		
-		function deletePayrate(){
-			
+
+		function deletePayrate(id, cost, startDate, endDate) {
+			xhr.open("DELETE", "./OV/main/deleterate/" + id + "/" + cost + "/" + startDate + "/" + endDate);
+			xhr.send();
 		}
 
 		$("#menu-toggle").click(function(e) {
