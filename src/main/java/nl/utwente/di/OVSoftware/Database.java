@@ -511,7 +511,7 @@ public class Database {
     	try {
 			String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 			Connection conn = MakeConnection();
-			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.localaccounts VALUES(?,?");
+			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.localaccounts VALUES(?,?)");
 			p.setString(1, username);
 			p.setString(2, hashed);
 			p.execute();
@@ -520,6 +520,41 @@ public class Database {
 			
 		}
     }
+	public static void createGoogleAccount(String email){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.googleaccounts VALUES(?)");
+			p.setString(1, email);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+	}
+
+	public static void deleteOVAccount(String username){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.localaccounts WHERE username=?");
+			p.setString(1, username);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+	}
+
+	public static void deleteGoogleAccount(String email){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.googleaccounts WHERE email=?");
+			p.setString(1, email);
+			p.execute();
+			conn.close();
+		} catch (ClassNotFoundException | SQLException e1) {
+
+		}
+	}
 
 
 	public static List<Payrates> getPayratesSpecificEmployee(int crdnr){

@@ -2,329 +2,350 @@
 <html>
 
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-signin-client_id"
-	content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
-<title>Module4</title>
-<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/styles.css">
-<link rel="stylesheet"
-	href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
-	integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
-	crossorigin="anonymous">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
+    <title>Module4</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
 
 
-<style>
-#card-style {
-	box-shadow: 3px 3px #e0e0e0;
-}
-</style>
+    <style>
+        #card-style {
+            box-shadow: 3px 3px #e0e0e0;
+        }
+    </style>
 
 
 </head>
 
 <body onload="requestContent()">
-	<div id="wrapper">
+<div id="wrapper">
 
-		<!-- Sidebar -->
-		<div id="sidebar-wrapper">
-			<ul class="sidebar-nav">
-				<li class="sidebar-brand"><a> OV Software </a></li>
-				<li><a href="main.html">Payrates</a></li>
-				<li><a href="#">Administration</a></li>
-			</ul>
-		</div>
-		<!-- /#sidebar-wrapper -->
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <a >
+                    OV Software
+                </a>
+            </li>
+            <li>
+                <a href="main.html">Payrates</a>
+            </li>
+            <li>
+                <a href="#">Administration</a>
+            </li>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
 
-		<!-- Page Content -->
-		<div id="page-content-wrapper">
-			<div class="container-fluid">
-				<div class="row" style="padding-top: 12px; padding-bottom: 6px;">
-					<div class="col-md-12" style="padding: 0px;">
-						<div class="card" id="card-style">
-							<div class="card-body">
-								<div class="col-md-12 d-flex align-items-center">
-									<div id="menu-toggle" href="#menu-toggle">
-										<div class="bar1"></div>
-										<div class="bar2"></div>
-										<div class="bar3"></div>
-									</div>
-									<a href="main.html"><img src="assets/img/OV.png"
-										style="height: 70px; margin-right: 12px;"></a>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" name="accounttype"
-											type="radio" id="googleSelector" checked="checked" /><label
-											class="form-check-label" for="googleSelector">Google
-											Account</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" name="accounttype"
-											type="radio" id="OVSelector" /><label
-											class="form-check-label" for="OVSelector">OV Account</label>
-									</div>
-									<input id="username" type="text" placeholder="Username"
-										style="margin: 6px;"><input id="password"
-										type="password" placeholder="Password" style="margin: 6px;">
-									<input id="email" type="email" placeholder="Email"
-										style="margin: 6px;">
-									<button onclick=addAccount() class="btn btn-primary"
-										type="button" style="margin-left: 6px;">Add</button>
-									<div class="btn-group ml-auto" role="group">
-										<button onclick=logout() class="btn btn-primary ml-auto"
-											type="button" style="margin: 6px;">Log Out</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row" style="padding-top: 6px;">
-					<div class="col-md-4">
-						<div class="row">
-							<h2>Google Accounts</h2>
-						</div>
-						<div class="row d-block" style="padding-right: 8px">
-							<div class="card">
-								<div class="card-body" style="padding: 0px;">
-									<div class="table-responsive table-hover">
-										<table class="table">
-											<thead>
-												<tr>
-													<th>Email</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody id="GoogleAccountList">
-												<tr>
-													<td>*.student.utwente.nl</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-8">
-						<div class="row">
-							<h2>OV accounts</h2>
-						</div>
-						<div class="row d-block" style="padding-left: 8px">
-							<div class="card">
-								<div class="card-body" style="padding: 0px;">
-									<div class="table-responsive table-hover">
-										<table class="table">
-											<thead>
-												<tr>
-													<th>Username</th>
-													<th>Password</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody id="OVAccountList">
-												<tr>
-													<td>test</td>
-													<td>test</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /#page-content-wrapper -->
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row" style="padding-top: 12px; padding-bottom: 6px;">
+                <div class="col-md-12" style="padding: 0px;">
+                    <div class="card" id="card-style">
+                        <div class="card-body">
+                            <div class="col-md-12 d-flex align-items-center">
+                                <div id="menu-toggle" href="#menu-toggle">
+                                    <div class="bar1"></div>
+                                    <div class="bar2"></div>
+                                    <div class="bar3"></div>
+                                </div>
+                                <img src="assets/img/OV.png"
+                                     style="height: 70px; margin-right: 12px;">
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector">Google Account</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector">OV Account</label></div>
+                                <input
+                                        id="username" type="text" placeholder="Username"
+                                        style="margin: 6px;"><input id="password" type="password"
+                                                                    placeholder="Password"  style="margin: 6px;">
+                                <input id="email" type="email"
+                                       placeholder="Email" style="margin: 6px;">
+                                <button onclick=addAccount() class="btn btn-primary"
+                                        type="button" style="margin-left: 6px;">Add</button>
+                                <div class="btn-group ml-auto" role="group">
+                                    <button onclick=logout() class="btn btn-primary ml-auto" type="button"
+                                            style="margin: 6px;">Log Out</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 6px;">
+                <div class="col-md-4" >
+                    <div class="row">
+                        <h2>Google Accounts</h2>
+                    </div>
+                    <div class="row d-block" style="padding-right: 8px">
+                        <div class="card">
+                            <div class="card-body" style="padding: 0px;">
+                                <div class="table-responsive table-hover">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="GoogleAccountList">
+                                        <tr>
+                                            <td>*.student.utwente.nl</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <h2>OV accounts</h2>
+                    </div>
+                    <div class="row d-block" style="padding-left: 8px">
+                        <div class="card">
+                            <div class="card-body" style="padding: 0px;">
+                                <div class="table-responsive table-hover">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Password</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="OVAccountList">
+                                        <tr>
+                                            <td>test</td>
+                                            <td>test</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
 
-	</div>
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-	<script src="assets/js/main.js"></script>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
-		async defer></script>
-	<script>
-		var ovacc = [];
-		var googleacc = [];
-		var dropdownitems = [];
-		var status = -1;
-		var xhr = new XMLHttpRequest();
-		var rqueue = [ "./OV/admin/googleusers", "./OV/admin/ovusers" ];
-		var rcounter = 0;
-		$("#username").hide();
-		$("#password").hide();
-		$("#email").show();
-		xhr.onload = function() {
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				// session ends
-				if (this.responseText == "0") {
-					window.location.replace(".");
-					console.log(this.responseText);
-				}
-				console.log(this.responseText);
-				try {
-					var temp = JSON.parse(this.responseText);
-					if (temp.length > 0) {
+</div>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<script>
+    var ovacc = [];
+    var googleacc = [];
+    var dropdownitems = [];
+    var status = -1;
+    var xhr = new XMLHttpRequest();
+    var rqueue = [ "./OV/admin/googleusers", "./OV/admin/ovusers"];
+    var rcounter = 0;
+    $("#username").hide();
+    $("#password").hide();
+    $("#email").show();
+    xhr.onload = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // session ends
+        	if (this.responseText == "0"){
+            	window.location.replace(".");
+            	console.log(this.responseText);
+            }
+        	console.log(this.responseText);
+        	try {
+				var temp = JSON.parse(this.responseText);
+				if (temp.length > 0) {
 
-						if (temp[0].hasOwnProperty("email")) {
-							googleacc = temp;
-							updateGoogleAccount();
-						} else if (temp[0].hasOwnProperty("username")) {
-							ovacc = temp;
-							updateOVAccount();
-						}
+					if (temp[0].hasOwnProperty("email")) {
+						googleacc = temp;
+		                updateGoogleAccount();
+					} else if (temp[0].hasOwnProperty("username")) {
+						ovacc = temp;
+		                updateOVAccount();
 					}
-				} catch (e) {
-					console.log("caught exception : " + e);
 				}
-				requestContent();
+			} catch (e) {
+				console.log("caught exception : " + e);
 			}
-		};
+			requestContent();
+        }
+    };
 
-		function updatelist() {
-			var body = document.getElementById('EmployeeList');
-			body.innerHTML = "";
 
-			for (var i = 0; i < googleacc.length; i++) {
+    function updatelist() {
+        var body = document.getElementById('EmployeeList');
+        body.innerHTML = "";
 
-				var ver = document.createElement("tr");
+		for (var i = 0; i < googleacc.length; i++) {
 
-				// create email display
-				var em = document.createElement("td");
-				var etxt = document.createTextNode(googleacc[i].email);
-				em.appendChild(etxt);
-				ver.appendChild(em);
-				body.appendChild(ver);
-			}
+			var ver = document.createElement("tr");
+
+			// create email display
+			var em = document.createElement("td");
+			var etxt = document.createTextNode(googleacc[i].email);
+			em.appendChild(etxt);
+			ver.appendChild(em);
+			body.appendChild(ver);
 		}
+	}
 
-		function updateOVAccount() {
-			var body = document.getElementById('OVAccountList');
-			body.innerHTML = "";
+    function updateOVAccount(){
+        var body = document.getElementById('OVAccountList');
+        body.innerHTML = "";
 
-			for (var i = 0; i < ovacc.length; i++) {
+        for (var i = 0; i < ovacc.length; i++) {
 
-				var ver = document.createElement("tr");
+            var ver = document.createElement("tr");
 
-				// create user display
-				var user = document.createElement("td");
-				var utxt = document.createTextNode(ovacc[i].username);
-				user.appendChild(utxt);
-				ver.appendChild(user);
+            // create user display
+            var user = document.createElement("td");
+            var utxt = document.createTextNode(ovacc[i].username);
+            user.appendChild(utxt);
+            ver.appendChild(user);
 
-				// create pass display
-				var pass = document.createElement("td");
-				var ptxt = document.createTextNode(ovacc[i].password);
-				pass.appendChild(ptxt);
-				ver.appendChild(pass);
+            // create pass display
+            var pass = document.createElement("td");
+            var ptxt = document.createTextNode(ovacc[i].password);
+            pass.appendChild(ptxt);
+            ver.appendChild(pass);
 
-				// create trash icon
-				var trash = document.createElement("td");
-				var trashIcon = document.createElement("span");
-				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deleteOVUser('"
-						+ ovacc[i].username + "')");
-				trash.appendChild(trashIcon);
-				ver.appendChild(trash);
+            // create trash icon
+            var trash = document.createElement("td");
+            var trashIcon = document.createElement("span");
+            trash.className = "fas fa-trash-alt";
+            trash.setAttribute("onclick", "deleteOVUser(\""+ovacc[i].username+"\")");
+            trash.appendChild(trashIcon);
+            ver.appendChild(trash);
 
-				body.appendChild(ver);
+            body.appendChild(ver);
 
-				body.appendChild(ver);
-			}
-		}
+            body.appendChild(ver);
+        }
+    }
 
-		function updateGoogleAccount() {
-			var body = document.getElementById('GoogleAccountList');
-			body.innerHTML = "";
 
-			for (var i = 0; i < googleacc.length; i++) {
+    function updateGoogleAccount() {
+        var body = document.getElementById('GoogleAccountList');
+        body.innerHTML = "";
 
-				var ver = document.createElement("tr");
+        for (var i = 0; i < googleacc.length; i++) {
 
-				// create email display
-				var em = document.createElement("td");
-				var etxt = document.createTextNode(googleacc[i].email);
-				em.appendChild(etxt);
-				ver.appendChild(em);
+            var ver = document.createElement("tr");
 
-				// create trash icon
-				var trash = document.createElement("td");
-				var trashIcon = document.createElement("span");
-				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deleteGoogleUser('"
-						+ googleacc[i].email + "')");
-				trash.appendChild(trashIcon);
-				ver.appendChild(trash);
+            // create email display
+            var em = document.createElement("td");
+            var etxt = document.createTextNode(googleacc[i].email);
+            em.appendChild(etxt);
+            ver.appendChild(em);
 
-				body.appendChild(ver);
-			}
-		}
+            // create trash icon
+            var trash = document.createElement("td");
+            var trashIcon = document.createElement("span");
+            trash.className = "fas fa-trash-alt";
+            trash.setAttribute("onclick", "deleteGoogleUser(\""+googleacc[i].email+"\")");
+            trash.appendChild(trashIcon);
+            ver.appendChild(trash);
 
-		function addAccount() {
-			if ($("#googleSelector").prop("checked", true)) {
-				$.post({
-					url : "./OV/admin/googleUser",
-					contentType : 'application/json; charset=utf-8',
-					dataType : 'json'
-				});
-				$("#email").val()
-			}
-		}
+            body.appendChild(ver);
+        }
+    }
 
-		$("#menu-toggle").click(function(e) {
-			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
-		});
+    function addAccount(){
+        if($("#OVSelector").prop("checked", true)){
+            $.post({
+                url: "./OV/admin/ovuser",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({"username": $("#username").val(),"password": $("#password").val()}),
+                dataType: 'json'
+            });
+        }
+        if($("#googleSelector").prop("checked", true)){
+            $.post({
+                url: "./OV/admin/googleuser",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({"email": $("#email").val()}),
+                dataType: 'json'
+            });
+        }
+    }
 
-		function logout() {
-			var auth2 = gapi.auth2.getAuthInstance();
-			auth2.signOut().then(function() {
-				console.log('User signed out.');
-			});
-			xhr.open("GET", "./OV/logout");
-			xhr.send();
-			window.open("./login.html", "_self");
-		}
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
 
-		function onLoad() {
-			gapi.load('auth2', function() {
-				gapi.auth2.init();
-			});
-		}
 
-		function deleteGoogleUser(mail) {
-			xhr.open("DELETE", "./OV/admin/deletegoogle/" + mail);
-			xhr.send();
-		}
 
-		function deleteOVUser(user) {
-			xhr.open("DELETE", "./OV/admin/deleteov/" + username);
-			xhr.send();
-		}
+    function logout() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+        xhr.open("GET", "./OV/logout");
+        xhr.send();
+        window.open("./login.html", "_self");
+    }
 
-		function requestContent() {
-			console.log("a");
-			if (rcounter < rqueue.length) {
-				xhr.open("GET", rqueue[rcounter]);
-				xhr.send();
-				rcounter++;
-			}
-		}
+    function onLoad() {
+        gapi.load('auth2', function() {
+            gapi.auth2.init();
+        });
+    }
 
-		$("#googleSelector").click(function() {
-			$("#username").hide();
-			$("#password").hide();
-			$("#email").show();
-		});
 
-		$("#OVSelector").click(function() {
-			$("#username").show();
-			$("#password").show();
-			$("#email").hide();
-		});
-	</script>
+    function deleteGoogleUser(mail){
+        $.ajax({
+            url: "./OV/admin/googleuser",
+            contentType: 'application/json; charset=utf-8',
+            type: "DELETE",
+            data: JSON.stringify({"email": mail}),
+            dataType: 'json'
+        });
+    }
+
+    function deleteOVUser(user) {
+        $.ajax({
+            url: "./OV/admin/ovuser",
+            type: "DELETE",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({"username": user}),
+            dataType: 'json'
+        });
+    }
+
+
+
+        function requestContent() {
+        console.log("a");
+        if (rcounter < rqueue.length) {
+            xhr.open("GET", rqueue[rcounter]);
+            xhr.send();
+            rcounter++;
+        }
+    }
+
+    $( "#googleSelector" ).click(function() {
+        $("#username").hide();
+        $("#password").hide();
+        $("#email").show();
+    });
+
+    $( "#OVSelector" ).click(function() {
+        $("#username").show();
+        $("#password").show();
+        $("#email").hide();
+    });
+</script>
 </body>
 
 </html>
