@@ -28,7 +28,7 @@
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
         <li class="sidebar-brand">
-            <a >
+            <a>
                 OV Software
             </a>
         </li>
@@ -113,8 +113,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <td>Employee Number</td>
-                                    <td>Full Name</td>
+                                    <td onclick = sort(0)>Employee Number</td>
+                                    <td onclick = sort(1)>Full Name</td>
                                     <td>Status</td>
                                 </tr>
                                 </thead>
@@ -382,6 +382,11 @@
 			xhr.setRequestHeader("Content-type", "text/plain");
 			xhr.send(out);
 			setTimeout(function(){getId(crdnr, infoname)}, 200);			
+		}
+		
+		function sort(n) {
+			xhr.open("GET", "./OV/main/sort/" + n);
+			xhr.send();
 		}
 		
 		function logout() {

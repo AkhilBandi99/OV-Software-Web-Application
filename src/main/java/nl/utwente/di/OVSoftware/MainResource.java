@@ -76,7 +76,16 @@ public class MainResource {
 		s.close();
 		Database.editPayrts(prts);
 	}
-
+	
+	@GET
+	@Path("/sort/{num}")
+	@Produces("MediaType.APPLICATION_JSON")
+	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
+		if (Login.Security(r.getSession()) == 1) {
+			return Database.sortTable(n);
+		}
+		return null;
+	}
 	
 	@GET
 	@Path("/export.csv")

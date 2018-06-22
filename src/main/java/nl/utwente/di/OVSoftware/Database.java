@@ -213,6 +213,24 @@ public class Database {
 				+ "AND h.\"freefield 16\" = 'N' "
 				+ "ORDER BY h.res_id";
 	}
+	
+	public static String sort(int i) {
+		if(i == 0 && ListOnPage.get(0).getId() <= 50) {
+		return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
+				+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.res_id DESC";
+		} else if(i == 0 && ListOnPage.get(0).getId() >= 1000) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
+					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.fullname";
+		} else if(i == 1 && ListOnPage.get(0).getName().compareTo("A") <= 0) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
+					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.fullname DESC";
+		} else if(i == 1 && ListOnPage.get(0).getName().compareTo("P") > 0) {
+			return "SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
+					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.fullname";
+		} else {
+			return null;
+		}
+	}
 
 	public static void importPayrts(List<Payrates> list) {
 		try {
@@ -395,6 +413,35 @@ public class Database {
 			while(res.next()) {
 				for(int i = 0; i < ListOnPage.size(); i++) {
 					if(res.getInt(1) == ListOnPage.get(i).getId()) {
+						String stat = "Unknown";
+						switch (res.getString(3)) {
+							case "A":
+								stat = "Active";
+								break;
+							case "I":
+								stat = "Not Active";
+								break;
+							case "H":
+								stat = "Not Active Yet";
+								break;
+						}
+						l.add(new Employee(res.getInt(1), res.getString(2),stat));
+					}
+				}
+			}
+		} catch (SQLException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return l;
+	}
+	
+	public static List<Employee> sortTable(int i) {
+		ResultSet res = getData("", Database.sort(i));
+		List<Employee> l = new ArrayList<>();
+		try {
+			while(res.next()) {
+				for(int n = 0; n < ListOnPage.size(); n++) {
+					if(res.getInt(1) == ListOnPage.get(n).getId()) {
 						l.add(new Employee(res.getInt(1), res.getString(2),res.getString(3)));
 					}
 				}
