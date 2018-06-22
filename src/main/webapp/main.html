@@ -4,13 +4,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="google-signin-client_id" content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
+<meta name="google-signin-client_id"
+	content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
 <title>Module4</title>
 <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/css/styles.css">
 
-	<!-- Icons -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<!-- Icons -->
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+	integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+	crossorigin="anonymous">
 
 <style>
 #card-style {
@@ -22,174 +26,180 @@
 </head>
 
 <body onload="requestContent()">
-<div id="wrapper">
+	<div id="wrapper">
 
-<!-- Sidebar -->
-<div id="sidebar-wrapper">
-    <ul class="sidebar-nav">
-        <li class="sidebar-brand">
-            <a>
-                OV Software
-            </a>
-        </li>
-        <li>
-            <a href="#">Payrates</a>
-        </li>
-        <li>
-            <a href="admin.html">Administration</a>
-        </li>
-    </ul>
-</div>
-<!-- /#sidebar-wrapper -->
+		<!-- Sidebar -->
+		<div id="sidebar-wrapper">
+			<ul class="sidebar-nav">
+				<li class="sidebar-brand"><a> OV Software </a></li>
+				<li><a href="#">Payrates</a></li>
+				<li><a href="admin.html">Administration</a></li>
+			</ul>
+		</div>
+		<!-- /#sidebar-wrapper -->
 
-<!-- Page Content -->
-<div id="page-content-wrapper">
-    <div class="container-fluid">
-        <div class="row" style="padding-top: 12px; padding-bottom: 6px;padding-right: 20px; padding-left: 15px;">
-            <div class="col-md-12" style="padding: 0px;">
-                <div class="card" id="card-style">
-                    <div class="card-body">
-                        <div class="col-md-12 d-flex align-items-center">
-                            <div id="menu-toggle" href="#menu-toggle">
-                                <div class="bar1"></div>
-                                <div class="bar2"></div>
-                                <div class="bar3"></div>
-                            </div>
-                            <img src="assets/img/OV.png"
-                                 style="height: 80px; margin-right: 12px;"><input
-                                id="searchid" type="text" placeholder="Employee Number"
-                                style="margin: 6px;"><input id="searchname" type="text"
-                                                            placeholder="Full Name" style="margin: 6px;">
-                            <div class="dropdown d-inline-flex">
-                                <button id="statusButton"
-                                        class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                                        aria-expanded="false" type="button"
-                                        style="margin-right: 6px; margin-left: 6px; border-radius : 6px; ">Status</button>
-                                <div id="statusDropdown" class="dropdown-menu" role="menu">
-                                    <a id="statusA" value = "A" onclick=statusFilterA() class="dropdown-item" role="presentation">Active</a>
-                                    <a id="statusI" value = "I" onclick=statusFilterI() class="dropdown-item" role="presentation">Not Active</a>
-                                    <a id="statusH" value = "H" onclick=statusFilterH() class="dropdown-item" role="presentation">Not Active Yet</a>
-                                </div>
-                            </div>
-                            <button onclick=searchupdate() class="btn btn-primary"
-                                    type="button" style="margin-left: 6px;border-radius: 6px;">Search</button>
-                            <div class="btn-group ml-auto" role="group">
-                                <div class="dropdown d-inline-flex" style="margin: 6px;">
-                                    <button id="officeButtton"
-                                            class="btn btn-primary dropdown-toggle"
-                                            data-toggle="dropdown" aria-expanded="false" type="button"
-                                            style="margin-right: 6px; margin-left: 6px;border-radius: 6px; padding-left: 20px;">Office</button>
-                                    <div id="officeDropdown" class="dropdown-menu" role="menu">
-                                        <a class="dropdown-item" role="presentation" href="#">Amersfoort</a><a
-                                            class="dropdown-item" role="presentation" href="#">Apeldoorn</a><a
-                                            class="dropdown-item" role="presentation" href="#">DenHaag</a>
-                                        <a class="dropdown-item" role="presentation" href="#">Münster</a><a
-                                            class="dropdown-item" role="presentation" href="#">Oldenzaal</a>
-                                    </div>
-                                </div>
-                                <form id="upload" enctype="multipart/form-data" method="post"
-                                      action="./OV/main/import">
-                                    <button class="btn btn-primary" type="button"
-                                            onclick="openFileDialog();" style="margin: 6px; border-radius: 6px;">Import</button>
-                                    <input type="file" id="fileLoader"
-                                           onchange="this.form.submit()" name="files" title="Load File" />
-                                </form>
-                                <button class="btn btn-primary" type="button"
-                                        onclick="location.href='./OV/main/export.csv'"
-                                        style="margin: 6px; border-radius: 6px;">Export</button>
-                                <button onclick=logout() class="btn btn-primary" type="button"
-                                        style="margin: 6px; border-radius: 6px;">Log Out</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" style="padding-top: 6px;">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body" style="padding: 0px;">
-                        <div class="table-responsive table-hover">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <td>Employee Number</td>
-                                    <td>Full Name</td>
-                                    <td>Status</td>
-                                </tr>
-                                </thead>
-                                <tbody id="EmployeeList">
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="modal fade" role="dialog" tabindex="-1" id="empInfo">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 id=infotitle class="modal-title"></h4>
-                                        <button type="button" class="close" data-dismiss="modal"
-                                                aria-label="Close">
-                                            <span aria-hidden="true">x</span>
-                                        </button>
-                                    </div>
-                                    <div id = "infobody" class="modal-body" style="padding: 0;">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>Payrate</th>
-                                                    <th>From</th>
-                                                    <th>Until</th>
-                                                    <th></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id=infotable>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button onclick = newPayrtField() class="btn btn-primary mr-auto" type="button">Add New Payrate</button>
-                                        <button class="btn btn-light" type="button"
-                                                data-dismiss="modal">Close</button>
-                                        <button onclick = saveChanges() class="btn btn-primary" type="button">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-</div>
-<!-- /#page-content-wrapper -->
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+			<div class="container-fluid">
+				<div class="row"
+					style="padding-top: 12px; padding-bottom: 6px; padding-right: 20px; padding-left: 15px;">
+					<div class="col-md-12" style="padding: 0px;">
+						<div class="card" id="card-style">
+							<div class="card-body">
+								<div class="col-md-12 d-flex align-items-center">
+									<div id="menu-toggle" href="#menu-toggle">
+										<div class="bar1"></div>
+										<div class="bar2"></div>
+										<div class="bar3"></div>
+									</div>
+									<img src="assets/img/OV.png"
+										style="height: 80px; margin-right: 12px;"><input
+										id="searchid" type="text" placeholder="Employee Number"
+										style="margin: 6px;"><input id="searchname"
+										type="text" placeholder="Full Name" style="margin: 6px;">
+									<div class="dropdown d-inline-flex">
+										<button id="statusButton"
+											class="btn btn-primary dropdown-toggle"
+											data-toggle="dropdown" aria-expanded="false" type="button"
+											style="margin-right: 6px; margin-left: 6px; border-radius: 6px;">Status</button>
+										<div id="statusDropdown" class="dropdown-menu" role="menu">
+											<a id="statusA" value="A" onclick=statusFilterA()
+												class="dropdown-item" role="presentation">Active</a> <a
+												id="statusI" value="I" onclick=statusFilterI()
+												class="dropdown-item" role="presentation">Not Active</a> <a
+												id="statusH" value="H" onclick=statusFilterH()
+												class="dropdown-item" role="presentation">Not Active Yet</a>
+										</div>
+									</div>
+									<button onclick=searchupdate() class="btn btn-primary"
+										type="button" style="margin-left: 6px; border-radius: 6px;">Search</button>
+									<div class="btn-group ml-auto" role="group">
+										<div class="dropdown d-inline-flex" style="margin: 6px;">
+											<button id="officeButtton"
+												class="btn btn-primary dropdown-toggle"
+												data-toggle="dropdown" aria-expanded="false" type="button"
+												style="margin-right: 6px; margin-left: 6px; border-radius: 6px; padding-left: 20px;">Office</button>
+											<div id="officeDropdown" class="dropdown-menu" role="menu">
+												<a class="dropdown-item" role="presentation" href="#">Amersfoort</a><a
+													class="dropdown-item" role="presentation" href="#">Apeldoorn</a><a
+													class="dropdown-item" role="presentation" href="#">DenHaag</a>
+												<a class="dropdown-item" role="presentation" href="#">Münster</a><a
+													class="dropdown-item" role="presentation" href="#">Oldenzaal</a>
+											</div>
+										</div>
+										<form id="upload" enctype="multipart/form-data" method="post"
+											action="./OV/main/import">
+											<button class="btn btn-primary" type="button"
+												onclick="openFileDialog();"
+												style="margin: 6px; border-radius: 6px;">Import</button>
+											<input type="file" id="fileLoader"
+												onchange="this.form.submit()" name="files" title="Load File" />
+										</form>
+										<button class="btn btn-primary" type="button"
+											onclick="location.href='./OV/main/export.csv'"
+											style="margin: 6px; border-radius: 6px;">Export</button>
+										<button onclick=logout() class="btn btn-primary" type="button"
+											style="margin: 6px; border-radius: 6px;">Log Out</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="padding-top: 6px;">
+					<div class="col-md-12">
+						<div class="card">
+							<div class="card-body" style="padding: 0px;">
+								<div class="table-responsive table-hover">
+									<table class="table">
+										<thead>
+											<tr>
+												<td>Employee Number</td>
+												<td>Full Name</td>
+												<td>Status</td>
+											</tr>
+										</thead>
+										<tbody id="EmployeeList">
+											<tr>
+												<td></td>
+												<td></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td></td>
+												<td></td>
+												<td></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="modal fade" role="dialog" tabindex="-1" id="empInfo">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 id=infotitle class="modal-title"></h4>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">x</span>
+												</button>
+											</div>
+											<div id="infobody" class="modal-body" style="padding: 0;">
+												<div class="table-responsive">
+													<table class="table">
+														<thead>
+															<tr>
+																<th>Payrate</th>
+																<th>From</th>
+																<th>Until</th>
+																<th></th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody id=infotable>
+															<tr>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tr>
+															<tr>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button onclick=newPayrtField()
+													class="btn btn-primary mr-auto" type="button">Add
+													New Payrate</button>
+												<button class="btn btn-light" type="button"
+													data-dismiss="modal">Close</button>
+												<button onclick=saveChanges() class="btn btn-primary"
+													type="button">Save</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /#page-content-wrapper -->
 
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/main.js"></script>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
+		async defer></script>
 	<script>
 		var list = [];
 		var info = [];
@@ -264,8 +274,8 @@
 				var atxt = document.createTextNode(list[i].status);
 				active.appendChild(atxt);
 				ver.appendChild(active);
-				ver.setAttribute('onclick', "getId(" + list[i].id + ", \"" +
-						list[i].id + " " + list[i].name + "\")");
+				ver.setAttribute('onclick', "getId(" + list[i].id + ", \""
+						+ list[i].id + " " + list[i].name + "\")");
 				body.appendChild(ver);
 			}
 
@@ -279,11 +289,14 @@
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
-				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname + "/status/" + status);
+				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname
+						+ "/status/" + status);
 			} else if (crdnr == "" && fullname != "") {
-				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname + "/status/" + status);
+				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname
+						+ "/status/" + status);
 			} else if (crdnr != "" && fullname == "") {
-				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1 + "/status/" + status);
+				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1
+						+ "/status/" + status);
 			}
 			xhr.send();
 		}
@@ -310,33 +323,40 @@
 				active.appendChild(atxt);
 				ver.appendChild(active);
 
-
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
-                editIcon.className ="fas fa-pencil-alt";
-                editIcon.setAttribute("onclick", "edit(" + i + ")")
-                edit.appendChild(editIcon);
-                ver.appendChild(edit);
+				editIcon.className = "fas fa-pencil-alt";
+				editIcon.setAttribute("onclick", "edit(" + i + ")")
+				edit.appendChild(editIcon);
+				ver.appendChild(edit);
 
-                body.appendChild(ver);
+				// create trash icon
+				var trash = document.createElement("td");
+				var trashIcon = document.createElement("span");
+				trash.className = "fas fa-trash-alt";
+				trash.setAttribute("onclick", "deletePayrate(" + ")");
+				trash.appendChild(trashIcon);
+				ver.appendChild(trash);
+
+				body.appendChild(ver);
 
 			}
 		}
-		
-		function edit(i){
-		    updateinfo();
-		    var row = document.getElementById('infotable').children.item(i);
-		    for(k = 0; k < 3; k++) {
-		        var element = row.children.item(k);
-                var temp = element.innerHTML;
-		        element.innerHTML = "<input id = 'editedPayrate' type = 'text' size = '10' value = '" + temp + "'>";
-            }
-		    rowNum = i;
-		    elem1 = row.children.item(0);
-		    elem2 = row.children.item(1);
-		    elem3 = row.children.item(2);
-        }
-		
+
+		function edit(i) {
+			updateinfo();
+			var row = document.getElementById('infotable').children.item(i);
+			for (k = 0; k < 3; k++) {
+				var element = row.children.item(k);
+				var temp = element.innerHTML;
+				element.innerHTML = "<input id = 'editedPayrate' type = 'text' size = '10' value = '" + temp + "'>";
+			}
+			rowNum = i;
+			elem1 = row.children.item(0);
+			elem2 = row.children.item(1);
+			elem3 = row.children.item(2);
+		}
+
 		function newPayrtField() {
 			var body = document.getElementById('infotable');
 			updateinfo();
@@ -347,52 +367,63 @@
 			cell1.innerHTML = "<input id='newPayrt' type='text' placeholder='Payrate' size = '10'>";
 			cell2.innerHTML = "<input id='startDate' type='text' placeholder='Start Date' size = '10'>";
 			cell3.innerHTML = "<input id='endDate' type='text' placeholder='End Date' size = '10'>";
-			
+
 		}
-		
+
 		// function when save button pressed
 		function saveChanges() {
 			let infoname = document.getElementById("infotitle").innerHTML;
 			let crdnr = infoname.split(" ")[0];
 			var out = "";
-			for (var k = 0; k < info.length; k++){
+			for (var k = 0; k < info.length; k++) {
 				if (k != rowNum) {
-					out +=	info[k].id + "," + info[k].cost + "," + info[k].startDate + "," + info[k].endDate + "\n";
+					out += info[k].id + "," + info[k].cost + ","
+							+ info[k].startDate + "," + info[k].endDate + "\n";
 				}
 			}
 			rowNum = -1;
-			if(document.getElementById("newPayrt") == null && document.getElementById("startDate") == null && document.getElementById("endDate") == null
-				&& typeof elem1 !== 'undefined' && typeof elem2 !== 'undefined' && typeof elem3 !== 'undefined') {
+			if (document.getElementById("newPayrt") == null
+					&& document.getElementById("startDate") == null
+					&& document.getElementById("endDate") == null
+					&& typeof elem1 !== 'undefined'
+					&& typeof elem2 !== 'undefined'
+					&& typeof elem3 !== 'undefined') {
 				let edit1 = elem1.querySelector('input').value;
 				let edit2 = elem2.querySelector('input').value;
 				let edit3 = elem3.querySelector('input').value;
 				if (edit1 != "" && edit2 != "" && edit3 != "") {
-						out += crdnr + "," + edit1 + "," + edit2 + "," + edit3 + "\n";
-				} 
-			} else if(document.getElementById("newPayrt") != null && document.getElementById("startDate") != null && document.getElementById("endDate") != null) {
+					out += crdnr + "," + edit1 + "," + edit2 + "," + edit3
+							+ "\n";
+				}
+			} else if (document.getElementById("newPayrt") != null
+					&& document.getElementById("startDate") != null
+					&& document.getElementById("endDate") != null) {
 				let payrate = document.getElementById("newPayrt").value;
 				let stDt = document.getElementById("startDate").value;
 				let edDt = document.getElementById("endDate").value;
 				if (payrate != "" && stDt != "" && edDt != "") {
-					out +=	crdnr + "," + payrate + "," + stDt + "," + edDt + "\n";
+					out += crdnr + "," + payrate + "," + stDt + "," + edDt
+							+ "\n";
 				}
 			}
 			xhr.open("POST", "./OV/main/editPayrates/");
 			xhr.setRequestHeader('Accept', 'text/plain');
 			xhr.setRequestHeader("Content-type", "text/plain");
 			xhr.send(out);
-			setTimeout(function(){getId(crdnr, infoname)}, 200);			
+			setTimeout(function() {
+				getId(crdnr, infoname)
+			}, 200);
 		}
-		
+
 		function logout() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                console.log('User signed out.');
-            });
-            xhr.open("GET", "./OV/logout");
-            xhr.send();
-            window.open("./login.html", "_self");
-        }
+			var auth2 = gapi.auth2.getAuthInstance();
+			auth2.signOut().then(function() {
+				console.log('User signed out.');
+			});
+			xhr.open("GET", "./OV/logout");
+			xhr.send();
+			window.open("./login.html", "_self");
+		}
 
 		function requestContent() {
 			xhr.open("GET", "./OV/test");
@@ -401,21 +432,25 @@
 		}
 
 		function onLoad() {
-            gapi.load('auth2', function() {
-                gapi.auth2.init();
-            });
-        }
+			gapi.load('auth2', function() {
+				gapi.auth2.init();
+			});
+		}
 
 		function statusFilterA() {
 			status = document.getElementById("statusA").getAttribute("value");
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/A/search/" + crdnr + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/A/search/" + crdnr + "/"
+						+ fullname);
 			} else if (crdnr == "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/A/search/" + -1 + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/A/search/" + -1 + "/"
+						+ fullname);
 			} else if (crdnr != "" && fullname == "") {
-				xhr.open("GET", "./OV/main/status/A/search/" + crdnr + "/" + -1);
+				xhr
+						.open("GET", "./OV/main/status/A/search/" + crdnr + "/"
+								+ -1);
 			} else {
 				xhr.open("GET", "./OV/main/status/A/search/" + -1 + "/" + -1);
 			}
@@ -427,11 +462,15 @@
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/I/search/" + crdnr + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/I/search/" + crdnr + "/"
+						+ fullname);
 			} else if (crdnr == "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/I/search/" + -1 + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/I/search/" + -1 + "/"
+						+ fullname);
 			} else if (crdnr != "" && fullname == "") {
-				xhr.open("GET", "./OV/main/status/I/search/" + crdnr + "/" + -1);
+				xhr
+						.open("GET", "./OV/main/status/I/search/" + crdnr + "/"
+								+ -1);
 			} else {
 				xhr.open("GET", "./OV/main/status/I/search/" + -1 + "/" + -1);
 			}
@@ -443,17 +482,21 @@
 			let crdnr = document.getElementById("searchid").value;
 			let fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/H/search/" + crdnr + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/H/search/" + crdnr + "/"
+						+ fullname);
 			} else if (crdnr == "" && fullname != "") {
-				xhr.open("GET", "./OV/main/status/H/search/" + -1 + "/" + fullname);
+				xhr.open("GET", "./OV/main/status/H/search/" + -1 + "/"
+						+ fullname);
 			} else if (crdnr != "" && fullname == "") {
-				xhr.open("GET", "./OV/main/status/H/search/" + crdnr + "/" + -1);
+				xhr
+						.open("GET", "./OV/main/status/H/search/" + crdnr + "/"
+								+ -1);
 			} else {
 				xhr.open("GET", "./OV/main/status/H/search/" + -1 + "/" + -1);
 			}
 			xhr.send();
 		}
-		
+
 		function getId(x, name) {
 			info = [];
 			xhr.open("GET", "./OV/main/employees/" + x);
@@ -490,11 +533,15 @@
 				rcounter++;
 			}
 		}
+		
+		function deletePayrate(){
+			
+		}
 
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
+		$("#menu-toggle").click(function(e) {
+			e.preventDefault();
+			$("#wrapper").toggleClass("toggled");
+		});
 	</script>
 </body>
 
