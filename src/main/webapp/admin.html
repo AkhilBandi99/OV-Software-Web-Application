@@ -8,6 +8,11 @@
     <title>Module4</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
+
 
     <style>
         #card-style {
@@ -85,7 +90,8 @@
                                     <table class="table">
                                         <thead>
                                         <tr>
-                                            <td>Email</td>
+                                            <th>Email</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody id="GoogleAccountList">
@@ -110,8 +116,9 @@
                                     <table class="table">
                                         <thead>
                                         <tr>
-                                            <td>Username</td>
-                                            <td>Password</td>
+                                            <th>Username</th>
+                                            <th>Password</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody id="OVAccountList">
@@ -212,6 +219,16 @@
             pass.appendChild(ptxt);
             ver.appendChild(pass);
 
+            // create trash icon
+            var trash = document.createElement("td");
+            var trashIcon = document.createElement("span");
+            trash.className = "fas fa-trash-alt";
+            trash.setAttribute("onclick", "deleteOVUser(" + utxt + ")");
+            trash.appendChild(trashIcon);
+            ver.appendChild(trash);
+
+            body.appendChild(ver);
+
             body.appendChild(ver);
         }
     }
@@ -230,6 +247,15 @@
             var etxt = document.createTextNode(googleacc[i].email);
             em.appendChild(etxt);
             ver.appendChild(em);
+
+            // create trash icon
+            var trash = document.createElement("td");
+            var trashIcon = document.createElement("span");
+            trash.className = "fas fa-trash-alt";
+            trash.setAttribute("onclick", "deleteGoogleUser(" + etxt + ")");
+            trash.appendChild(trashIcon);
+            ver.appendChild(trash);
+
             body.appendChild(ver);
         }
     }
@@ -268,14 +294,27 @@
         });
     }
 
-	function deleteUser(){
 
-	}
+    function deleteGoogleUser(mail){
+        var email = mail;
+        // create a json object and store it in email
+        xhr.open("DELETE", "./OV/admin/deletegoogle/?mail=" + email);
+        xhr.send();
+    }
+
+    function deleteUser() {
+        function deleteOVUser(user) {
+            var username = user;
+            // create a json object and store it in username
+            xhr.open("DELETE", "./OV/admin/deleteov/?user=" + username);
+            xhr.send();
+
+        }
+    }
 
 
 
-
-    function requestContent() {
+        function requestContent() {
         console.log("a");
         if (rcounter < rqueue.length) {
             xhr.open("GET", rqueue[rcounter]);
