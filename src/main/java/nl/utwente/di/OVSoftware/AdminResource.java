@@ -15,6 +15,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+
+import com.sun.glass.ui.delegate.MenuItemDelegate;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/admin")
@@ -47,19 +49,19 @@ public class AdminResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")
 	public void createGoogleUser(GoogleAccount googleAccount){
-		//Database.createGoogleAccount(googleAccount.getEmail());
+		Database.createGoogleAccount(googleAccount.getEmail());
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/ovuser")
+	@Path("/ovuser/{username}")
 	public void deleteOVUser(OVAccount ovAccount){
-		//Database.deleteOVAccount(ovAccount.getUsername(),ovAccount.getPassword());
+		//Database.deleteOVAccount(ovAccount.getUsername());
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/googleuser")
+	@Path("/googleuser/{email}")
 	public void deleteGoogleUser(GoogleAccount googleAccount){
 		//Database.deleteGoogleAccount(googleAccount.getEmail());
 	}

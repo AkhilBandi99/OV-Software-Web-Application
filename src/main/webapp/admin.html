@@ -261,13 +261,21 @@
     }
 
     function addAccount(){
-        if($("#googleSelector").prop("checked", true)){
+        if($("#OVSelector").prop("checked", true)){
             $.post({
-                url: "./OV/admin/googleUser",
+                url: "./OV/admin/ovuser",
                 contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({"username": $("#username").val(),"password": $("#password").val()}),
                 dataType: 'json'
             });
-            $("#email").val()
+        }
+        if($("#googleSelector").prop("checked", true)){
+            $.post({
+                url: "./OV/admin/googleuser",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({"email": $("#email").val()}),
+                dataType: 'json'
+            });
         }
     }
 
@@ -298,18 +306,16 @@
     function deleteGoogleUser(mail){
         var email = mail;
         // create a json object and store it in email
-        xhr.open("DELETE", "./OV/admin/deletegoogle/?mail=" + email);
+        xhr.open("DELETE", "./OV/admin/deletegoogle/" + email);
         xhr.send();
     }
 
-    function deleteUser() {
-        function deleteOVUser(user) {
-            var username = user;
-            // create a json object and store it in username
-            xhr.open("DELETE", "./OV/admin/deleteov/?user=" + username);
-            xhr.send();
+    function deleteOVUser(user) {
+        var username = user;
+        // create a json object and store it in username
+        xhr.open("DELETE", "./OV/admin/deleteov/" + username);
+        xhr.send();
 
-        }
     }
 
 
