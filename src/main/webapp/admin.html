@@ -50,8 +50,8 @@
 										<div class="bar2"></div>
 										<div class="bar3"></div>
 									</div>
-									<img src="assets/img/OV.png"
-										style="height: 70px; margin-right: 12px;">
+									<a href="main.html"><img src="assets/img/OV.png"
+										style="height: 70px; margin-right: 12px;"></a>
 									<div class="form-check form-check-inline">
 										<input class="form-check-input" name="accounttype"
 											type="radio" id="googleSelector" checked="checked" /><label
@@ -224,7 +224,8 @@
 				var trash = document.createElement("td");
 				var trashIcon = document.createElement("span");
 				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deleteOVUser('" + ovacc[i].username + "')");
+				trash.setAttribute("onclick", "deleteOVUser('"
+						+ ovacc[i].username + "')");
 				trash.appendChild(trashIcon);
 				ver.appendChild(trash);
 
@@ -252,7 +253,8 @@
 				var trash = document.createElement("td");
 				var trashIcon = document.createElement("span");
 				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deleteGoogleUser('" + googleacc[i].email + "')");
+				trash.setAttribute("onclick", "deleteGoogleUser('"
+						+ googleacc[i].email + "')");
 				trash.appendChild(trashIcon);
 				ver.appendChild(trash);
 
