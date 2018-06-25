@@ -177,7 +177,6 @@ public class Database {
 				"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");
 		System.out.println(list.size());
 		for (Payrates rate: list) {
-			System.out.println(rate);
 			p.setInt(1, rate.getId());
 			p.setDouble(2, rate.getCost());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -196,10 +195,10 @@ public class Database {
 	}
 	
 	//Edit the payrates for one employee with deletion
-	public static void editPayrates(List<Payrates> list) {
+	public static void editPayrates(int crdnr, List<Payrates> list) {
 		try {
 			Connection conn = MakeConnection();
-			delPayrate(conn, list.get(0).getId());
+			delPayrate(conn, crdnr);
 			addPayrates(conn, list);
 		} catch(SQLException | ClassNotFoundException e) {
 			System.out.println(e.getMessage());

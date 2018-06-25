@@ -68,13 +68,26 @@ public class MainResource {
 	public void editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
 		List<Payrates> prts = new ArrayList<>();
-		while(s.hasNextLine()) {
-			String line = s.nextLine();
-			String[] elems = line.split(",");
-			prts.add(new Payrates(Integer.parseInt(elems[0]), Double.parseDouble(elems[1]), elems[2], elems[3]));
+		int crdnr = -1;
+		try {
+			if (s.hasNextLine()) {
+				crdnr = Integer.parseInt(s.nextLine());
+			}
+			while(s.hasNextLine()) {
+				String line = s.nextLine();
+				String[] elems = line.split(",");
+				prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
+			}
+			s.close();
+			try {
+				Payrates.checkIntegrity(prts);
+				Database.editPayrates(crdnr, prts);
+			} catch (DateException e) {
+				e.printStackTrace();
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
 		}
-		s.close();
-		Database.editPayrates(prts);
 	}
 
 	

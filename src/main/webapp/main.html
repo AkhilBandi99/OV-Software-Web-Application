@@ -326,7 +326,7 @@
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
 				editIcon.className = "fas fa-pencil-alt";
-				editIcon.setAttribute("onclick", "edit(" + i + ")")
+				editIcon.setAttribute("onclick", "edit(" + i + ")");
 				edit.appendChild(editIcon);
 				ver.appendChild(edit);
 
@@ -334,9 +334,7 @@
 				var trash = document.createElement("td");
 				var trashIcon = document.createElement("span");
 				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deletePayrate(" + info[i].id
-						+ "," + info[i].cost + ",'" + info[i].startDate + "','"
-						+ info[i].endDate + "')");
+				trash.setAttribute("onclick", "deletePayrate(" + i + ")");
 				trash.appendChild(trashIcon);
 				ver.appendChild(trash);
 
@@ -346,68 +344,89 @@
 		}
 
 		function edit(i) {
-			updateinfo();
-			var row = document.getElementById('infotable').children.item(i);
+			var row = document.getElementById('infotable').children
+			
+			for (l = 0; l < row.length; l++){
+				for (k = 0; k < 3; k++) {
+					var element = row[l].children[k];
+					if (element.children.length > 0) {
+						element.innerHTML = element.children[0].value
+					}
+				}
+			}
+			
+			console.log(i);
 			for (k = 0; k < 3; k++) {
-				var element = row.children.item(k);
+				
+				var element = row[i].children[k];
 				var temp = element.innerHTML;
 				element.innerHTML = "<input id = 'editedPayrate' type = 'text' size = '10' value = '" + temp + "'>";
 			}
-			rowNum = i;
-			elem1 = row.children.item(0);
-			elem2 = row.children.item(1);
-			elem3 = row.children.item(2);
 		}
 
 		function newPayrtField() {
 			var body = document.getElementById('infotable');
-			updateinfo();
-			var row = body.insertRow(info.length);
-			var cell1 = row.insertCell(0);
-			var cell2 = row.insertCell(1);
-			var cell3 = row.insertCell(2);
-			cell1.innerHTML = "<input id='newPayrt' type='text' placeholder='Payrate' size = '10'>";
-			cell2.innerHTML = "<input id='startDate' type='text' placeholder='Start Date' size = '10'>";
-			cell3.innerHTML = "<input id='endDate' type='text' placeholder='End Date' size = '10'>";
+			
+			info.push({'cost' : "0", 'startDate' : "Start Date",'endDate' : "End Date"});
+			
+			var ver = document.createElement("tr");
 
+			var id = document.createElement("td");
+			var ptxt = document.createTextNode("Cost");
+			id.appendChild(ptxt);
+			ver.appendChild(id);
+
+			var name = document.createElement("td");
+			var ntxt = document.createTextNode("Start date");
+			name.appendChild(ntxt);
+			ver.appendChild(name);
+			var active = document.createElement("td");
+			var atxt = document.createTextNode("End date");
+			active.appendChild(atxt);
+			ver.appendChild(active);
+
+			var edit = document.createElement("td");
+			var editIcon = document.createElement("span");
+			editIcon.className = "fas fa-pencil-alt";
+			editIcon.setAttribute("onclick", "edit(" + body.children.length + ")")
+			edit.appendChild(editIcon);
+			ver.appendChild(edit);
+			
+			// create trash icon
+			var trash = document.createElement("td");
+			var trashIcon = document.createElement("span");
+			trash.className = "fas fa-trash-alt";
+			trash.setAttribute("onclick", "deletePayrate(" + body.children.length + ")");
+			trash.appendChild(trashIcon);
+			ver.appendChild(trash);
+			
+
+
+			body.appendChild(ver);
 		}
 
 		// function when save button pressed
 		function saveChanges() {
 			let infoname = document.getElementById("infotitle").innerHTML;
 			let crdnr = infoname.split(" ")[0];
-			var out = "";
-			for (var k = 0; k < info.length; k++) {
-				if (k != rowNum) {
-					out += info[k].id + "," + info[k].cost + ","
-							+ info[k].startDate + "," + info[k].endDate + "\n";
+			var out = crdnr + "\n";
+			
+			var row = document.getElementById('infotable').children;
+			for (var i = 0; i < row.length; i++) {
+				var inf = []
+				for (k = 0; k < 3; k++) {
+					var element = row.item(i).children.item(k);
+					if (element.children.length > 0) {
+						inf.push(element.children[0].value);
+					} else {
+						inf.push(element.innerHTML);
+					}
 				}
+				out += inf[0] + "," + inf[1] + ","
+				+ inf[2] + "\n";
+				
 			}
-			rowNum = -1;
-			if (document.getElementById("newPayrt") == null
-					&& document.getElementById("startDate") == null
-					&& document.getElementById("endDate") == null
-					&& typeof elem1 !== 'undefined'
-					&& typeof elem2 !== 'undefined'
-					&& typeof elem3 !== 'undefined') {
-				let edit1 = elem1.querySelector('input').value;
-				let edit2 = elem2.querySelector('input').value;
-				let edit3 = elem3.querySelector('input').value;
-				if (edit1 != "" && edit2 != "" && edit3 != "") {
-					out += crdnr + "," + edit1 + "," + edit2 + "," + edit3
-							+ "\n";
-				}
-			} else if (document.getElementById("newPayrt") != null
-					&& document.getElementById("startDate") != null
-					&& document.getElementById("endDate") != null) {
-				let payrate = document.getElementById("newPayrt").value;
-				let stDt = document.getElementById("startDate").value;
-				let edDt = document.getElementById("endDate").value;
-				if (payrate != "" && stDt != "" && edDt != "") {
-					out += crdnr + "," + payrate + "," + stDt + "," + edDt
-							+ "\n";
-				}
-			}
+			console.log(out);
 			xhr.open("POST", "./OV/main/editPayrates/");
 			xhr.setRequestHeader('Accept', 'text/plain');
 			xhr.setRequestHeader("Content-type", "text/plain");
@@ -536,9 +555,17 @@
 			}
 		}
 
-		function deletePayrate(id, cost, startDate, endDate) {
-			xhr.open("DELETE", "./OV/main/deleterate/" + id + "/" + cost + "/" + startDate + "/" + endDate);
-			xhr.send();
+		function deletePayrate(i) {
+			var delelem = document.getElementById('infotable').children[i];
+			document.getElementById('infotable').removeChild(delelem);
+			
+			var row = document.getElementById('infotable').children;
+			for(l = 0; l < row.length; l++) {
+				row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
+				row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
+			} 
+			
+			
 		}
 
 		$("#menu-toggle").click(function(e) {
