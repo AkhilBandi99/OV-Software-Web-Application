@@ -172,6 +172,7 @@
 															</tr>
 														</tbody>
 													</table>
+                                                    <p id="payratestatus"></p>
 												</div>
 											</div>
 											<div class="modal-footer">
@@ -179,13 +180,33 @@
 													class="btn btn-primary mr-auto" type="button">Add
 													New Payrate</button>
 												<button class="btn btn-light" type="button"
-													data-dismiss="modal">Close</button>
+													data-dismiss="modal" onclick=$("#payratestatus").html("")>Close</button>
 												<button onclick=saveChanges() class="btn btn-primary"
 													type="button">Save</button>
 											</div>
 										</div>
 									</div>
-								</div>
+                                </div>
+                                <div class="modal fade" role="dialog" tabindex="-1" id="importpopup">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 id="importtitle" class="modal-title">Import status</h4>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">x</span>
+                                                </button>
+                                            </div>
+                                            <div id="importbody" class="modal-body" style="padding: 0;">
+                                                <p id="importstatus">Import</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-primary" type="button"
+                                                        data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 							</div>
 						</div>
 					</div>
@@ -572,6 +593,15 @@
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
 		});
+
+		function showImportStatus(status) {
+		    $("#importstatus").html(status);
+            $("#importpopup").modal();
+        }
+        
+        function showPayrateStatus(status) {
+            $("#payratestatus").html(status);
+        }
 	</script>
 </body>
 
