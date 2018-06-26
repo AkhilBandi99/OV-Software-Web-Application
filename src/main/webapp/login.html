@@ -41,38 +41,40 @@
 	<script src="assets/js/main.js"></script>
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
 	<script>
-		var username;
-		var password;
+	var username;
+	var password;
 
-		var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest();
 
-		function login() {
-			username = sanitizeInput(document.getElementById("username").value);
-			password = sanitizeInput(document.getElementById("password").value);
-			console.log(username);
-			console.log(password);
-			if (username.length == 0 || password.length == 0) {
-				$("#warning").text(
-						"Please do not leave one of the space empty.");
-			} else {
-				$
-						.get({
-							url : "./OV/login/" + username + "/" + password,
-							success : function(response) {
-								if (response == 0) {
-									$("#warning")
-											.text(
-													"Either username or password is wrong or does not exist, please try again.");
-								} else {
-									window.open("./main.html", "_self");
-								}
-								console.log(response);
+	// checks the user input values and gives error accordingly
+	function login() {
+		username = sanitizeInput(document.getElementById("username").value);
+		password = sanitizeInput(document.getElementById("password").value);
+		console.log(username);
+		console.log(password);
+		if (username.length == 0 || password.length == 0) {
+			$("#warning").text(
+					"Please do not leave one of the space empty.");
+		} else {
+			$
+					.get({
+						url : "./OV/login/" + username + "/" + password,
+						success : function(response) {
+							if (response == 0) {
+								$("#warning")
+										.text(
+												"Either username or password is wrong or does not exist, please try again.");
+							} else {
+								window.open("./main.html", "_self");
 							}
-						})
-			}
-
+							console.log(response);
+						}
+					})
 		}
 
+	}
+
+	// checks if the google sign in is allowed or not
     function onSignIn(googleUser) {
         var id_token = googleUser.getAuthResponse().id_token;
         xhr.open('POST', './OV/googleLogin');
@@ -96,6 +98,7 @@
 
     }
     
+	// sanitizes the user input to protect against cross site scripting
     function sanitizeInput(input) {
 		var out = '';
 		for (i = 0; i < input.length; i++) {

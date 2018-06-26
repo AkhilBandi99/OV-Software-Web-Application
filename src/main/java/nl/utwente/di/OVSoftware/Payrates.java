@@ -1,15 +1,11 @@
 package nl.utwente.di.OVSoftware;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"id", "cost", "startDate", "endDate"})
@@ -20,6 +16,7 @@ public class Payrates implements Comparable<Payrates>{
 	private final Calendar startDate;
 	private final Calendar endDate;
 	
+	// constructor 
 	public Payrates(int i, double c, String s, String e) {
 		id = i;
 		cost = c;
@@ -34,47 +31,56 @@ public class Payrates implements Comparable<Payrates>{
 		}
 	}
 	
+	// returns id of payrate
 	public int getId() {
 		return id;
 	}
 
+	// returns cost of payrate
 	public double getCost() {
 		return cost;
 	}
 
+	// checks if the date entered is valid or not
 	public boolean isNextDate(String next) {
 		Calendar temp = (Calendar) endDate.clone();
 		temp.add(Calendar.DATE, 1);
 		return format(temp).equals(next);
 	}
 
+	// returns start date
 	public String getStartDate() {
 		return format(startDate);
 	}
 
+	// formats the date into simple data
 	public String format(Calendar date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(date.getTime());
 	}
 
+	// returns end date
 	public String getEndDate() {
 		return format(endDate);
 	}
 
+	// compares the startdates of the payrates
 	@Override
 	public int compareTo(Payrates o) {
 		return startDate.compareTo(o.startDate);
 	}
 
+	// checks if the end date is after the start date
 	public boolean checkDates() {
 		return startDate.before(endDate);
 	}
 
+	// converts the payrate to a string
 	public String toString() {
 		return getId() + " " + getCost() + " " + getStartDate() + " " + getEndDate();
 	}
 
-	
+	// checks the integrety of the payrates
 	public static void checkIntegrity(List<Payrates> mainlist) throws DateException {
 		List<Payrates> head = new ArrayList<>(mainlist);
 		Collections.sort(head);
@@ -82,7 +88,7 @@ public class Payrates implements Comparable<Payrates>{
 		checkDates(head, mainlist);
 	}
 
-	
+	// checks the date of the given payrates
 	private static void checkPayrate(List<Payrates> head) throws DateException {
 		int i = 0;
 		while (i < head.size()) {
@@ -93,6 +99,7 @@ public class Payrates implements Comparable<Payrates>{
 		}
 	}
 	
+	// check the dates of the payrates
 	private static void checkDates(List<Payrates> head, List<Payrates> mainlist) throws DateException {
 		List<Payrates> list = new ArrayList<Payrates>(head);
 		while(!list.isEmpty()) {

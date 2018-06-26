@@ -154,6 +154,8 @@
     $("#username").hide();
     $("#password").hide();
     $("#email").show();
+    
+    // loads this whenever page refreshes
     xhr.onload = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // session ends
@@ -180,8 +182,23 @@
 			requestContent();
         }
     };
+    
+    function requestContent() {
+        console.log("a");
+        if (rcounter < rqueue.length) {
+            xhr.open("GET", rqueue[rcounter]);
+            xhr.send();
+            rcounter++;
+        }
+    }
+    
+    function onLoad() {
+        gapi.load('auth2', function() {
+            gapi.auth2.init();
+        });
+    }
 
-
+	// Displays the employee list on the home page
     function updatelist() {
         var body = document.getElementById('EmployeeList');
         body.innerHTML = "";
@@ -199,6 +216,7 @@
 		}
 	}
 
+	// updates the ov accounts on the administrator page
     function updateOVAccount(){
         var body = document.getElementById('OVAccountList');
         body.innerHTML = "";
@@ -233,7 +251,7 @@
         }
     }
 
-
+	// updates the google accounts on the administrator page
     function updateGoogleAccount() {
         var body = document.getElementById('GoogleAccountList');
         body.innerHTML = "";
@@ -259,7 +277,8 @@
             body.appendChild(ver);
         }
     }
-
+	
+	// adds an account on the administrator page
     function addAccount(){
         if($("#googleSelector").prop("checked", true)){
             $.post({
@@ -271,13 +290,7 @@
         }
     }
 
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-
-
-
+	// logs out the user from the main page
     function logout() {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
@@ -288,13 +301,7 @@
         window.open("./login.html", "_self");
     }
 
-    function onLoad() {
-        gapi.load('auth2', function() {
-            gapi.auth2.init();
-        });
-    }
-
-
+	// delete google account from admin page
     function deleteGoogleUser(mail){
         var email = mail;
         // create a json object and store it in email
@@ -302,6 +309,7 @@
         xhr.send();
     }
 
+	// delete ov account from admin page
     function deleteUser() {
         function deleteOVUser(user) {
             var username = user;
@@ -311,17 +319,13 @@
 
         }
     }
+	
+	//<---functions for the toggle and account selector---->
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
 
-
-
-        function requestContent() {
-        console.log("a");
-        if (rcounter < rqueue.length) {
-            xhr.open("GET", rqueue[rcounter]);
-            xhr.send();
-            rcounter++;
-        }
-    }
 
     $( "#googleSelector" ).click(function() {
         $("#username").hide();

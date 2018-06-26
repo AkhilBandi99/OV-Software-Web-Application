@@ -12,7 +12,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -75,7 +74,8 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public void editPayrates(String payrates) {
+	@Produces(MediaType.TEXT_PLAIN)
+	public int editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
 		List<Payrates> prts = new ArrayList<>();
 		while(s.hasNextLine()) {
@@ -84,7 +84,11 @@ public class MainResource {
 			prts.add(new Payrates(Integer.parseInt(elems[0]), Double.parseDouble(elems[1]), elems[2], elems[3]));
 		}
 		s.close();
-		Database.editPayrates(prts);
+		if(Database.editPayrates(prts)) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 	
 	@GET

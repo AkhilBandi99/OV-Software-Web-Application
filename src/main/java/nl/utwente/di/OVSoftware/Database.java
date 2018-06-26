@@ -172,38 +172,61 @@ public class Database {
 		
 	}
 	
-	private static void addPayrates(Connection conn, List<Payrates> list) throws SQLException {
-		PreparedStatement p = conn.prepareStatement(
-				"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");
-		System.out.println(list.size());
-		for (Payrates rate: list) {
-			System.out.println(rate);
-			p.setInt(1, rate.getId());
-			p.setDouble(2, rate.getCost());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Calendar startDate = Calendar.getInstance();
-			Calendar endDate = Calendar.getInstance();
-			try {
-				startDate.setTime(sdf.parse(rate.getStartDate()));
-				endDate.setTime(sdf.parse(rate.getEndDate()));
-				p.setDate(3, new java.sql.Date(startDate.getTimeInMillis()));
-				p.setDate(4, new java.sql.Date(endDate.getTimeInMillis()));
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-			p.execute();
+	private static boolean addPayrates(Connection conn, List<Payrates> list) throws SQLException {
+		String ret = null;
+		try {
+			Payrates.checkIntegrity(list);
+		} catch(DateException e){
+			ret = e.getMessage();
 		}
+		if(ret == null) {
+			PreparedStatement p = conn.prepareStatement(
+					"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");
+			for (Payrates rate: list) {
+				p.setInt(1, rate.getId());
+				p.setDouble(2, rate.getCost());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Calendar startDate = Calendar.getInstance();
+				Calendar endDate = Calendar.getInstance();
+				try {
+					startDate.setTime(sdf.parse(rate.getStartDate()));
+					endDate.setTime(sdf.parse(rate.getEndDate()));
+					p.setDate(3, new java.sql.Date(startDate.getTimeInMillis()));
+					p.setDate(4, new java.sql.Date(endDate.getTimeInMillis()));
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+				p.execute();
+				return true;
+			}
+		}
+		ret = null;
+		return false;
 	}
 	
 	//Edit the payrates for one employee with deletion
-	public static void editPayrates(List<Payrates> list) {
+	public static boolean editPayrates(List<Payrates> list) {
+		String ret = null;
 		try {
-			Connection conn = MakeConnection();
-			delPayrate(conn, list.get(0).getId());
-			addPayrates(conn, list);
-		} catch(SQLException | ClassNotFoundException e) {
-			System.out.println(e.getMessage());
+			Payrates.checkIntegrity(list);
+		} catch(DateException e){
+			ret = e.getMessage();
 		}
+		if(ret == null) {
+			try {
+				Connection conn = MakeConnection();
+				delPayrate(conn, list.get(0).getId());
+				if(addPayrates(conn, list)) {
+					return true;
+				} else {
+					return false;
+				}
+			} catch(SQLException | ClassNotFoundException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		ret = null;
+		return false;
 	}
 	
 	//Import the payrates for all employee with deletion

@@ -166,6 +166,7 @@
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                            <label for = "label" class = "text-center" id="warning" style="color: red;"></label>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -321,6 +322,7 @@
                 ver.appendChild(edit);
 
                 body.appendChild(ver);
+                $("#warning").text("");
 
 			}
 		}
@@ -379,11 +381,21 @@
 					out +=	crdnr + "," + payrate + "," + stDt + "," + edDt + "\n";
 				}
 			}
-			xhr.open("POST", "./OV/main/editPayrates/");
-			xhr.setRequestHeader('Accept', 'text/plain');
-			xhr.setRequestHeader("Content-type", "text/plain");
-			xhr.send(out);
-			setTimeout(function(){getId(crdnr, infoname)}, 200);			
+			$.post({
+				url : "./OV/main/editPayrates/",
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Accept', 'text/plain');
+					xhr.setRequestHeader("Content-type", "text/plain");
+			    },
+			    data : out,
+				success : function(response) {
+					if (response == 1) {
+						setTimeout(function(){getId(crdnr, infoname)}, 200);
+					} else {
+						$("#warning").text("Entered dates are invalid, please check and try again with valid dates.");
+					}
+				}
+			})
 		}
 		
 		function sort(n) {
