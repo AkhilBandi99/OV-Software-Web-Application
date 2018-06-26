@@ -172,19 +172,15 @@
 															</tr>
 														</tbody>
 													</table>
-<<<<<<< HEAD
 													<label for = "label" class = "text-center" id="warning" style="color: red;"></label>
-=======
                                                     <p id="payratestatus"></p>
->>>>>>> branch 'master' of https://git.snt.utwente.nl/s1898922/mod04di08.git
 												</div>
 											</div>
 											<div class="modal-footer">
 												<button onclick=newPayrtField()
 													class="btn btn-primary mr-auto" type="button">Add
 													New Payrate</button>
-												<button class="btn btn-light" type="button"
-													data-dismiss="modal" onclick=$("#payratestatus").html("")>Close</button>
+												<button class="btn btn-light" type="button" data-dismiss="modal" onclick=$("#payratestatus").html("")>Close</button>
 												<button onclick=saveChanges() class="btn btn-primary"
 													type="button">Save</button>
 											</div>
@@ -427,9 +423,6 @@
 			trash.setAttribute("onclick", "deletePayrate(" + body.children.length + ")");
 			trash.appendChild(trashIcon);
 			ver.appendChild(trash);
-			
-
-
 			body.appendChild(ver);
 			
 			editIcon.click();
