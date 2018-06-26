@@ -51,6 +51,16 @@ public class MainResource {
 		}
 		return null;
 	}
+	
+	@GET
+	@Path("/sort/{num}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
+		if (Login.Security(r.getSession()) == 1) {
+			return Database.sortTable(n);
+		}
+		return null;
+	}
 
 	@GET
 	@Path("/search/{crdnr}/{name}/status/{status}")
@@ -65,8 +75,9 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public void editPayrates(String payrates) {
+	public int editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
+		String ret = null;
 		List<Payrates> prts = new ArrayList<>();
 		int crdnr = -1;
 		try {
@@ -83,10 +94,17 @@ public class MainResource {
 				Payrates.checkIntegrity(prts);
 				Database.editPayrates(crdnr, prts);
 			} catch (DateException e) {
-				e.printStackTrace();
+				ret = e.getMessage();
+				System.out.println(ret);
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
+		}
+		if(ret == null) {
+			return 1;
+		} else {
+			ret = null;
+			return 0;
 		}
 	}
 
