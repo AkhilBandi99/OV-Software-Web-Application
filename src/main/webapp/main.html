@@ -312,14 +312,18 @@
 			if (crdnr != "" && fullname != "") {
 				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname
 						+ "/status/" + status);
+				xhr.send();
 			} else if (crdnr == "" && fullname != "") {
 				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname
 						+ "/status/" + status);
+				xhr.send();
 			} else if (crdnr != "" && fullname == "") {
 				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1
 						+ "/status/" + status);
+				xhr.send();
+			} else if (crdnr == "" && fullname == "") {
+				return;
 			}
-			xhr.send();
 		}
 
 		function updateinfo() {
@@ -346,6 +350,7 @@
 
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
+				editIcon.id = "editaa";
 				editIcon.className = "fas fa-pencil-alt";
 				editIcon.setAttribute("onclick", "edit(" + i + ")");
 				edit.appendChild(editIcon);
@@ -360,6 +365,7 @@
 				ver.appendChild(trash);
 
 				body.appendChild(ver);
+				console.log(document.getElementById("editaa"));
 				$("#payratestatus").html("");
 			}
 		}
