@@ -172,14 +172,12 @@
 															</tr>
 														</tbody>
 													</table>
-													<label for = "label" class = "text-center" id="warning" style="color: red;"></label>
                                                     <p id="payratestatus"></p>
 												</div>
 											</div>
 											<div class="modal-footer">
 												<button onclick=newPayrtField()
-													class="btn btn-primary mr-auto" type="button">Add
-													New Payrate</button>
+													class="btn btn-primary mr-auto" type="button">Add New Payrate</button>
 												<button class="btn btn-light" type="button" data-dismiss="modal" onclick=$("#payratestatus").html("")>Close</button>
 												<button onclick=saveChanges() class="btn btn-primary"
 													type="button">Save</button>
@@ -362,8 +360,7 @@
 				ver.appendChild(trash);
 
 				body.appendChild(ver);
-				$("#warning").text(null);
-
+				$("#payratestatus").html("");
 			}
 		}
 
@@ -460,7 +457,7 @@
 					if (response == 1) {
 						setTimeout(function(){getId(crdnr, infoname)}, 200);
 					} else {
-						$("#warning").text("Entered dates are invalid, please check and try again with valid dates.");
+						$("#payratestatus").html("<label for = 'label' class = 'text-center' id='warning' style='color: red;'>Entered dates are invalid, please check and try again with valid dates.</label>");
 					}
 				}
 			})
