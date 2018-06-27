@@ -28,7 +28,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s, i, f);
+			return Database.statusFilter(s, i, f, (String) r.getAttribute("Database"));
 		}
 		return null;
 	}
@@ -38,7 +38,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> getEmployees(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getEmployees();
+			return Database.getEmployees((String) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -48,7 +48,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getPayratesSpecificEmployee(n);
+			return Database.getPayratesSpecificEmployee(n, (String) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -58,7 +58,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.sortTable(n);
+			return Database.sortTable(n, (String) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -68,7 +68,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c, s);
+			return Database.searchEmployees(n, c, s, (String) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -76,39 +76,43 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String editPayrates(String payrates) {
-		Scanner s = new Scanner(payrates);
-		String ret = null;
-		List<Payrates> prts = new ArrayList<>();
-		int crdnr = -1;
-		try {
-			if (s.hasNextLine()) {
-				crdnr = Integer.parseInt(s.nextLine());
-			}
-			while(s.hasNextLine()) {
-				String line = s.nextLine();
-				String[] elems = line.split(",");
-				try {
-					prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
-				} catch (ParseException e) {
-					return "A Date is not valid";
-				}
-			}
-			s.close();
+	public String editPayrates(@Context HttpServletRequest r, String payrates) {
+		if (Login.Security(r.getSession()) == 1) {
+			Scanner s = new Scanner(payrates);
+			String ret = null;
+			List<Payrates> prts = new ArrayList<>();
+			int crdnr = -1;
 			try {
-				Payrates.checkIntegrity(prts);
-				Database.editPayrates(crdnr, prts);
-			} catch (DateException e) {
-				ret = e.getMessage();
+				if (s.hasNextLine()) {
+					crdnr = Integer.parseInt(s.nextLine());
+				}
+				while(s.hasNextLine()) {
+					String line = s.nextLine();
+					String[] elems = line.split(",");
+					try {
+						prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
+					} catch (ParseException e) {
+						s.close();
+						return "A Date is not valid";
+					}
+				}
+				s.close();
+				try {
+					Payrates.checkIntegrity(prts);
+					Database.editPayrates(crdnr, prts, (String) r.getSession().getAttribute("Database"));
+				} catch (DateException e) {
+					ret = e.getMessage();
+				}
+			} catch (NumberFormatException e) {
+				ret = "A Cost is not valid";
 			}
-		} catch (NumberFormatException e) {
-			ret = "A Cost is not valid";
+			if(ret == null) {
+				return "1";
+			} else {
+				return ret;
+			}
 		}
-		if(ret == null) {
-			return "1";
-		} else {
-			return ret;
-		}
+		return null;
 	}
 
 	
@@ -117,7 +121,7 @@ public class MainResource {
 	@Produces("text/csv")
 	public List<Payrates> exportcsv(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getAllPayrates();
+			return Database.getAllPayrates((String) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -143,6 +147,7 @@ public class MainResource {
 						try {
 							list.add(new Payrates(id, cost, words[2], words[3]));
 						} catch (ParseException e) {
+							s.close();
 							return "A date is not valid";
 						}
 					}
@@ -150,7 +155,7 @@ public class MainResource {
 				s.close();
 				try {
 					Payrates.checkIntegrity(list);
-					Database.importPayrts(list);
+					Database.importPayrts(list, (String) r.getSession().getAttribute("Database"));
 				} catch(DateException e){
 					ret = e.getMessage();
 				}
@@ -174,10 +179,10 @@ public class MainResource {
 	
 	@POST
 	@Path("/databases/{selection}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public void selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
 		if (Login.Security(r.getSession()) == 1) {
-			r.getSession().setAttribute("Database", n);
+			r.getSession().setAttribute("Database", tables.nametologin(n));
+			System.out.println(r.getSession().getAttribute("Database"));
 		}
 	}
 	
