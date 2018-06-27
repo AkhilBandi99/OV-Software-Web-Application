@@ -1,6 +1,7 @@
 package nl.utwente.di.OVSoftware;
 
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -75,7 +76,7 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public int editPayrates(String payrates) {
+	public String editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
 		String ret = null;
 		List<Payrates> prts = new ArrayList<>();
@@ -87,7 +88,11 @@ public class MainResource {
 			while(s.hasNextLine()) {
 				String line = s.nextLine();
 				String[] elems = line.split(",");
-				prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
+				try {
+					prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
+				} catch (ParseException e) {
+					return "A Date is not valid";
+				}
 			}
 			s.close();
 			try {
@@ -95,16 +100,14 @@ public class MainResource {
 				Database.editPayrates(crdnr, prts);
 			} catch (DateException e) {
 				ret = e.getMessage();
-				System.out.println(ret);
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			ret = "A Cost is not valid";
 		}
 		if(ret == null) {
-			return 1;
+			return "1";
 		} else {
-			ret = null;
-			return 0;
+			return ret;
 		}
 	}
 
@@ -126,27 +129,35 @@ public class MainResource {
 	public String importcsv(@Context HttpServletRequest r, @FormDataParam("files") InputStream in) {
 		String ret = null;
 		if (Login.Security(r.getSession()) == 1) {
-			List<Payrates> list = new ArrayList<>();
-			Scanner s = new Scanner(in);
-			while (!s.nextLine().equals("id,cost,startDate,endDate"));
-			String line = " ";
-			while (s.hasNextLine() || line.equals("")) {
-				line = s.nextLine();
-				String[] words = line.split(",");
-				if (words.length == 4) {
-					int id = Integer.parseInt(words[0]);
-					double cost = Double.parseDouble(words[1]);
-					list.add(new Payrates(id, cost, words[2], words[3]));
-				}
-			}
 			try {
-				Payrates.checkIntegrity(list);
-				Database.importPayrts(list);
-			} catch(DateException e){
-				ret = e.getMessage();
+				List<Payrates> list = new ArrayList<>();
+				Scanner s = new Scanner(in);
+				while (!s.nextLine().equals("id,cost,startDate,endDate"));
+				String line = " ";
+				while (s.hasNextLine() || line.equals("")) {
+					line = s.nextLine();
+					String[] words = line.split(",");
+					if (words.length == 4) {
+						int id = Integer.parseInt(words[0]);
+						double cost = Double.parseDouble(words[1]);
+						try {
+							list.add(new Payrates(id, cost, words[2], words[3]));
+						} catch (ParseException e) {
+							return "A date is not valid";
+						}
+					}
+				}
+				s.close();
+				try {
+					Payrates.checkIntegrity(list);
+					Database.importPayrts(list);
+				} catch(DateException e){
+					ret = e.getMessage();
+				}
+			} catch(NumberFormatException e) {
+				return "A cost is not valid";
 			}
 
-			s.close();
 		}
 		return ret;
 	}

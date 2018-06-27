@@ -26,9 +26,6 @@ public class Employee {
 
 	public String getStatus(){return status;}
 	
-	public void addPayrates(int c, String s, String e) {
-		payrates.add(new Payrates(getId(), c, s, e));
-	}
 	
 	public List<Payrates> getPayrates(){
 		return payrates;

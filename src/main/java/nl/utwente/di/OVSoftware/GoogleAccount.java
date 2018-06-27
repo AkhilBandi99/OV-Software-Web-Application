@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GoogleAccount {
-    private final String email;
+	private final String email;
 
-    public String getEmail() {
-        return email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    @JsonCreator
-    public GoogleAccount (@JsonProperty("email") String email){
-        this.email = email;
-    }
+	@JsonCreator
+	public GoogleAccount(@JsonProperty("email") String email) {
+		this.email = email;
+	}
 }

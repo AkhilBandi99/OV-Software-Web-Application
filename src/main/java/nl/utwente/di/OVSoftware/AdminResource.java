@@ -2,6 +2,7 @@ package nl.utwente.di.OVSoftware;
 
 import javax.ws.rs.Path;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.sun.glass.ui.delegate.MenuItemDelegate;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -54,17 +56,17 @@ public class AdminResource {
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/ovuser/{ovuser}")
-	public void deleteOVUser(OVAccount ovAccount){
+	@Path("/ovuser")
+	public void deleteOVUser(OVAccount ovAccount) throws SQLException, ClassNotFoundException {
 		Database.deleteOVAccount(ovAccount.getUsername());
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/googleuser/{googleuser}")
-	public void deleteGoogleUser(GoogleAccount googleAccount){
-		System.out.println("googletest");
+	@Path("/googleuser")
+	public void deleteGoogleUser(GoogleAccount googleAccount) throws SQLException, ClassNotFoundException {
 		Database.deleteGoogleAccount(googleAccount.getEmail());
+
 	}
 	
 	

@@ -565,23 +565,29 @@ public class Database {
 		}
 	}
 
-	public static void deleteOVAccount(String username){
-		try {
+	public static void deleteOVAccount(String username) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection();
 			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.localaccounts WHERE username=?");
 			p.setString(1, username);
 			p.execute();
 			conn.close();
-		} catch (ClassNotFoundException | SQLException e1) {
-
-		}
 	}
 
-	public static void deleteGoogleAccount(String email){
-		try {
+	public static void deleteGoogleAccount(String email) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection();
 			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.googleaccounts WHERE email=?");
 			p.setString(1, email);
+			p.execute();
+			conn.close();
+	}
+
+	public static void deletePayrate(String startDate, String endDate, int id){
+		try {
+			Connection conn = MakeConnection();
+			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.employeerates WHERE vandatum=? AND totdatum=? AND id=?");
+			p.setString(1, startDate);
+			p.setString(2,endDate);
+			p.setInt(3,id);
 			p.execute();
 			conn.close();
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -598,7 +604,11 @@ public class Database {
 			List<Payrates> l = new ArrayList<>();
 			try {
 				while(res.next()) {
-					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+					try {
+						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
@@ -618,7 +628,11 @@ public class Database {
 			List<Payrates> l = new ArrayList<>();
 			try {
 				while(res.next()) {
-					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+					try {
+						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();

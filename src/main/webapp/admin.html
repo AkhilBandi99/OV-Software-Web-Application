@@ -193,6 +193,7 @@
 			// create email display
 			var em = document.createElement("td");
 			var etxt = document.createTextNode(googleacc[i].email);
+			em
 			em.appendChild(etxt);
 			ver.appendChild(em);
 			body.appendChild(ver);
@@ -245,20 +246,37 @@
             // create email display
             var em = document.createElement("td");
             var etxt = document.createTextNode(googleacc[i].email);
+            em.className="email";
             em.appendChild(etxt);
             ver.appendChild(em);
 
             // create trash icon
             var trash = document.createElement("td");
-            var trashIcon = document.createElement("span");
             trash.className = "fas fa-trash-alt";
-            trash.setAttribute("onclick", "deleteGoogleUser(\""+googleacc[i].email+"\")");
-            trash.appendChild(trashIcon);
+            trash.id = "trash";
             ver.appendChild(trash);
-
             body.appendChild(ver);
         }
+
+        $('#GoogleAccountList').on('click', "#trash", function(){
+            var row = $(this).closest ('tr').remove();
+            $.ajax({
+                url: "./OV/admin/googleuser",
+                contentType: 'application/json; charset=utf-8',
+                type: "DELETE",
+                data: JSON.stringify({"email": $(this).closest ('tr').children("td.email").text()}),
+                dataType: 'json',
+                success: function() {
+                    row.remove();
+                },
+                error: function () {
+
+                }
+            });
+        });
     }
+
+
 
     function addAccount(){
         if($("#OVSelector").prop("checked", true)){
@@ -302,16 +320,6 @@
         });
     }
 
-
-    function deleteGoogleUser(mail){
-        $.ajax({
-            url: "./OV/admin/googleuser",
-            contentType: 'application/json; charset=utf-8',
-            type: "DELETE",
-            data: JSON.stringify({"email": mail}),
-            dataType: 'json'
-        });
-    }
 
     function deleteOVUser(user) {
         $.ajax({
