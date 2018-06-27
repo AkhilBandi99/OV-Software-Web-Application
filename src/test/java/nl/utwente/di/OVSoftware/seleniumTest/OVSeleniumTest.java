@@ -5,7 +5,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class OVSeleniumTest {
+import com.thoughtworks.selenium.SeleneseTestCase;
+
+public class OVSeleniumTest extends SeleneseTestCase{
 
 	/*
 	 * Before running the test, make sure your path is configured properly.
@@ -21,16 +23,20 @@ public class OVSeleniumTest {
         driver.get(baseURL);
         WebElement username = driver.findElement(By.id("username"));
         WebElement password = driver.findElement(By.id("password"));
-        WebElement button = driver.findElement(By.xpath("/html/body/div/form/div[4]/button"));
+        WebElement loginbutton = driver.findElement(By.xpath("/html/body/div/form/div[4]/button"));
 
         username.sendKeys("a");
         password.sendKeys("a");
 
-        button.click();
+        loginbutton.click();
         
         // make an if statement
         
+        System.out.println(driver.getCurrentUrl());
         
-
+        // main.html
+        
+        
+        
     }
 }
