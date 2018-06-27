@@ -640,9 +640,6 @@ public class Database {
 				} else {
 					res = Database.search(conn, crdnr, fullname);
 				}
-				res.next();
-				res.next();
-				System.out.println(res.getInt(1));
 				List<Employee> l = new ArrayList<>();
 				try {
 					if(!res.wasNull()) {

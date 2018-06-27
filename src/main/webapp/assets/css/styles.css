@@ -22,15 +22,12 @@ button, input {
   border-bottom:1px solid grey;
 }
 
-.triangle {
-    width: 1;
-    height: 1;
-    border: solid 3px;
-    border-color: transparent transparent black transparent;
+#hovernum:hover {
+  cursor: pointer;
 }
 
-.fas fa-pencil-alt:hover {
-	transform: scale(1.5);
+#hovername:hover {
+  cursor: pointer;
 }
 
 .login-clean {
