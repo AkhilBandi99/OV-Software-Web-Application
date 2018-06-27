@@ -22,18 +22,14 @@ public class Payrates implements Comparable<Payrates>{
 	private final Calendar endDate;
 
 	@JsonCreator
-	public Payrates(@JsonProperty("emp_id") int i, @JsonProperty("price") double c,@JsonProperty("startdate") String s,@JsonProperty("enddate") String e) {
+	public Payrates(@JsonProperty("emp_id") int i, @JsonProperty("price") double c,@JsonProperty("startdate") String s,@JsonProperty("enddate") String e) throws ParseException {
 		id = i;
 		cost = c;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		startDate = Calendar.getInstance();
 		endDate = Calendar.getInstance();
-		try {
-			startDate.setTime(sdf.parse(s));
-			endDate.setTime(sdf.parse(e));
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
+		startDate.setTime(sdf.parse(s));
+		endDate.setTime(sdf.parse(e));
 	}
 	
 	public int getId() {

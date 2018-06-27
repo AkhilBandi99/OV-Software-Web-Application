@@ -604,7 +604,11 @@ public class Database {
 			List<Payrates> l = new ArrayList<>();
 			try {
 				while(res.next()) {
-					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+					try {
+						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
@@ -624,7 +628,11 @@ public class Database {
 			List<Payrates> l = new ArrayList<>();
 			try {
 				while(res.next()) {
-					l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+					try {
+						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (SQLException | NullPointerException e) {
 				e.printStackTrace();
