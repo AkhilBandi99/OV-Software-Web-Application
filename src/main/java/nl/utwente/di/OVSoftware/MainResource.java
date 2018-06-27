@@ -75,7 +75,7 @@ public class MainResource {
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
-	public int editPayrates(String payrates) {
+	public String editPayrates(String payrates) {
 		Scanner s = new Scanner(payrates);
 		String ret = null;
 		List<Payrates> prts = new ArrayList<>();
@@ -95,16 +95,14 @@ public class MainResource {
 				Database.editPayrates(crdnr, prts);
 			} catch (DateException e) {
 				ret = e.getMessage();
-				System.out.println(ret);
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			ret = "Cost is not a number";
 		}
 		if(ret == null) {
-			return 1;
+			return "1";
 		} else {
-			ret = null;
-			return 0;
+			return ret;
 		}
 	}
 

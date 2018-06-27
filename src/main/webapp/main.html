@@ -93,7 +93,7 @@
 												onclick="openFileDialog();"
 												style="margin: 6px; border-radius: 6px;">Import</button>
 											<input type="file" id="fileLoader"
-												onchange="this.form.submit()" name="files" title="Load File" />
+												onchange="submitfile()" name="files" title="Load File" />
 										</form>
 										<button class="btn btn-primary" type="button"
 											onclick="location.href='./OV/main/export.csv'"
@@ -172,14 +172,12 @@
 															</tr>
 														</tbody>
 													</table>
-													<label for = "label" class = "text-center" id="warning" style="color: red;"></label>
                                                     <p id="payratestatus"></p>
 												</div>
 											</div>
 											<div class="modal-footer">
 												<button onclick=newPayrtField()
-													class="btn btn-primary mr-auto" type="button">Add
-													New Payrate</button>
+													class="btn btn-primary mr-auto" type="button">Add New Payrate</button>
 												<button class="btn btn-light" type="button" data-dismiss="modal" onclick=$("#payratestatus").html("")>Close</button>
 												<button onclick=saveChanges() class="btn btn-primary"
 													type="button">Save</button>
@@ -259,12 +257,20 @@
 						}
 					}
 				} catch (e) {
-					console.log("caught exception : " + e);
+					showImportStatus(this.responseText);
 				}
+				
 				requestContent();
 			}
 		}
 
+		function submitfile() {
+			let formData = new FormData();
+			formData.append("files", document.getElementById("fileLoader").files[0]);
+			xhr.open("POST", "./OV/main/import");
+			xhr.send(formData);
+		}
+		
 		function addDropdown() {
 			dropdown = document.getElementById("officeDropdown")
 			dropdown.innerHTML = "";
@@ -314,14 +320,18 @@
 			if (crdnr != "" && fullname != "") {
 				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + fullname
 						+ "/status/" + status);
+				xhr.send();
 			} else if (crdnr == "" && fullname != "") {
 				xhr.open("GET", "./OV/main/search/" + -1 + "/" + fullname
 						+ "/status/" + status);
+				xhr.send();
 			} else if (crdnr != "" && fullname == "") {
 				xhr.open("GET", "./OV/main/search/" + crdnr + "/" + -1
 						+ "/status/" + status);
+				xhr.send();
+			} else if (crdnr == "" && fullname == "") {
+				return;
 			}
-			xhr.send();
 		}
 
 		function updateinfo() {
@@ -348,6 +358,7 @@
 
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
+				editIcon.id = "editaa";
 				editIcon.className = "fas fa-pencil-alt";
 				editIcon.setAttribute("onclick", "edit(" + i + ")");
 				edit.appendChild(editIcon);
@@ -362,8 +373,8 @@
 				ver.appendChild(trash);
 
 				body.appendChild(ver);
-				$("#warning").text(null);
-
+				console.log(document.getElementById("editaa"));
+				$("#payratestatus").html("");
 			}
 		}
 
@@ -460,7 +471,7 @@
 					if (response == 1) {
 						setTimeout(function(){getId(crdnr, infoname)}, 200);
 					} else {
-						$("#warning").text("Entered dates are invalid, please check and try again with valid dates.");
+						$("#payratestatus").html("<label for = 'label' class = 'text-center' id='warning' style='color: red;'>" + response + "</label>");
 					}
 				}
 			})
