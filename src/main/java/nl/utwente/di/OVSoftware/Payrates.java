@@ -10,17 +10,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"id", "cost", "startDate", "endDate"})
 public class Payrates implements Comparable<Payrates>{
 	
 	private final int id;
 	private final double cost;
 	private final Calendar startDate;
 	private final Calendar endDate;
-	
-	public Payrates(int i, double c, String s, String e) {
+
+	@JsonCreator
+	public Payrates(@JsonProperty("emp_id") int i, @JsonProperty("price") double c,@JsonProperty("startdate") String s,@JsonProperty("enddate") String e) {
 		id = i;
 		cost = c;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
