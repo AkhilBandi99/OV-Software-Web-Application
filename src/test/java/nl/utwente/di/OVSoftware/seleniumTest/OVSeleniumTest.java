@@ -1,13 +1,13 @@
 package nl.utwente.di.OVSoftware.seleniumTest;
 
 import org.openqa.selenium.By;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import com.thoughtworks.selenium.SeleneseTestCase;
 
-public class OVSeleniumTest extends SeleneseTestCase{
+public class OVSeleniumTest {
 
 	/*
 	 * Before running the test, make sure your path is configured properly.
