@@ -1,15 +1,16 @@
 package nl.utwente.di.OVSoftware;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.Test;
 
 public class GoogleAccountTest {
 	
 	private GoogleAccount acc = new GoogleAccount("group8@student.utwente.nl");
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		
 	}

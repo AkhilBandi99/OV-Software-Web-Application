@@ -1,15 +1,17 @@
 package nl.utwente.di.OVSoftware;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.Test;
+
 
 public class OVAccountTest {
 	
 	private OVAccount acc = new OVAccount("a", "123");
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		
 	}
