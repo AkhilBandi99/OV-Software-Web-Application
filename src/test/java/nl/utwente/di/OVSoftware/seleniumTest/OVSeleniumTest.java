@@ -72,6 +72,7 @@ public class OVSeleniumTest {
 		
 		Thread.sleep(1000);
 		
+		
 		if (result.getText().contains("Not Active") || result.getText().contains("Not Active Yet")) {
 			System.out.println("searching active employee failed");
 		} else {
