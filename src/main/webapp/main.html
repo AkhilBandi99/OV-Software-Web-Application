@@ -76,7 +76,7 @@
 										style="margin-left: 6px; border-radius: 6px;">Search</button>
 									<div class="btn-group ml-auto" role="group">
 										<div class="dropdown d-inline-flex" style="margin: 6px;">
-											<button id="officeButtton"
+											<button id="officeButton"
 												class="btn btn-primary dropdown-toggle"
 												data-toggle="dropdown" aria-expanded="false" type="button"
 												style="margin-right: 6px; margin-left: 6px; border-radius: 6px; padding-left: 20px;">Office</button>
@@ -96,7 +96,7 @@
 											<input type="file" id="fileLoader" onchange="submitfile()"
 												name="files" title="Load File" />
 										</form>
-										<button class="btn btn-primary" type="button"
+										<button id="export" class="btn btn-primary" type="button"
 											onclick="location.href='./OV/main/export.csv'"
 											style="margin: 6px; border-radius: 6px;">Export</button>
 										<button id="logout" onclick=logout() class="btn btn-primary"
@@ -113,11 +113,11 @@
 						<div class="card">
 							<div class="card-body" style="padding: 0px;">
 								<div class="table-responsive table-hover">
-									<table class="table">
+									<table id = "empTable" class="table">
 										<thead>
 											<tr>
-												<td onclick=sort(0)>Employee Number</td>
-												<td onclick=sort(1)>Full Name</td>
+												<td id = "hovernum" style = "font-size:16px;" onclick = sort(0)>Employee Number<i id = "numSort" class="fas fa-sort fa-fw" style="vertical-align: middle; font-size:18px;"></i></td>
+                                    			<td id = "hovername" style = "font-size:16px;" onclick = sort(1)>Full Name<i id = "nameSort" class="fas fa-sort fa-fw" style="vertical-align: middle; font-size:18px;"></i></td>
 												<td>Status</td>
 											</tr>
 										</thead>
@@ -369,7 +369,7 @@
 
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
-				editIcon.id = "editaa";
+				editIcon.style = "cursor:pointer;"
 				editIcon.className = "fas fa-pencil-alt";
 				editIcon.setAttribute("onclick", "edit(" + i + ")");
 				edit.appendChild(editIcon);
@@ -378,14 +378,15 @@
 				// create trash icon
 				var trash = document.createElement("td");
 				var trashIcon = document.createElement("span");
-				trash.className = "fas fa-trash-alt";
-				trash.setAttribute("onclick", "deletePayrate(" + i + ")");
+				trashIcon.style = "cursor:pointer;"
+				trashIcon.className = "fas fa-trash-alt";
+				trashIcon.setAttribute("onclick", "deletePayrate(" + i + ")");
 				trash.appendChild(trashIcon);
 				ver.appendChild(trash);
 
 				body.appendChild(ver);
-				console.log(document.getElementById("editaa"));
 				$("#payratestatus").html("");
+				console.log(ver);
 			}
 		}
 
@@ -489,18 +490,28 @@
 		}
 		
 		function sort(n) {
+			var sortnum = document.getElementById("numSort");
+			var sortname = document.getElementById("nameSort");
 			if(n == 0 && ascNum == false) {
 				xhr.open("GET", "./OV/main/sort/00");
 				ascNum = true;
+				sortnum.className = "fas fa-sort-up fa-fw";
+				sortname.className = "fas fa-sort fa-fw";
 			} else if(n == 0 && ascNum == true) {
 				xhr.open("GET", "./OV/main/sort/01");
 				ascNum = false;
+				sortnum.className = "fas fa-sort-down fa-fw";
+				sortname.className = "fas fa-sort fa-fw";
 			} else if(n == 1 && ascName == false) {
 				xhr.open("GET", "./OV/main/sort/10");
 				ascName = true;
+				sortname.className = "fas fa-sort-up fa-fw";
+				sortnum.className = "fas fa-sort fa-fw";
 			} else if(n == 1 && ascName == true) {
 				xhr.open("GET", "./OV/main/sort/11");
 				ascName = false;
+				sortname.className = "fas fa-sort-down fa-fw";
+				sortnum.className = "fas fa-sort fa-fw";
 			}
 			xhr.send();
 		}
@@ -625,14 +636,20 @@
 		}
 
 		function deletePayrate(i) {
-			var delelem = document.getElementById('infotable').children[i];
-			document.getElementById('infotable').removeChild(delelem);
-			
-			var row = document.getElementById('infotable').children;
-			for(l = 0; l < row.length; l++) {
-				row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
-				row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
-			} 
+			var result = confirm('Are you sure you want to delete this payrate?');
+			if(result) {
+				var delelem = document.getElementById('infotable').children[i];
+				document.getElementById('infotable').removeChild(delelem);
+				
+				var row = document.getElementById('infotable').children;
+				for(l = 0; l < row.length; l++) {
+					row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
+					row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
+				}
+				saveChanges();
+			} else {
+				return;
+			}
 		}
 
 		$("#menu-toggle").click(function(e) {
