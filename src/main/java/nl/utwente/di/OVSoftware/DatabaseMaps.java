@@ -9,12 +9,12 @@ public class DatabaseMaps {
 	private List<Table> users = new ArrayList<>();
 	
 	public DatabaseMaps() {
-		this.newDatabase("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker");
-		this.newDatabase("Belgie", "This will crash it");
+		this.newDatabase("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
+		this.newDatabase("Belgie", "//castle.ewi.utwente.nl:5432/di049", "di049", "Hzixmlr+");
 	}
 	
-	public void newDatabase(String name, String login) {
-		users.add(new Table(name, login));
+	public void newDatabase(String name, String login, String user, String pass) {
+		users.add(new Table(name, login, user, pass));
 	}
 
 	public List<String> getDatabases() {
@@ -29,10 +29,10 @@ public class DatabaseMaps {
 		return users.get(1).getLogin();
 	}
 	
-	public String nametologin(String n) {
+	public Table nametotable(String n) {
 		for (Table d: users) {
 			if (d.getName().equals(n)) {
-				return d.getLogin();
+				return d;
 			}
 		}
 		return null;
