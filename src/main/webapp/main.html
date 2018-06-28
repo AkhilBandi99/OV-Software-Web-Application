@@ -26,8 +26,7 @@
 </head>
 
 <body onload="requestContent()">
-	<div id="wrapper">
-
+	<div id="wrapper" style = "cursor:pointer;">
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
 			<ul class="sidebar-nav">
@@ -52,11 +51,13 @@
 										<div class="bar2"></div>
 										<div class="bar3"></div>
 									</div>
+									<a href = "https://www.ovsoftware.nl/">
 									<img src="assets/img/OV.png"
 										style="height: 80px; margin-right: 12px;"><input
 										id="searchid" type="text" placeholder="Employee Number"
 										style="margin: 6px;"><input id="searchname"
 										type="text" placeholder="Full Name" style="margin: 6px;">
+									</a>
 									<div class="dropdown d-inline-flex">
 										<button id="statusButton"
 											class="btn btn-primary dropdown-toggle"
@@ -380,7 +381,6 @@
 
 				body.appendChild(ver);
 				$("#payratestatus").html("");
-				console.log(ver);
 			}
 		}
 
@@ -396,7 +396,6 @@
 				}
 			}
 			
-			console.log(i);
 			for (k = 0; k < 3; k++) {
 				
 				var element = row[i].children[k];
