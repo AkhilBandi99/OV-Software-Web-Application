@@ -90,7 +90,11 @@ public class MainResource {
 					String line = s.nextLine();
 					String[] elems = line.split(",");
 					try {
-						prts.add(new Payrates(crdnr, Double.parseDouble(elems[0]), elems[1], elems[2]));
+						double cost = Double.parseDouble(elems[0]);
+						if (cost < 0) {
+							throw new NumberFormatException();
+						}
+						prts.add(new Payrates(crdnr, cost, elems[1], elems[2]));
 					} catch (ParseException e) {
 						s.close();
 						return "A Date is not valid";
@@ -144,6 +148,10 @@ public class MainResource {
 					if (words.length == 4) {
 						int id = Integer.parseInt(words[0]);
 						double cost = Double.parseDouble(words[1]);
+						if (cost < 0) {
+							s.close();
+							throw new NumberFormatException();
+						}
 						try {
 							list.add(new Payrates(id, cost, words[2], words[3]));
 						} catch (ParseException e) {
