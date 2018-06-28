@@ -30,4 +30,9 @@ public class Table {
 		return pass;
 	}
 	
+	@Override
+	public String toString() {
+		return getName() + " " + getUser() + " " + getLogin() + " " + getPass();
+	}
+	
 }

@@ -179,17 +179,14 @@ public class MainResource {
 	
 	@POST
 	@Path("/databases/{selection}")
-	public void selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
+	@Produces(MediaType.TEXT_PLAIN)
+	public int selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
 		if (Login.Security(r.getSession()) == 1) {
 			r.getSession().setAttribute("Database", tables.nametotable(n));
+			System.out.println("aaaaaaaa " + ((Table) r.getSession().getAttribute("Database")));
+			return 1;
 		}
-	}
-	
-	
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void deletePayrate(Payrates p) {
-		
+		return 0;
 	}
 	
 	

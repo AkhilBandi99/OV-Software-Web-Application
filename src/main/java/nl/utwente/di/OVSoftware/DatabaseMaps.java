@@ -10,7 +10,7 @@ public class DatabaseMaps {
 	
 	public DatabaseMaps() {
 		this.newDatabase("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
-		this.newDatabase("Belgie", "di049@castle.ewi.utwente.nl", "di049", "Hzixmlr+");
+		this.newDatabase("Belgie", "//castle.ewi.utwente.nl:5432/di049", "di049", "Hzixmlr+");
 	}
 	
 	public void newDatabase(String name, String login, String user, String pass) {

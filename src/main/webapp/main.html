@@ -286,9 +286,8 @@
 		}
 		
 		function selectitem(item)	{
+			rqueue.push("./OV/main/employees");
 			xhr.open("POST", "./OV/main/databases/" + item);
-			xhr.send();
-			xhr.open("GET", "./OV/main/employees");
 			xhr.send();
 		}
 
@@ -526,12 +525,6 @@
 			window.open("./login.html", "_self");
 		}
 
-		function requestContent() {
-			xhr.open("GET", "./OV/test");
-			xhr.send();
-			window.setTimeout(requestContent2, 200);
-		}
-
 		function onLoad() {
 			gapi.load('auth2', function() {
 				gapi.auth2.init();
@@ -628,6 +621,7 @@
 		});
 
 		function requestContent() {
+			console.log(rqueue.length + " " + rcounter);
 			if (rcounter < rqueue.length) {
 				xhr.open("GET", rqueue[rcounter]);
 				xhr.send();
