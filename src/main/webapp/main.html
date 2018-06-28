@@ -26,8 +26,7 @@
 </head>
 
 <body onload="requestContent()">
-	<div id="wrapper">
-
+	<div id="wrapper" style = "cursor:pointer;">
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
 			<ul class="sidebar-nav">
@@ -52,8 +51,9 @@
 										<div class="bar2"></div>
 										<div class="bar3"></div>
 									</div>
-									<img src="assets/img/OV.png"
-										style="height: 80px; margin-right: 12px;"><input
+									<a href = "https://www.ovsoftware.nl/">
+									<img src="assets/img/OV.png" style="height: 80px; margin-right: 12px;"></a>
+										<input
 										id="searchid" type="text" placeholder="Employee Number"
 										style="margin: 6px;"><input id="searchname"
 										type="text" placeholder="Full Name" style="margin: 6px;">
@@ -235,7 +235,7 @@
 		var elem1;
 		var elem2;
 		var elem3;
-		var ascNum = false;
+		var ascNum = true;
 		var ascName = false;
 		var rowNum = -1;
 		var xhr = new XMLHttpRequest();
@@ -345,6 +345,7 @@
 			}
 		}
 
+		// update payrate table
 		function updateinfo() {
 			var body = document.getElementById('infotable');
 			body.innerHTML = "";
@@ -386,7 +387,6 @@
 
 				body.appendChild(ver);
 				$("#payratestatus").html("");
-				console.log(ver);
 			}
 		}
 
@@ -402,7 +402,6 @@
 				}
 			}
 			
-			console.log(i);
 			for (k = 0; k < 3; k++) {
 				
 				var element = row[i].children[k];
