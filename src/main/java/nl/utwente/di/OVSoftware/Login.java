@@ -11,6 +11,9 @@ public class Login {
 		if (x != null && x instanceof Long) {
 			if (System.currentTimeMillis() - (Long) x < TIMEOUT) {
 				s.setAttribute("Timeout", System.currentTimeMillis());
+				if (s.getAttribute("Database") == null) {
+					s.setAttribute("Database", Database.mainDatabase);
+				}
 				return 1;
 			}
 		}

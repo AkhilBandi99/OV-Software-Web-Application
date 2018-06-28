@@ -28,45 +28,58 @@ public class AdminResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/ovusers")
 	public List<OVAccount> getAllOVUsers(@Context HttpServletRequest r) {
-		List<OVAccount> ovlist = Database.getOVAccounts();
-		return ovlist;
+		if(Login.Security(r.getSession())==1) {
+			List<OVAccount> ovlist = Database.getOVAccounts();
+			return ovlist;
+		}
+		return null;
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/googleusers")
 	public List<GoogleAccount> getAllGoogleUsers(@Context HttpServletRequest r){
-		List<GoogleAccount> googlelist = Database.getGoogleAccounts();
-		return googlelist;
+		if(Login.Security(r.getSession())==1) {
+			List<GoogleAccount> googlelist = Database.getGoogleAccounts();
+			return googlelist;
+		}
+		return null;
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
-	public void createOVUser(OVAccount ovAccount){
-		Database.createOVAccount(ovAccount.getUsername(),ovAccount.getPassword());
+	public void createOVUser(@Context HttpServletRequest r, OVAccount ovAccount) throws SQLException, ClassNotFoundException {
+		if(Login.Security(r.getSession())==1) {
+			Database.createOVAccount(ovAccount.getUsername(), ovAccount.getPassword());
+		}
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")
-	public void createGoogleUser(GoogleAccount googleAccount){
-		Database.createGoogleAccount(googleAccount.getEmail());
+	public void createGoogleUser(@Context HttpServletRequest r, GoogleAccount googleAccount) throws SQLException, ClassNotFoundException {
+		if(Login.Security(r.getSession())==1) {
+			Database.createGoogleAccount(googleAccount.getEmail());
+		}
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
-	public void deleteOVUser(OVAccount ovAccount) throws SQLException, ClassNotFoundException {
-		Database.deleteOVAccount(ovAccount.getUsername());
+	public void deleteOVUser(@Context HttpServletRequest r,OVAccount ovAccount) throws SQLException, ClassNotFoundException {
+		if(Login.Security(r.getSession())==1) {
+			Database.deleteOVAccount(ovAccount.getUsername());
+		}
 	}
 
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")
-	public void deleteGoogleUser(GoogleAccount googleAccount) throws SQLException, ClassNotFoundException {
-		Database.deleteGoogleAccount(googleAccount.getEmail());
-
+	public void deleteGoogleUser(@Context HttpServletRequest r, GoogleAccount googleAccount) throws SQLException, ClassNotFoundException {
+		if(Login.Security(r.getSession())==1) {
+			Database.deleteGoogleAccount(googleAccount.getEmail());
+		}
 	}
 	
 	

@@ -239,7 +239,7 @@
 		var ascName = false;
 		var rowNum = -1;
 		var xhr = new XMLHttpRequest();
-		var rqueue = ["./OV/main/databases", "./OV/test", "./OV/main/employees"];
+		var rqueue = ["./OV/test", "./OV/main/databases", "./OV/main/employees"];
 		var rcounter = 0;
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
@@ -286,9 +286,8 @@
 		}
 		
 		function selectitem(item)	{
+			rqueue.push("./OV/main/employees");
 			xhr.open("POST", "./OV/main/databases/" + item);
-			xhr.send();
-			xhr.open("GET", "./OV/main/employees");
 			xhr.send();
 		}
 
@@ -523,12 +522,6 @@
 			xhr.open("GET", "./OV/logout");
 			xhr.send();
 			window.open("./login.html", "_self");
-		}
-
-		function requestContent() {
-			xhr.open("GET", "./OV/test");
-			xhr.send();
-			window.setTimeout(requestContent2, 200);
 		}
 
 		function onLoad() {
