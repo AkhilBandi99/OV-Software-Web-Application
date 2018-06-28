@@ -42,7 +42,8 @@ public class Database {
 		PreparedStatement p = conn.prepareStatement(
 				"SELECT h.res_id, h.fullname, h.emp_stat " +
 				"FROM di08.humres h " +
-				"WHERE h.\"freefield 16\" = 'N' ");
+				"WHERE h.\"freefield 16\" = 'N' " +
+				"ORDER BY h.res_id");
 		ResultSet res = p.executeQuery();
 		return res;
 	}
