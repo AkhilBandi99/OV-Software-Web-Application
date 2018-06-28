@@ -240,8 +240,7 @@
 		var ascName = false;
 		var rowNum = -1;
 		var xhr = new XMLHttpRequest();
-		var rqueue = [ "./OV/test", "./OV/main/employees",
-				"./OV/main/databases" ];
+		var rqueue = ["./OV/main/databases", "./OV/test", "./OV/main/employees"];
 		var rcounter = 0;
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
@@ -281,10 +280,17 @@
 			dropdown = document.getElementById("officeDropdown")
 			dropdown.innerHTML = "";
 			for (var i = 0; i < dropdownitems.length; i++) {
-				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">"
+				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" onclick=\"selectitem('" + dropdownitems[i] + "')\">"
 						+ dropdownitems[i] + "</a>";
 			}
 
+		}
+		
+		function selectitem(item)	{
+			xhr.open("POST", "./OV/main/databases/" + item);
+			xhr.send();
+			xhr.open("GET", "./OV/main/employees");
+			xhr.send();
 		}
 
 		function updatelist() {

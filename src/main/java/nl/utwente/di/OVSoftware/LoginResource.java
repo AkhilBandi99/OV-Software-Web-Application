@@ -23,6 +23,7 @@ public class LoginResource {
 	public int getClichedMessage(@PathParam("user") String user, @PathParam("pass") String pass, @Context HttpServletRequest r) {
 		if(Database.OVAccountAccepted(user,pass)) {
 			r.getSession().setAttribute("Timeout", System.currentTimeMillis());
+			r.getSession().setAttribute("Database", Database.mainDatabase);
 			return 1;
 		} else {
 			return 0;
@@ -62,6 +63,7 @@ public class LoginResource {
 			GoogleIdToken.Payload payload = idToken.getPayload();
 			if(Database.googleAccountAccepted(payload.getEmail())){
 				request.getSession().setAttribute("Timeout", System.currentTimeMillis());
+				request.getSession().setAttribute("Database", Database.mainDatabase);
 				return 1;
 			}
 		}

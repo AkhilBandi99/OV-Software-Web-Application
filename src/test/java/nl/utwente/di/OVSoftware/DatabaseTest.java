@@ -8,22 +8,22 @@ class DatabaseTest {
 
     @Test
     void getAllPayrates() {
-        assertNotNull(Database.getAllPayrates());
+        assertNotNull(Database.getAllPayrates(Database.mainDatabase));
     }
 
     @Test
     void allEmployees() {
-        assertNotNull(Database.getEmployees());
+        assertNotNull(Database.getEmployees(Database.mainDatabase));
     }
 
     @Test
     void getPayratesSpecificEmployee() {
-        assertNotNull(Database.getPayratesSpecificEmployee(4));
+        assertNotNull(Database.getPayratesSpecificEmployee(4, Database.mainDatabase));
     }
 
     @Test
     void searchEmployees() {
-        assertNotNull(Database.searchEmployees(4,"MaSt", "A"));
+        assertNotNull(Database.searchEmployees(4,"MaSt", "A", Database.mainDatabase));
     }
 
 }

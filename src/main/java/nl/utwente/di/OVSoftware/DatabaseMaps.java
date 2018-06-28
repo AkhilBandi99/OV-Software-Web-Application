@@ -9,8 +9,8 @@ public class DatabaseMaps {
 	private List<Table> users = new ArrayList<>();
 	
 	public DatabaseMaps() {
-		this.newDatabase("Amsterdam", "Amsterdam");
-		this.newDatabase("Belgie", "Belgie");
+		this.newDatabase("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker");
+		this.newDatabase("Belgie", "This will crash it");
 	}
 	
 	public void newDatabase(String name, String login) {
@@ -23,6 +23,19 @@ public class DatabaseMaps {
 			list.add(t.getName());
 		}
 		return list;
+	}
+	
+	public String getFirst() {
+		return users.get(1).getLogin();
+	}
+	
+	public String nametologin(String n) {
+		for (Table d: users) {
+			if (d.getName().equals(n)) {
+				return d.getLogin();
+			}
+		}
+		return null;
 	}
 	
 }
