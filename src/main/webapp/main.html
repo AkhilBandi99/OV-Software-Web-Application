@@ -625,7 +625,6 @@
 		});
 
 		function requestContent() {
-			console.log(rqueue.length + " " + rcounter);
 			if (rcounter < rqueue.length) {
 				xhr.open("GET", rqueue[rcounter]);
 				xhr.send();
