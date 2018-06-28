@@ -316,7 +316,6 @@ public class Database {
 			} catch (SQLException e) {
 				
 			}
-			i = 1;
 			index = 1;
 			return index;
 		}
