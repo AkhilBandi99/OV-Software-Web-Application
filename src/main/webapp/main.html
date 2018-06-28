@@ -26,8 +26,7 @@
 </head>
 
 <body onload="requestContent()">
-	<div id="wrapper">
-
+	<div id="wrapper" style = "cursor:pointer;">
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
 			<ul class="sidebar-nav">
@@ -52,11 +51,13 @@
 										<div class="bar2"></div>
 										<div class="bar3"></div>
 									</div>
+									<a href = "https://www.ovsoftware.nl/">
 									<img src="assets/img/OV.png"
 										style="height: 80px; margin-right: 12px;"><input
 										id="searchid" type="text" placeholder="Employee Number"
 										style="margin: 6px;"><input id="searchname"
 										type="text" placeholder="Full Name" style="margin: 6px;">
+									</a>
 									<div class="dropdown d-inline-flex">
 										<button id="statusButton"
 											class="btn btn-primary dropdown-toggle"
@@ -239,8 +240,7 @@
 		var ascName = false;
 		var rowNum = -1;
 		var xhr = new XMLHttpRequest();
-		var rqueue = [ "./OV/test", "./OV/main/employees",
-				"./OV/main/databases" ];
+		var rqueue = ["./OV/main/databases", "./OV/test", "./OV/main/employees"];
 		var rcounter = 0;
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
@@ -280,10 +280,17 @@
 			dropdown = document.getElementById("officeDropdown")
 			dropdown.innerHTML = "";
 			for (var i = 0; i < dropdownitems.length; i++) {
-				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" href=\"#\">"
+				dropdown.innerHTML += "<a class=\"dropdown-item\" role=\"presentation\" onclick=\"selectitem('" + dropdownitems[i] + "')\">"
 						+ dropdownitems[i] + "</a>";
 			}
 
+		}
+		
+		function selectitem(item)	{
+			xhr.open("POST", "./OV/main/databases/" + item);
+			xhr.send();
+			xhr.open("GET", "./OV/main/employees");
+			xhr.send();
 		}
 
 		function updatelist() {
@@ -339,6 +346,7 @@
 			}
 		}
 
+		// update payrate table
 		function updateinfo() {
 			var body = document.getElementById('infotable');
 			body.innerHTML = "";
@@ -380,7 +388,6 @@
 
 				body.appendChild(ver);
 				$("#payratestatus").html("");
-				console.log(ver);
 			}
 		}
 
@@ -396,7 +403,6 @@
 				}
 			}
 			
-			console.log(i);
 			for (k = 0; k < 3; k++) {
 				
 				var element = row[i].children[k];

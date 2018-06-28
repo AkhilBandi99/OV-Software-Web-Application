@@ -13,7 +13,7 @@ public class OVSeleniumTest {
 	 */
 
 	public static void main(String[] args) throws InterruptedException {
-		String path = "/Users/ignatiuspatrick/Downloads/chromedriver";
+		String path = "/Users/akhilbandi/Desktop/Module4/apache-tomcat-8.0.51/chromedriver";
 		System.setProperty("webdriver.chrome.driver", path);
 		WebDriver driver = new ChromeDriver();
 

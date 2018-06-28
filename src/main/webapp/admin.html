@@ -30,7 +30,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
-                <a >
+                <a style = "cursor:pointer;" href = "https://www.ovsoftware.nl/">
                     OV Software
                 </a>
             </li>
@@ -57,10 +57,11 @@
                                     <div class="bar2"></div>
                                     <div class="bar3"></div>
                                 </div>
-                                <img src="assets/img/OV.png"
-                                     style="height: 70px; margin-right: 12px;">
-                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector">Google Account</label></div>
-                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector">OV Account</label></div>
+                                <a href = "https://www.ovsoftware.nl/">
+                                <img src="assets/img/OV.png" style="height: 70px; margin-right: 12px; cursor:pointer;">
+                                </a>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector" style = "cursor:pointer;">Google Account</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector" style = "cursor:pointer;">OV Account</label></div>
                                 <input
                                         id="username" type="text" placeholder="Username"
                                         style="margin: 6px;"><input id="password" type="password"
@@ -193,7 +194,6 @@
 			// create email display
 			var em = document.createElement("td");
 			var etxt = document.createTextNode(googleacc[i].email);
-			em
 			em.appendChild(etxt);
 			ver.appendChild(em);
 			body.appendChild(ver);
@@ -223,6 +223,7 @@
             // create trash icon
             var trash = document.createElement("td");
             var trashIcon = document.createElement("span");
+            trash.style = "cursor:pointer;"
             trash.className = "fas fa-trash-alt";
             trash.setAttribute("onclick", "deleteOVUser(\""+ovacc[i].username+"\")");
             trash.appendChild(trashIcon);
@@ -234,7 +235,7 @@
         }
     }
 
-
+	// update google account table
     function updateGoogleAccount() {
         var body = document.getElementById('GoogleAccountList');
         body.innerHTML = "";
@@ -252,6 +253,7 @@
 
             // create trash icon
             var trash = document.createElement("td");
+            trash.style = "cursor:pointer;"
             trash.className = "fas fa-trash-alt";
             trash.id = "trash";
             ver.appendChild(trash);
