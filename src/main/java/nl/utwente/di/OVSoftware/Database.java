@@ -18,13 +18,13 @@ public class Database {
 	private static int i = 1;
 	private static List<Employee> ListOnPage = new ArrayList<>();
 	private static List<Employee> ListOnPage2 = new ArrayList<>();
-	public static String mainDatabase = "//farm03.ewi.utwente.nl:7016/docker";
+	public static Table mainDatabase = new Table("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
 	
 	//Creates a connection to the database
-	private static Connection MakeConnection(String database) throws SQLException, ClassNotFoundException {
+	private static Connection MakeConnection(Table database) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
-		String url = "jdbc:postgresql:" + database;
-		Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
+		String url = "jdbc:postgresql:" + database.getLogin();
+		Connection conn = DriverManager.getConnection(url, database.getUser(), database.getPass());
 		return conn;
 	}
 
@@ -196,7 +196,7 @@ public class Database {
 	}
 	
 	//Edit the payrates for one employee with deletion
-	public static void editPayrates(int crdnr, List<Payrates> list, String database) {
+	public static void editPayrates(int crdnr, List<Payrates> list, Table database) {
 		try {
 			Connection conn = MakeConnection(database);
 			delPayrate(conn, crdnr);
@@ -207,7 +207,7 @@ public class Database {
 	}
 	
 	//Import the payrates for all employee with deletion
-	public static void importPayrts(List<Payrates> list, String database) {
+	public static void importPayrts(List<Payrates> list, Table database) {
 		try {
 			Connection conn = MakeConnection(database);
 				try {
@@ -417,7 +417,7 @@ public class Database {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 
-	public static List<Employee> getEmployees(String database) {
+	public static List<Employee> getEmployees(Table database) {
 		Connection conn;
 		try {
 			conn = MakeConnection(database);
@@ -582,7 +582,7 @@ public class Database {
 			conn.close();
 	}
 
-	public static void deletePayrate(String startDate, String endDate, int id, String database){
+	public static void deletePayrate(String startDate, String endDate, int id, Table database){
 		try {
 			Connection conn = MakeConnection(database);
 			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.employeerates WHERE vandatum=? AND totdatum=? AND id=?");
@@ -597,7 +597,7 @@ public class Database {
 	}
 
 
-	public static List<Payrates> getPayratesSpecificEmployee(int crdnr, String database){
+	public static List<Payrates> getPayratesSpecificEmployee(int crdnr, Table database){
 		try {
 			Connection conn = MakeConnection(database);
 			ResultSet res = specpr(conn, crdnr);
@@ -621,7 +621,7 @@ public class Database {
 		return null;
 	}
 
-	public static List<Payrates> getAllPayrates(String database) {
+	public static List<Payrates> getAllPayrates(Table database) {
 		Connection conn;
 		try {
 			conn = MakeConnection(database);
@@ -645,7 +645,7 @@ public class Database {
 		return null;
 	}
 
-	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, String database) {
+	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, Table database) {
 		try {
 			if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
 				Connection conn = MakeConnection(database);
@@ -704,7 +704,7 @@ public class Database {
 		return null;
 	}
 
-	public static List<Employee> statusFilter(String status, int crdnr, String fullname, String database) {
+	public static List<Employee> statusFilter(String status, int crdnr, String fullname, Table database) {
 		Connection conn;
 		try {
 			conn = MakeConnection(database);
@@ -742,7 +742,7 @@ public class Database {
 		return null;
 	}
 	
-	public static List<Employee> sortTable(int i,String database) {
+	public static List<Employee> sortTable(int i,Table database) {
 		Connection conn;
 		try {
 			conn = MakeConnection(database);

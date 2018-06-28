@@ -28,7 +28,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s, i, f, (String) r.getAttribute("Database"));
+			return Database.statusFilter(s, i, f, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -38,7 +38,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> getEmployees(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getEmployees((String) r.getSession().getAttribute("Database"));
+			return Database.getEmployees((Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -48,7 +48,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getPayratesSpecificEmployee(n, (String) r.getSession().getAttribute("Database"));
+			return Database.getPayratesSpecificEmployee(n, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -58,7 +58,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.sortTable(n, (String) r.getSession().getAttribute("Database"));
+			return Database.sortTable(n, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -68,7 +68,7 @@ public class MainResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c, s, (String) r.getSession().getAttribute("Database"));
+			return Database.searchEmployees(n, c, s, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -99,7 +99,7 @@ public class MainResource {
 				s.close();
 				try {
 					Payrates.checkIntegrity(prts);
-					Database.editPayrates(crdnr, prts, (String) r.getSession().getAttribute("Database"));
+					Database.editPayrates(crdnr, prts, (Table) r.getSession().getAttribute("Database"));
 				} catch (DateException e) {
 					ret = e.getMessage();
 				}
@@ -121,7 +121,7 @@ public class MainResource {
 	@Produces("text/csv")
 	public List<Payrates> exportcsv(@Context HttpServletRequest r) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.getAllPayrates((String) r.getSession().getAttribute("Database"));
+			return Database.getAllPayrates((Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
@@ -155,7 +155,7 @@ public class MainResource {
 				s.close();
 				try {
 					Payrates.checkIntegrity(list);
-					Database.importPayrts(list, (String) r.getSession().getAttribute("Database"));
+					Database.importPayrts(list, (Table) r.getSession().getAttribute("Database"));
 				} catch(DateException e){
 					ret = e.getMessage();
 				}
@@ -181,8 +181,7 @@ public class MainResource {
 	@Path("/databases/{selection}")
 	public void selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
 		if (Login.Security(r.getSession()) == 1) {
-			r.getSession().setAttribute("Database", tables.nametologin(n));
-			System.out.println(r.getSession().getAttribute("Database"));
+			r.getSession().setAttribute("Database", tables.nametotable(n));
 		}
 	}
 	
