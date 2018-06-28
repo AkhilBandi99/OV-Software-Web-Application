@@ -43,7 +43,8 @@ public class Database {
 		PreparedStatement p = conn.prepareStatement(
 				"SELECT h.res_id, h.fullname, h.emp_stat " +
 				"FROM di08.humres h " +
-				"WHERE h.\"freefield 16\" = 'N' ");
+				"WHERE h.\"freefield 16\" = 'N' " +
+				"ORDER BY h.res_id");
 		ResultSet res = p.executeQuery();
 		return res;
 	}
@@ -234,7 +235,7 @@ public class Database {
 				Class.forName("org.postgresql.Driver");
 
 			} catch (ClassNotFoundException e) {
-				
+
 			}
 			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 			int tsvector = 0;
@@ -245,7 +246,7 @@ public class Database {
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
-				
+
 			}
 			i = 1;
 			return tsvector;
@@ -260,7 +261,7 @@ public class Database {
 			Class.forName("org.postgresql.Driver");
 
 		} catch (ClassNotFoundException e) {
-			
+
 		}
 		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 		int update = 0;
@@ -272,7 +273,7 @@ public class Database {
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
-			
+
 		}
 		return update;
 	}
@@ -283,7 +284,7 @@ public class Database {
 				Class.forName("org.postgresql.Driver");
 
 			} catch (ClassNotFoundException e) {
-				
+
 			}
 			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 			int index = 0;
@@ -294,7 +295,7 @@ public class Database {
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
-				
+
 			}
 			i = 1;
 			return index;
@@ -303,7 +304,7 @@ public class Database {
 				Class.forName("org.postgresql.Driver");
 
 			} catch (ClassNotFoundException e) {
-				
+
 			}
 			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
 			int index = 0;
@@ -314,7 +315,7 @@ public class Database {
 				statement.close();
 				conn.close();
 			} catch (SQLException e) {
-				
+
 			}
 			i = 1;
 			index = 1;
@@ -366,7 +367,7 @@ public class Database {
 				return res;
 			}
 		} catch (SQLException e) {
-			
+
 		}
 		return null;
 	}
@@ -441,7 +442,7 @@ public class Database {
 					l.add(new Employee(res.getInt(1), res.getString(2), status));
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			ListOnPage = new ArrayList<>();
 			ListOnPage.addAll(l);
@@ -468,7 +469,7 @@ public class Database {
 					l.add(new GoogleAccount(res.getString(1)));
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -506,10 +507,11 @@ public class Database {
 			List<OVAccount> l = new ArrayList<>();
 			try {
 				while(res.next()) {
-					l.add(new OVAccount(res.getString(1),res.getString(2)));
+					//don't send password hashes of all users to client for security reasons
+					l.add(new OVAccount(res.getString(1),"•••••••••"));
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -533,7 +535,7 @@ public class Database {
 	                return BCrypt.checkpw(password,res.getString(1));
 	            }
 	        } catch (SQLException | NullPointerException e) {
-	            
+
 	        }
 
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -542,8 +544,7 @@ public class Database {
         return false;
     }
 
-    public static void createOVAccount(String username, String password){
-    	try {
+    public static void createOVAccount(String username, String password) throws SQLException, ClassNotFoundException {
 			String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.localaccounts VALUES(?,?)");
@@ -551,20 +552,15 @@ public class Database {
 			p.setString(2, hashed);
 			p.execute();
 			conn.close();
-		} catch (ClassNotFoundException | SQLException e1) {
-			
-		}
+
     }
-	public static void createGoogleAccount(String email){
-		try {
+	public static void createGoogleAccount(String email) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.googleaccounts VALUES(?)");
 			p.setString(1, email);
 			p.execute();
 			conn.close();
-		} catch (ClassNotFoundException | SQLException e1) {
 
-		}
 	}
 
 	public static void deleteOVAccount(String username) throws SQLException, ClassNotFoundException {
@@ -609,11 +605,11 @@ public class Database {
 					try {
 						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3), res.getString(4)));
 					} catch (ParseException e) {
-						
+
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -633,11 +629,11 @@ public class Database {
 					try {
 						l.add(new Payrates(res.getInt(1), res.getDouble(2), res.getString(3),res.getString(4)));
 					} catch (ParseException e) {
-						
+
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -676,7 +672,7 @@ public class Database {
 						}
 					}
 				} catch (SQLException | NullPointerException e) {
-					
+
 				}
 				ListOnPage = new ArrayList<>();
 				ResultSet result = Database.search(conn, crdnr, fullname);
@@ -688,7 +684,7 @@ public class Database {
 						}
 					}
 				} catch (SQLException | NullPointerException e) {
-					
+
 				};
 				ListOnPage.addAll(l);
 				ListOnPage2 = new ArrayList<>();
@@ -732,7 +728,7 @@ public class Database {
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			ListOnPage2 = new ArrayList<>();
 			ListOnPage2.addAll(l);
@@ -770,7 +766,7 @@ public class Database {
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-				
+
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {

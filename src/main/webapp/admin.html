@@ -12,6 +12,7 @@
           href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
 
     <style>
@@ -30,7 +31,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
-                <a >
+                <a style = "cursor:pointer;" href = "https://www.ovsoftware.nl/">
                     OV Software
                 </a>
             </li>
@@ -57,10 +58,11 @@
                                     <div class="bar2"></div>
                                     <div class="bar3"></div>
                                 </div>
-                                <img src="assets/img/OV.png"
-                                     style="height: 70px; margin-right: 12px;">
-                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector">Google Account</label></div>
-                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector">OV Account</label></div>
+                                <a href = "https://www.ovsoftware.nl/">
+                                <img src="assets/img/OV.png" style="height: 70px; margin-right: 12px; cursor:pointer;">
+                                </a>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="googleSelector" checked="checked" /><label class="form-check-label" for="googleSelector" style = "cursor:pointer;">Google Account</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" name="accounttype" type="radio" id="OVSelector" /><label class="form-check-label" for="OVSelector" style = "cursor:pointer;">OV Account</label></div>
                                 <input
                                         id="username" type="text" placeholder="Username"
                                         style="margin: 6px;"><input id="password" type="password"
@@ -143,6 +145,7 @@
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
 <script>
     var ovacc = [];
     var googleacc = [];
@@ -193,7 +196,6 @@
 			// create email display
 			var em = document.createElement("td");
 			var etxt = document.createTextNode(googleacc[i].email);
-			em
 			em.appendChild(etxt);
 			ver.appendChild(em);
 			body.appendChild(ver);
@@ -213,7 +215,7 @@
             var utxt = document.createTextNode(ovacc[i].username);
             user.appendChild(utxt);
             ver.appendChild(user);
-
+            user.className="username";
             // create pass display
             var pass = document.createElement("td");
             var ptxt = document.createTextNode(ovacc[i].password);
@@ -223,7 +225,9 @@
             // create trash icon
             var trash = document.createElement("td");
             var trashIcon = document.createElement("span");
+            trash.style = "cursor:pointer;"
             trash.className = "fas fa-trash-alt";
+            trash.id = "trash";
             trash.setAttribute("onclick", "deleteOVUser(\""+ovacc[i].username+"\")");
             trash.appendChild(trashIcon);
             ver.appendChild(trash);
@@ -232,9 +236,27 @@
 
             body.appendChild(ver);
         }
+
+        $('#OVAccountList').on('click', "#trash", function(){
+            var row = $(this).closest ('tr').remove();
+            $.ajax({
+                url: "./OV/admin/ovuser",
+                contentType: 'application/json; charset=utf-8',
+                type: "DELETE",
+                data: JSON.stringify({"username": $(this).closest ('tr').children("td.username").text()}),
+                dataType: 'json',
+                success: function() {
+                    row.remove();
+                    showSuccessToast("User has been successfully deleted.");
+                },
+                error: function () {
+                    showErrorToast("An error occurred while deleting the user.");
+                }
+            });
+        });
     }
 
-
+	// update google account table
     function updateGoogleAccount() {
         var body = document.getElementById('GoogleAccountList');
         body.innerHTML = "";
@@ -252,6 +274,7 @@
 
             // create trash icon
             var trash = document.createElement("td");
+            trash.style = "cursor:pointer;"
             trash.className = "fas fa-trash-alt";
             trash.id = "trash";
             ver.appendChild(trash);
@@ -268,9 +291,10 @@
                 dataType: 'json',
                 success: function() {
                     row.remove();
+                    showSuccessToast("User has been successfully deleted.");
                 },
                 error: function () {
-
+                    showErrorToast("An error occurred while deleting the user.");
                 }
             });
         });
@@ -279,20 +303,42 @@
 
 
     function addAccount(){
-        if($("#OVSelector").prop("checked", true)){
+        if($("#OVSelector").is(':checked')){
+            var username = $("#username").val();
+            var password = $("#password").val();
             $.post({
                 url: "./OV/admin/ovuser",
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({"username": $("#username").val(),"password": $("#password").val()}),
-                dataType: 'json'
+                data: JSON.stringify({"username": username,"password": password}),
+                dataType: 'json',
+                success: function () {
+                    showSuccessToast("User has been successfully created.");
+                    $('#OVAccountList tr:last').after('<tr><td class="username">'+username+'</td><td>•••••••••</td><td class="fas fa-trash-alt" id="trash"></td></tr>');
+                    $("#username").val("");
+                    $("#password").val("");
+                },
+                error: function () {
+                    showErrorToast("An error occurred while creating the user.")
+                }
             });
         }
-        if($("#googleSelector").prop("checked", true)){
+        if($("#googleSelector").is(':checked')){
+            var email = $("#email").val();
             $.post({
                 url: "./OV/admin/googleuser",
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({"email": $("#email").val()}),
-                dataType: 'json'
+                data: JSON.stringify({"email": email}),
+                dataType: 'json',
+                success: function () {
+                    console.log("test1");
+                    showSuccessToast("User has been successfully created.");
+                    $('#GoogleAccountList tr:last').after('<tr><td class="email">'+email+'</td><td class="fas fa-trash-alt" id="trash"></td></tr>');
+                    $("#email").val();
+                },
+                error: function () {
+                    console.log("test2");
+                    showErrorToast("An error occurred while creating the user.")
+                }
             });
         }
     }
@@ -302,6 +348,38 @@
         $("#wrapper").toggleClass("toggled");
     });
 
+    function showErrorToast(message){
+        $.notify({
+            message: message
+        },{
+            type: 'danger',
+            placement:{
+                from: "bottom",
+                align: "center"
+            },
+            animate: {
+                enter: 'animated fadeInUp',
+                exit: 'animated fadeOutDown'
+            }
+        });
+    }
+
+    function showSuccessToast(message) {
+        $.notify({
+            message: message
+        },{
+            type: 'success',
+            allow_dismiss: true,
+            placement:{
+                from: "bottom",
+                align: "center"
+            },
+            animate: {
+                enter: 'animated fadeInUp',
+                exit: 'animated fadeOutDown'
+            }
+        });
+    }
 
 
     function logout() {
