@@ -282,21 +282,24 @@
         }
 
         $('#GoogleAccountList').on('click', "#trash", function(){
-            var row = $(this).closest ('tr').remove();
-            $.ajax({
-                url: "./OV/admin/googleuser",
-                contentType: 'application/json; charset=utf-8',
-                type: "DELETE",
-                data: JSON.stringify({"email": $(this).closest ('tr').children("td.email").text()}),
-                dataType: 'json',
-                success: function() {
-                    row.remove();
-                    showSuccessToast("User has been successfully deleted.");
-                },
-                error: function () {
-                    showErrorToast("An error occurred while deleting the user.");
-                }
-            });
+            var result = confirm('Are you sure you want to delete this payrate?');
+            if(result) {
+            	var row = $(this).closest ('tr').remove();
+	            $.ajax({
+	                url: "./OV/admin/googleuser",
+	                contentType: 'application/json; charset=utf-8',
+	                type: "DELETE",
+	                data: JSON.stringify({"email": $(this).closest ('tr').children("td.email").text()}),
+	                dataType: 'json',
+	                success: function() {
+	                    row.remove();
+	                    showSuccessToast("User has been successfully deleted.");
+	                },
+	                error: function () {
+	                    showErrorToast("An error occurred while deleting the user.");
+	                }
+	            });
+            }
         });
     }
 
