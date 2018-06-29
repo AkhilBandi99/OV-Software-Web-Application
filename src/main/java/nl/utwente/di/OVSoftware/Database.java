@@ -19,7 +19,6 @@ public class Database {
 	//Creates a connection to the database
 	private static Connection MakeConnection(Table database) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
-		//System.out.println(database);
 		String url = "jdbc:postgresql:" + database.getLogin();
 		Connection conn = DriverManager.getConnection(url, database.getUser(), database.getPass());
 		return conn;

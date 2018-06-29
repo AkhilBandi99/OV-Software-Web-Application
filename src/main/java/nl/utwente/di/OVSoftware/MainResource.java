@@ -1,6 +1,7 @@
 package nl.utwente.di.OVSoftware;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class MainResource {
 	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> getEmployees(@Context HttpServletRequest r) {
+	public List<Employee> getEmployees(@Context HttpServletRequest r) throws SQLException, ClassNotFoundException {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.getEmployees((Table) r.getSession().getAttribute("Database"));
 		}
@@ -38,7 +39,7 @@ public class MainResource {
 	@GET
 	@Path("/employees/{crdnr}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n) {
+	public List<Payrates> getEmployees(@Context HttpServletRequest r, @PathParam("crdnr") int n) throws ParseException, SQLException, ClassNotFoundException {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.getPayratesSpecificEmployee(n, (Table) r.getSession().getAttribute("Database"));
 		}
@@ -49,65 +50,54 @@ public class MainResource {
 	@GET
 	@Path("/search/{crdnr}/{name}/status/{status}/sort/{num}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s, @PathParam("num") int so) {
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s, @PathParam("num") int so) throws SQLException, ClassNotFoundException {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.searchEmployees(n, c, s, so, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
 
-	//Receives a string of all the new pay rates for an employee and puts these in the database after validating these.
-	@POST
-	@Path("/editPayrates")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String editPayrates(@Context HttpServletRequest r, String payrates) {
-		if (Login.Security(r.getSession()) == 1) {
-			Scanner s = new Scanner(payrates);
-			String ret = null;
-			List<Payrates> prts = new ArrayList<>();
-			int crdnr = -1;
-			try {
-				if (s.hasNextLine()) {
-					crdnr = Integer.parseInt(s.nextLine());
-				}
-				while(s.hasNextLine()) {
-					String line = s.nextLine();
-					String[] elems = line.split(",");
-					try {
-						double cost = Double.parseDouble(elems[0]);
-						if (cost < 0) {
-							throw new NumberFormatException();
-						}
-						prts.add(new Payrates(crdnr, cost, elems[1], elems[2]));
-					} catch (ParseException e) {
-						s.close();
-						return "A Date is not valid";
-					}
-				}
-				s.close();
-				try {
-					Payrates.checkIntegrity(prts);
-					Database.editPayrates(crdnr, prts, (Table) r.getSession().getAttribute("Database"));
-				} catch (DateException e) {
-					ret = e.getMessage();
-				}
-			} catch (NumberFormatException e) {
-				ret = "A Cost is not valid";
-			}
-			if(ret == null) {
-				return "1";
-			} else {
-				return ret;
-			}
-		}
-		return null;
-	}
+    //Receives a string of all the new pay rates for an employee and puts these in the database after validating these.
+    @POST
+    @Path("/editPayrates")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public String editPayrates(@Context HttpServletRequest r, String payrates) throws ParseException, DateException {
+        if (Login.Security(r.getSession()) == 1) {
+            Scanner s = new Scanner(payrates);
+            String ret = null;
+            List<Payrates> prts = new ArrayList<>();
+            int crdnr = -1;
+                if (s.hasNextLine()) {
+                    crdnr = Integer.parseInt(s.nextLine());
+                }
+                while(s.hasNextLine()) {
+                    String line = s.nextLine();
+                    String[] elems = line.split(",");
+                        double cost = Double.parseDouble(elems[0]);
+                        if (cost < 0) {
+                            throw new NumberFormatException();
+                        }
+                        prts.add(new Payrates(crdnr, cost, elems[1], elems[2]));
+                }
+                s.close();
+                    Payrates.checkIntegrity(prts);
+                    Database.editPayrates(crdnr, prts, (Table) r.getSession().getAttribute("Database"));
+
+            if(ret == null) {
+                return "1";
+            } else {
+                return ret;
+            }
+        }
+        return null;
+    }
+
 
 	//Exports a complete pay rates list from the database in csv format.
 	@GET
 	@Path("/export.csv")
 	@Produces("text/csv")
-	public List<Payrates> exportcsv(@Context HttpServletRequest r) {
+	public List<Payrates> exportcsv(@Context HttpServletRequest r) throws SQLException, ClassNotFoundException {
 		if (Login.Security(r.getSession()) == 1) {
 			return Database.getAllPayrates((Table) r.getSession().getAttribute("Database"));
 		}
@@ -120,7 +110,7 @@ public class MainResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String importcsv(@Context HttpServletRequest r, @FormDataParam("files") InputStream in) {
-		String ret = null;
+		String ret = "import success";
 		if (Login.Security(r.getSession()) == 1) {
 			try {
 				List<Payrates> list = new ArrayList<>();
