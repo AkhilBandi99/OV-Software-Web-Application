@@ -468,7 +468,6 @@ function requestContent() {
 
 // delete the selected payrate
 function deletePayrate(i) {
-	console.log(i);
     var delelem = document.getElementById('infotable').children[i];
     document.getElementById('infotable').removeChild(delelem);
 
