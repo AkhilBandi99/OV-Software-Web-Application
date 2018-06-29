@@ -206,6 +206,11 @@
 		async defer></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
 	<script>
+		/*
+		 * The script of main page and it's various functions
+		*/
+		
+		// global variables
 		var list = [];
 		var info = [];
 		var dropdownitems = [];
@@ -222,6 +227,8 @@
 		var xhr = new XMLHttpRequest();
 		var rqueue = ["./OV/test", "./OV/main/databases", "./OV/main/employees"];
 		var rcounter = 0;
+		
+		// when ever the page loads
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
 				if (this.responseText == "0") {
@@ -253,6 +260,7 @@
 			}
 		};
 
+		// the file submitter when importing
 		function submitfile() {
 			let formData = new FormData();
 			formData.append("files", document.getElementById("fileLoader").files[0]);
@@ -261,6 +269,7 @@
 			xhr.send(formData);
 		}
 		
+		// functionality for office dropdown(selects the database)
 		function addDropdown() {
 			dropdown = document.getElementById("officeDropdown")
 			dropdown.innerHTML = "";
@@ -271,6 +280,7 @@
 
 		}
 		
+		// select a row of the employee iist on the web page
 		function selectitem(item)	{
 			var body = document.getElementById('EmployeeList');
 			body.innerHTML = "";
@@ -279,6 +289,7 @@
 			xhr.send();
 		}
 
+		// update the employee list whenever the page reloads
 		function updatelist() {
 			var body = document.getElementById('EmployeeList');
 			body.innerHTML = "";
@@ -311,10 +322,12 @@
 
 		}
 
+		// open the file dialog when file loader is clicked
 		function openFileDialog() {
 			$("#fileLoader").click();
 		}
 
+		// send a get request for just search query
 		function searchupdate() {
 			var body = document.getElementById('EmployeeList');
 			body.innerHTML = "";
@@ -338,7 +351,7 @@
 			}
 		}
 
-		// update payrate table
+		// update payrate table when page reloads
 		function updateinfo() {
 			var body = document.getElementById('infotable');
 			body.innerHTML = "";
@@ -361,6 +374,7 @@
 				active.appendChild(atxt);
 				ver.appendChild(active);
 
+				// create an edit icon
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
 				editIcon.style = "cursor:pointer;";
@@ -383,6 +397,7 @@
 			}
 		}
 
+		// functionality when edit button is pressed
 		function edit(i) {
 			var row = document.getElementById('infotable').children
 			
@@ -403,6 +418,7 @@
 			}
 		}
 
+		// functionality when add new payrate button is pressed
 		function newPayrtField() {
 			var body = document.getElementById('infotable');
 			
@@ -430,6 +446,7 @@
 			active.appendChild(atxt);
 			ver.appendChild(active);
 
+			// create edit icon
 			var edit = document.createElement("td");
 			var editIcon = document.createElement("span");
 			editIcon.className = "fas fa-pencil-alt";
@@ -486,6 +503,7 @@
 			})
 		}
 		
+		// sort the tables when the employee name or number is pressed
 		function sort(n) {
 			var sortnum = document.getElementById("numSort");
 			var sortname = document.getElementById("nameSort");
@@ -525,6 +543,7 @@
 			xhr.send();
 		}
 
+		// logout off the main html page
 		function logout() {
 			var auth2 = gapi.auth2.getAuthInstance();
 			auth2.signOut().then(function() {
@@ -541,6 +560,11 @@
 			});
 		}
 
+		/*
+		 * the functions when status filter is applied
+		 * we had to make three of them becaue we cannot take the value selected from an "a" tag
+		 */
+		 
 		function statusFilterA() {
 			status = document.getElementById("statusA").getAttribute("value");
 			crdnr = document.getElementById("searchid").value;
@@ -601,6 +625,7 @@
 			xhr.send();
 		}
 
+		// get the id of the employee when a row is pressed
 		function getId(x, name) {
 			info = [];
 			xhr.open("GET", "./OV/main/employees/" + x);
@@ -612,6 +637,7 @@
 			$("#empInfo").modal();
 		}
 
+		// office button and status dropdown functionality 
 		$(function() {
 
 			$("#officeDropdown a").click(function() {
@@ -630,6 +656,7 @@
 
 		});
 
+		// this is called whenever the server recieves new content
 		function requestContent() {
 			if (rcounter < rqueue.length) {
 				xhr.open("GET", rqueue[rcounter]);
@@ -650,6 +677,7 @@
 			}
 		}
 
+		// the error notification message on the page
         function showErrorToast(message){
             $.notify({
                 message: message
@@ -666,6 +694,7 @@
             });
         }
 
+		// the success notification message on the page
         function showSuccessToast(message) {
             $.notify({
                 message: message
@@ -684,10 +713,22 @@
             });
         }
 
+        // menu toggle function
 		$("#menu-toggle").click(function(e) {
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
 		});
+
+		// notify the status of import
+		function showImportStatus(status) {
+		    $("#importstatus").html(status);
+            $("#importpopup").modal();
+        }
+        
+		// notify the status of the payrate change
+        function showPayrateStatus(status) {
+            $("#payratestatus").html(status);
+        }
 	</script>
 </body>
 
