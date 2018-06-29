@@ -23,6 +23,7 @@ public class MainResource {
 	
 	DatabaseMaps tables = new DatabaseMaps();
 
+	//returns a list of all employees in the database
 	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -33,6 +34,7 @@ public class MainResource {
 		return null;
 	}
 
+	//returns a list of all pay rates for a specific employee.
 	@GET
 	@Path("/employees/{crdnr}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -43,6 +45,7 @@ public class MainResource {
 		return null;
 	}
 
+	//returns a list of all employees that are compliant with the search parameters.
 	@GET
 	@Path("/search/{crdnr}/{name}/status/{status}/sort/{num}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -53,6 +56,7 @@ public class MainResource {
 		return null;
 	}
 
+	//Receives a string of all the new pay rates for an employee and puts these in the database after validating these.
 	@POST
 	@Path("/editPayrates")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -99,7 +103,7 @@ public class MainResource {
 		return null;
 	}
 
-	
+	//Exports a complete pay rates list from the database in csv format.
 	@GET
 	@Path("/export.csv")
 	@Produces("text/csv")
@@ -110,6 +114,7 @@ public class MainResource {
 		return null;
 	}
 
+	//Imports a csv from the user and overwrites the database with it.
 	@POST
 	@Path("/import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -155,6 +160,7 @@ public class MainResource {
 		return ret;
 	}
 
+	//returns all database names.
 	@GET
 	@Path("/databases")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -165,13 +171,13 @@ public class MainResource {
 		return null;
 	}
 	
+	//Selects the database for a session.
 	@POST
 	@Path("/databases/{selection}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public int selectDatabases(@Context HttpServletRequest r, @PathParam("selection") String n) {
 		if (Login.Security(r.getSession()) == 1) {
 			r.getSession().setAttribute("Database", tables.nametotable(n));
-			System.out.println("aaaaaaaa " + ((Table) r.getSession().getAttribute("Database")));
 			return 1;
 		}
 		return 0;

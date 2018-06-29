@@ -1,9 +1,6 @@
 package nl.utwente.di.OVSoftware;
 
 import org.mindrot.jbcrypt.BCrypt;
-
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -76,6 +73,7 @@ public class Database {
 		p.execute();
 	}
 	
+	//Adds a list of payrates to the database.
 	private static void addPayrates(Connection conn, List<Payrates> list) throws SQLException {
 		PreparedStatement p = conn.prepareStatement(
 				"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");

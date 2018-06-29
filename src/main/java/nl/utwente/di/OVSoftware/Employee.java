@@ -7,13 +7,12 @@ public class Employee {
 	private final int id;
 	private final String name;
 	private final String status;
-	List<Payrates> payrates;
 	
+	//Employees are used to store employee data from the database.
 	public Employee(int i, String name, String status) {
 		id = i;
 		this.name = name;
 		this.status = status;
-		payrates = new ArrayList<>();
 	}
 
 	public int getId() {
@@ -24,11 +23,8 @@ public class Employee {
 		return name;
 	}
 
-	public String getStatus(){return status;}
-	
-	
-	public List<Payrates> getPayrates(){
-		return payrates;
+	public String getStatus(){
+		return status;
 	}
 	
 	public String toString() {

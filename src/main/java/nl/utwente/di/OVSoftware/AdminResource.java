@@ -24,6 +24,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 @Path("/admin")
 public class AdminResource {
 	
+	//Returns a list off all OV accounts.
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/ovusers")
@@ -35,6 +36,7 @@ public class AdminResource {
 		return null;
 	}
 	
+	//Returns a list of all Google accounts.
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/googleusers")
@@ -46,6 +48,7 @@ public class AdminResource {
 		return null;
 	}
 
+	//Creates a new OV account.
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
@@ -55,6 +58,7 @@ public class AdminResource {
 		}
 	}
 
+	//Creates a new Google account.
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")
@@ -64,6 +68,7 @@ public class AdminResource {
 		}
 	}
 
+	//Deletes an OV accounts.
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
@@ -73,6 +78,7 @@ public class AdminResource {
 		}
 	}
 
+	//Deletes a Google account.
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")

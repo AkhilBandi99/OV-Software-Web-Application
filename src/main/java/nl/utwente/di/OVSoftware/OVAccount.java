@@ -15,6 +15,7 @@ public class OVAccount {
 		return password;
 	}
 
+	//OV accounts are used to store the usernames and passwords for local accounts.
 	@JsonCreator
 	public OVAccount(@JsonProperty("username") String username, @JsonProperty("password") String password) {
 		this.username = username;

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 @Produces("text/csv")
 
 
-
+//The CsvWriter is used to automatically create csv files from a list.
 public class CsvWriter implements MessageBodyWriter<Object> {
 
 	@Override

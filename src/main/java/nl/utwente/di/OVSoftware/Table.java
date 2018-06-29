@@ -2,11 +2,19 @@ package nl.utwente.di.OVSoftware;
 
 public class Table {
 
+	//Display name of the database.
 	private final String name;
+	
+	//Link to the database.
 	private final String login;
+	
+	//Username for the database.
 	private final String user;
+	
+	//Password for the database.
 	private final String pass;
 	
+	//Tables are used to provide databases to pull data from.
 	public Table(String n, String l, String u, String p) {
 		name = n;
 		login = l;
