@@ -17,6 +17,7 @@ import java.util.Collections;
 @Path("/")
 public class LoginResource {
 
+	//Checks the login for local OV accounts.
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/login/{user}/{pass}")
@@ -32,6 +33,7 @@ public class LoginResource {
 
 	}
 
+	//Log the current session out.
 	@GET
 	@Path("/logout")
 	public void logOut(@Context HttpServletRequest r, @Context HttpServletResponse resp){
@@ -43,6 +45,7 @@ public class LoginResource {
 	private static final JacksonFactory jacksonFactory = new JacksonFactory();
 	private static final HttpTransport transport = new NetHttpTransport();
 
+	//Google login service.
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.TEXT_PLAIN)

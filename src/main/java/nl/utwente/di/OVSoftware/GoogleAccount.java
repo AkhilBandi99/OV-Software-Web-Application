@@ -10,6 +10,7 @@ public class GoogleAccount {
 		return email;
 	}
 
+	//Google accounts stores Google accounts from the database
 	@JsonCreator
 	public GoogleAccount(@JsonProperty("email") String email) {
 		this.email = email;

@@ -1,29 +1,22 @@
 package nl.utwente.di.OVSoftware;
 
-import javax.ws.rs.Path;
-
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import com.sun.glass.ui.delegate.MenuItemDelegate;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/admin")
 public class AdminResource {
 	
+	//Returns a list off all OV accounts.
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/ovusers")
@@ -35,6 +28,7 @@ public class AdminResource {
 		return null;
 	}
 	
+	//Returns a list of all Google accounts.
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/googleusers")
@@ -46,6 +40,7 @@ public class AdminResource {
 		return null;
 	}
 
+	//Creates a new OV account.
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
@@ -55,6 +50,7 @@ public class AdminResource {
 		}
 	}
 
+	//Creates a new Google account.
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")
@@ -64,6 +60,7 @@ public class AdminResource {
 		}
 	}
 
+	//Deletes an OV accounts.
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/ovuser")
@@ -73,6 +70,7 @@ public class AdminResource {
 		}
 	}
 
+	//Deletes a Google account.
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/googleuser")

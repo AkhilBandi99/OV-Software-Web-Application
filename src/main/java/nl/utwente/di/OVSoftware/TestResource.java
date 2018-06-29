@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+//Resource for the Javascript to check whether the user is logged in
 @Path("test")
 public class TestResource {
 

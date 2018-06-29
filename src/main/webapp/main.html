@@ -288,6 +288,8 @@
 		}
 		
 		function selectitem(item)	{
+			var body = document.getElementById('EmployeeList');
+			body.innerHTML = "";
 			rqueue.push("./OV/main/employees");
 			xhr.open("POST", "./OV/main/databases/" + item);
 			xhr.send();
@@ -330,6 +332,8 @@
 		}
 
 		function searchupdate() {
+			var body = document.getElementById('EmployeeList');
+			body.innerHTML = "";
 			crdnr = document.getElementById("searchid").value;
 			fullname = document.getElementById("searchname").value;
 			if (crdnr != "" && fullname != "") {
@@ -345,7 +349,8 @@
 						+ "/status/" + status + "/sort/-1");
 				xhr.send();
 			} else if (crdnr == "" && fullname == "") {
-				return;
+				xhr.open("GET", "./OV/main/employees");
+				xhr.send();
 			}
 		}
 
@@ -655,7 +660,6 @@
 					row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
 					row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
 				}
-				saveChanges();
 			} else {
 				return;
 			}

@@ -1,18 +1,14 @@
 package nl.utwente.di.OVSoftware;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 public class Payrates implements Comparable<Payrates>{
 	
@@ -21,6 +17,7 @@ public class Payrates implements Comparable<Payrates>{
 	private final Calendar startDate;
 	private final Calendar endDate;
 
+	//Payrates are used to store pay rates for employees
 	@JsonCreator
 	public Payrates(@JsonProperty("emp_id") int i, @JsonProperty("price") double c,@JsonProperty("startdate") String s,@JsonProperty("enddate") String e) throws ParseException {
 		id = i;
@@ -40,6 +37,7 @@ public class Payrates implements Comparable<Payrates>{
 		return cost;
 	}
 
+	//a comparing function to check if the string is equivalent to the day after this pay rates end date ends
 	public boolean isNextDate(String next) {
 		Calendar temp = (Calendar) endDate.clone();
 		temp.add(Calendar.DATE, 1);
@@ -72,7 +70,7 @@ public class Payrates implements Comparable<Payrates>{
 		return getId() + " " + getCost() + " " + getStartDate() + " " + getEndDate();
 	}
 
-	
+	//Checks if a list of payrates is valid.
 	public static void checkIntegrity(List<Payrates> mainlist) throws DateException {
 		List<Payrates> head = new ArrayList<>(mainlist);
 		Collections.sort(head);
@@ -80,7 +78,7 @@ public class Payrates implements Comparable<Payrates>{
 		checkDates(head, mainlist);
 	}
 
-	
+	//Checks for a list of payrates if all of the start dates are before the end dates.
 	private static void checkPayrate(List<Payrates> head) throws DateException {
 		int i = 0;
 		while (i < head.size()) {
@@ -91,6 +89,7 @@ public class Payrates implements Comparable<Payrates>{
 		}
 	}
 	
+	//Checks for a list of payrates if all of the sequential payrates have a start date the day after the previous' payrates end date.
 	private static void checkDates(List<Payrates> head, List<Payrates> mainlist) throws DateException {
 		List<Payrates> list = new ArrayList<Payrates>(head);
 		while(!list.isEmpty()) {
