@@ -648,20 +648,16 @@
 				rcounter++;
 			}
 		}
-
+		
+		// delete the selected payrate
 		function deletePayrate(i) {
-			var result = confirm('Are you sure you want to delete this payrate?');
-			if(result) {
-				var delelem = document.getElementById('infotable').children[i];
-				document.getElementById('infotable').removeChild(delelem);
-				
-				var row = document.getElementById('infotable').children;
-				for(l = 0; l < row.length; l++) {
-					row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
-					row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
-				}
-			} else {
-				return;
+			var delelem = document.getElementById('infotable').children[i];
+			document.getElementById('infotable').removeChild(delelem);
+			
+			var row = document.getElementById('infotable').children;
+			for(l = 0; l < row.length; l++) {
+				row[l].children[3].children[0].setAttribute('onclick', "edit(" + l + ")");
+				row[l].children[4].children[0].setAttribute('onclick', "deletePayrate(" + l + ")");
 			}
 		}
 

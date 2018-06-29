@@ -152,7 +152,7 @@
     var dropdownitems = [];
     var status = -1;
     var xhr = new XMLHttpRequest();
-    var rqueue = [ "./OV/admin/googleusers", "./OV/admin/ovusers"];
+    var rqueue = ["./OV/test", "./OV/admin/googleusers", "./OV/admin/ovusers"];
     var rcounter = 0;
     $("#username").hide();
     $("#password").hide();
@@ -282,7 +282,7 @@
         }
 
         $('#GoogleAccountList').on('click', "#trash", function(){
-            var row = $(this).closest ('tr').remove();
+           	var row = $(this).closest ('tr').remove();
             $.ajax({
                 url: "./OV/admin/googleuser",
                 contentType: 'application/json; charset=utf-8',

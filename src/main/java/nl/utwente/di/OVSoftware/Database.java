@@ -14,7 +14,6 @@ import java.util.List;
 
 public class Database {
 
-	private static int i = 1;
 	public static Table mainDatabase = new Table("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
 	
 	//Creates a connection to the database
@@ -117,7 +116,7 @@ public class Database {
 					try {
 						conn.rollback();
 					} catch (SQLException e1) {
-						
+						e1.printStackTrace();
 					}
 				}
 			} catch(SQLException | ClassNotFoundException e) {
@@ -127,105 +126,13 @@ public class Database {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private static int tsvector() {
-		if (i == 0) {
-			try {
-				Class.forName("org.postgresql.Driver");
-
-			} catch (ClassNotFoundException e) {
-
-			}
-			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-			int tsvector = 0;
-			try {
-				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				PreparedStatement statement = conn.prepareStatement("ALTER TABLE di08.humres " + "ADD ts tsvector;");
-				tsvector = statement.executeUpdate();
-				statement.close();
-				conn.close();
-			} catch (SQLException e) {
-
-			}
-			i = 1;
-			return tsvector;
-		} else {
-			i = 1;
-			return 1;
-		}
-	}
-
-	private static int update() {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException e) {
-
-		}
-		String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-		int update = 0;
-		try {
-			Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-			PreparedStatement statement = conn.prepareStatement("UPDATE di08.humres "
-					+ "SET ts = to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, ''));");
-			update = statement.executeUpdate();
-			statement.close();
-			conn.close();
-		} catch (SQLException e) {
-
-		}
-		return update;
-	}
-
-	private static int index() {
-		if (i == 0) {
-			try {
-				Class.forName("org.postgresql.Driver");
-
-			} catch (ClassNotFoundException e) {
-
-			}
-			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-			int index = 0;
-			try {
-				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				PreparedStatement statement = conn.prepareStatement("CREATE INDEX index ON di08.humres USING GIN(ts)");
-				index = statement.executeUpdate();
-				statement.close();
-				conn.close();
-			} catch (SQLException e) {
-
-			}
-			i = 1;
-			return index;
-		} else {
-			try {
-				Class.forName("org.postgresql.Driver");
-
-			} catch (ClassNotFoundException e) {
-
-			}
-			String url = "jdbc:postgresql://farm03.ewi.utwente.nl:7016/docker";
-			int index = 0;
-			try {
-				Connection conn = DriverManager.getConnection(url, "docker", "YkOkimczn");
-				PreparedStatement statement = conn.prepareStatement("REINDEX TABLE di08.humres");
-				index = statement.executeUpdate();
-				statement.close();
-				conn.close();
-			} catch (SQLException e) {
-
-			}
-			index = 1;
-			return index;
-		}
-	}
 
 	public static ResultSet search(Connection conn, int crdnr, String fullname) {
 		try {
 			if (crdnr != -1 && !fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement (
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
-						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 " + 
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " + 
 						"WHERE ((ts @@ query1 OR ts @@ query2) " +
 						"OR (h.fullname ILIKE ? " +
 						"AND h.res_id::varchar LIKE ?)) " +
@@ -239,8 +146,8 @@ public class Database {
 				return res;
 			} else if (crdnr != -1 && fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank " +
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " +
 						"WHERE (ts @@ query " +
 						"OR h.res_id::varchar LIKE ?) " +
 						"AND h.\"freefield 16\" = 'N' " +
@@ -251,8 +158,8 @@ public class Database {
 				return res;
 			} else if (crdnr == -1 && !fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank " +
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " +
 						"WHERE (ts @@ query " +
 						"OR h.fullname ILIKE ?) " +
 						"AND h.\"freefield 16\" = 'N' " +
@@ -273,8 +180,8 @@ public class Database {
 		try {
 			if (crdnr != -1 && !fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement (
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
-						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 " + 
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " + 
 						"WHERE ((ts @@ query1 OR ts @@ query2) " +
 						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
 						"AND h.\"freefield 16\" = 'N' " +
@@ -289,8 +196,8 @@ public class Database {
 				return res;
 			} else if (crdnr != -1 && fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank " +
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " +
 						"WHERE (ts @@ query " +
 						"OR h.res_id::varchar LIKE ?) " +
 						"AND h.\"freefield 16\" = 'N' " +
@@ -303,8 +210,8 @@ public class Database {
 				return res;
 			} else if (crdnr == -1 && !fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank " +
+						"FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " +
 						"WHERE (ts @@ query " +
 						"OR h.fullname ILIKE ?) " +
 						"AND h.\"freefield 16\" = 'N' " +
@@ -339,8 +246,8 @@ public class Database {
 			if (crdnr != -1 && !fullname.equals("-1")) {
 				if(sort == 00) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -353,8 +260,8 @@ public class Database {
 					return res;
 				} else if(sort == 01) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -367,8 +274,8 @@ public class Database {
 					return res;
 				} else if(sort == 10) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -381,8 +288,8 @@ public class Database {
 					return res;
 				} else if(sort == 11) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -397,8 +304,8 @@ public class Database {
 			} else if (crdnr != -1 && fullname.equals("-1")) {
 				if(sort == 00) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.res_id::varchar LIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -409,8 +316,8 @@ public class Database {
 					return res;
 				} else if(sort == 01) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.res_id::varchar LIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -421,8 +328,8 @@ public class Database {
 					return res;
 				} else if(sort == 10) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.res_id::varchar LIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -433,8 +340,8 @@ public class Database {
 					return res;
 				} else if(sort == 11) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.res_id::varchar LIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -447,8 +354,8 @@ public class Database {
 			} else if (crdnr == -1 && !fullname.equals("-1")) {
 				if(sort == 00) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.fullname ILIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -459,8 +366,8 @@ public class Database {
 					return res;
 				} else if(sort == 01) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.fullname ILIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -471,8 +378,8 @@ public class Database {
 					return res;
 				} else if(sort == 10) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.fullname ILIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -483,8 +390,8 @@ public class Database {
 					return res;
 				} else if(sort == 11) {
 					p = conn.prepareStatement(
-							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-							+ "FROM di08.humres h, to_tsquery(?) query " 
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+							+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 							+ "WHERE (ts @@ query "
 							+ "OR h.fullname ILIKE ?) "
 							+ "AND h.\"freefield 16\" = 'N' "
@@ -542,8 +449,8 @@ public class Database {
 				if(status.equals("-1")) {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -556,8 +463,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -570,8 +477,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -584,8 +491,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -600,8 +507,8 @@ public class Database {
 				} else {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -616,8 +523,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -632,8 +539,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -648,8 +555,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query1) AS rank1, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query1, to_tsquery(?) query2 " 
 								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
 								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -668,8 +575,8 @@ public class Database {
 				if(status.equals("-1")) {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -680,8 +587,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -692,8 +599,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -704,8 +611,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -718,8 +625,8 @@ public class Database {
 				} else {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -732,8 +639,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -746,8 +653,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -760,8 +667,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.res_id::varchar LIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -778,8 +685,8 @@ public class Database {
 				if(status.equals("-1")) {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -790,8 +697,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -802,8 +709,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -814,8 +721,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -828,8 +735,8 @@ public class Database {
 				} else {
 					if(sort == 00) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -842,8 +749,8 @@ public class Database {
 						return res;
 					} else if(sort == 01) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -856,8 +763,8 @@ public class Database {
 						return res;
 					} else if(sort == 10) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -870,8 +777,8 @@ public class Database {
 						return res;
 					} else if(sort == 11) {
 						p = conn.prepareStatement(
-								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-								+ "FROM di08.humres h, to_tsquery(?) query " 
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')), query) AS rank "
+								+ "FROM di08.humres h, to_tsvector('english', coalesce(res_id, '0') ||' '|| coalesce(fullname, '')) ts, to_tsquery(?) query " 
 								+ "WHERE (ts @@ query "
 								+ "OR h.fullname ILIKE ?) "
 								+ "AND h.\"freefield 16\" = 'N' "
@@ -995,11 +902,11 @@ public class Database {
 					l.add(new Employee(res.getInt(1), res.getString(2), status));
 				}
 			} catch (SQLException | NullPointerException e) {
-
+				e.printStackTrace();
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
-			
+			e1.printStackTrace();
 		}
 		return new ArrayList<Employee>();
 	}
@@ -1017,11 +924,11 @@ public class Database {
 					l.add(new GoogleAccount(res.getString(1)));
 				}
 			} catch (SQLException | NullPointerException e) {
-
+				e.printStackTrace();
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
-
+			e1.printStackTrace();
 		}
 		return null;
 	}
@@ -1038,10 +945,10 @@ public class Database {
 	                return true;
 	            }
 	        } catch (SQLException | NullPointerException e) {
-
+	        	e.printStackTrace();
 	        }
 		} catch (ClassNotFoundException | SQLException e1) {
-	
+			e1.printStackTrace();
 		}
         return false;
     }
@@ -1059,11 +966,11 @@ public class Database {
 					l.add(new OVAccount(res.getString(1),"•••••••••"));
 				}
 			} catch (SQLException | NullPointerException e) {
-
+				e.printStackTrace();
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
-			
+			e1.printStackTrace();
 		}
 		return null;
 	}
@@ -1081,7 +988,7 @@ public class Database {
 	                return BCrypt.checkpw(password,res.getString(1));
 	            }
 	        } catch (SQLException | NullPointerException e) {
-
+	        	e.printStackTrace();
 	        }
 
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -1135,7 +1042,7 @@ public class Database {
 			p.execute();
 			conn.close();
 		} catch (ClassNotFoundException | SQLException e1) {
-
+			e1.printStackTrace();
 		}
 	}
 
@@ -1155,7 +1062,7 @@ public class Database {
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-
+				e.printStackTrace();
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
@@ -1179,58 +1086,53 @@ public class Database {
 					}
 				}
 			} catch (SQLException | NullPointerException e) {
-
+				e.printStackTrace();
 			}
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
-
+			e1.printStackTrace();
 		}
 		return null;
 	}
 
 	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, int sort, Table database) {
 		try {
-			if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
-				Connection conn = MakeConnection(database);
-				ResultSet res;
-				if((crdnr != -1 || !fullname.equals("-1")) && status.equals("-1") && sort == -1) {
-					res = Database.search(conn, crdnr, fullname);
-				} else if(!status.equals("-1") && sort == -1) {
-					res = Database.searchFilter(conn, crdnr, fullname, status);
-				} else if(status.equals("-1") && sort != -1) {
-					res = Database.searchSort(conn, crdnr, fullname, sort);
-				} else if(sort != -1) {
-					res = Database.searchFilterSort(conn, crdnr, fullname, status, sort);
-				} else {
-					res = null;
-				}
-				List<Employee> l = new ArrayList<>();
-				try {
-					if(!res.wasNull()) {
-						while(res.next()) {
-							String stat = "unknown";
-							switch (res.getString(3)) {
-							case "A":
-								stat = "Active";
-								break;
-							case "I":
-								stat = "Not Active";
-								break;
-							case "H":
-								stat = "Not Active Yet";
-								break;
-							}
-							l.add(new Employee(res.getInt(1), res.getString(2),stat));
-						}
-					}
-				} catch (SQLException | NullPointerException e) {
-
-				}
-				return l;
+			Connection conn = MakeConnection(database);
+			ResultSet res;
+			if((crdnr != -1 || !fullname.equals("-1")) && status.equals("-1") && sort == -1) {
+				res = Database.search(conn, crdnr, fullname);
+			} else if(!status.equals("-1") && sort == -1) {
+				res = Database.searchFilter(conn, crdnr, fullname, status);
+			} else if(status.equals("-1") && sort != -1) {
+				res = Database.searchSort(conn, crdnr, fullname, sort);
+			} else if(sort != -1) {
+				res = Database.searchFilterSort(conn, crdnr, fullname, status, sort);
 			} else {
-				List<Employee> l = new ArrayList<>();
-				return l;
+				res = null;
 			}
+			List<Employee> l = new ArrayList<>();
+			try {
+				if(!res.wasNull()) {
+					while(res.next()) {
+						String stat = "unknown";
+						switch (res.getString(3)) {
+						case "A":
+							stat = "Active";
+							break;
+						case "I":
+							stat = "Not Active";
+							break;
+						case "H":
+							stat = "Not Active Yet";
+							break;
+						}
+						l.add(new Employee(res.getInt(1), res.getString(2),stat));
+					}
+				}
+			} catch (SQLException | NullPointerException e) {
+
+			}
+			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
 		}
