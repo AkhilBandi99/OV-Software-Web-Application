@@ -11,8 +11,8 @@ public class DatabaseMaps {
 	
 	//DatabaseMaps is used to store all of the databases that the can be used.
 	public DatabaseMaps() {
-		this.newDatabase("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
-		this.newDatabase("Belgie", "//castle.ewi.utwente.nl:5432/di049", "di049", "Hzixmlr+");
+		this.newDatabase("Oldenzaal", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
+		this.newDatabase("Den Haag", "//castle.ewi.utwente.nl:5432/di049", "di049", "Hzixmlr+");
 	}
 	
 	//Adds a new database to the databases list.
