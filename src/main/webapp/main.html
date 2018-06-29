@@ -242,7 +242,11 @@
                         }
                     }
 				} catch (e) {
-				    console.log(this.responseText);
+				   	if (this.responseText == "import success") {
+				   		showSuccessToast(this.responseText);
+				   	} else {
+				   		showErrorToast(this.responseText);
+				   	}
 				}
 				
 				requestContent();
@@ -252,6 +256,7 @@
 		function submitfile() {
 			let formData = new FormData();
 			formData.append("files", document.getElementById("fileLoader").files[0]);
+			document.getElementById("fileLoader").value = "";
 			xhr.open("POST", "./OV/main/import");
 			xhr.send(formData);
 		}
