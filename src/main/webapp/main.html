@@ -190,27 +190,6 @@
 										</div>
 									</div>
 								</div>
-								<div class="modal fade" role="dialog" tabindex="-1"
-									id="importpopup">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h4 id="importtitle" class="modal-title">Import status</h4>
-												<button type="button" class="close" data-dismiss="modal"
-													aria-label="Close">
-													<span aria-hidden="true">x</span>
-												</button>
-											</div>
-											<div id="importbody" class="modal-body" style="padding: 0;">
-												<p id="importstatus">Import</p>
-											</div>
-											<div class="modal-footer">
-												<button class="btn btn-primary" type="button"
-													data-dismiss="modal">Close</button>
-											</div>
-										</div>
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -256,31 +235,36 @@
 					window.location.replace(".");
 				}
 				try {
-					var temp = JSON.parse(this.responseText);
-					if (temp.length > 0) {
-						if (temp[0].hasOwnProperty("cost")) {
-							info = temp;
-							updateinfo();
-						} else if (temp[0].hasOwnProperty("status")) {
-							list = temp;
-							updatelist();
-						} else {
-							dropdownitems = temp;
-							addDropdown();
-						}
-					}
+                    var temp = JSON.parse(this.responseText);
+                    if (temp.length > 0) {
+                        if (temp[0].hasOwnProperty("cost")) {
+                            info = temp;
+                            updateinfo();
+                        } else if (temp[0].hasOwnProperty("status")) {
+                            list = temp;
+                            updatelist();
+                        } else {
+                            dropdownitems = temp;
+                            addDropdown();
+                        }
+                    }
 				} catch (e) {
-					showImportStatus(this.responseText);
+				   	if (this.responseText == "import success") {
+				   		showSuccessToast("Import successful.");
+				   	} else {
+				   		showErrorToast(this.responseText);
+				   	}
 				}
 				
 				requestContent();
 			}
-		}
+		};
 
 		// the file submitter when importing
 		function submitfile() {
 			let formData = new FormData();
 			formData.append("files", document.getElementById("fileLoader").files[0]);
+			document.getElementById("fileLoader").value = "";
 			xhr.open("POST", "./OV/main/import");
 			xhr.send(formData);
 		}
@@ -393,7 +377,7 @@
 				// create an edit icon
 				var edit = document.createElement("td");
 				var editIcon = document.createElement("span");
-				editIcon.style = "cursor:pointer;"
+				editIcon.style = "cursor:pointer;";
 				editIcon.className = "fas fa-pencil-alt";
 				editIcon.setAttribute("onclick", "edit(" + i + ")");
 				edit.appendChild(editIcon);
@@ -443,16 +427,22 @@
 			var ver = document.createElement("tr");
 
 			var id = document.createElement("td");
-			var ptxt = document.createTextNode("Cost");
+			var ptxt = document.createElement("input");
+			ptxt.setAttribute("placeholder","Price");
+            ptxt.setAttribute('size',ptxt.getAttribute('placeholder').length+2);
 			id.appendChild(ptxt);
 			ver.appendChild(id);
 
 			var name = document.createElement("td");
-			var ntxt = document.createTextNode("Start date");
+			var ntxt = document.createElement("input");
+			ntxt.setAttribute("placeholder","YYYY-MM-DD");
+            ntxt.setAttribute('size',ntxt.getAttribute('placeholder').length+2);
 			name.appendChild(ntxt);
 			ver.appendChild(name);
 			var active = document.createElement("td");
-			var atxt = document.createTextNode("End date");
+			var atxt = document.createElement("input");
+            atxt.setAttribute("placeholder","YYYY-MM-DD");
+            atxt.setAttribute('size',atxt.getAttribute('placeholder').length+2);
 			active.appendChild(atxt);
 			ver.appendChild(active);
 
@@ -472,8 +462,6 @@
 			trash.appendChild(trashIcon);
 			ver.appendChild(trash);
 			body.appendChild(ver);
-			
-			editIcon.click();
 		}
 
 		// function when save button pressed
@@ -481,7 +469,7 @@
 			let infoname = document.getElementById("infotitle").innerHTML;
 			let crdnr = infoname.split(" ")[0];
 			var out = crdnr + "\n";
-			
+
 			var row = document.getElementById('infotable').children;
 			for (var i = 0; i < row.length; i++) {
 				var inf = []
@@ -495,8 +483,9 @@
 				}
 				out += inf[0] + "," + inf[1] + ","
 				+ inf[2] + "\n";
-				
+
 			}
+			var modal = $('#empInfo');
 			$.post({
 				url : "./OV/main/editPayrates/",
 				beforeSend: function(xhr) {
@@ -505,12 +494,12 @@
 			    },
 			    data : out,
 				success : function(response) {
-					if (response == 1) {
-						setTimeout(function(){getId(crdnr, infoname)}, 200);
-					} else {
-						$("#payratestatus").html("<label for = 'label' class = 'text-center' id='warning' style='color: red;'>" + response + "</label>");
-					}
-				}
+					setTimeout(function(){getId(crdnr, infoname)}, 200);
+                    showSuccessToast("Payrates have been successfully saved.");
+                },
+				error: function (data) {
+                	showErrorToast("There has been a problem while saving the payrates.");
+                }
 			})
 		}
 		
@@ -688,7 +677,43 @@
 			}
 		}
 
-		// meny toggle function
+		// the error notification message on the page
+        function showErrorToast(message){
+            $.notify({
+                message: message
+            },{
+                type: 'danger',
+                placement:{
+                    from: "bottom",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animated fadeInUp',
+                    exit: 'animated fadeOutDown'
+                }
+            });
+        }
+
+		// the success notification message on the page
+        function showSuccessToast(message) {
+            $.notify({
+                message: message
+            },{
+                type: 'success',
+                allow_dismiss: true,
+                placement:{
+                    from: "bottom",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animated fadeInUp',
+                    exit: 'animated fadeOutDown'
+                },
+                z_index: 1000000000
+            });
+        }
+
+        // menu toggle function
 		$("#menu-toggle").click(function(e) {
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
