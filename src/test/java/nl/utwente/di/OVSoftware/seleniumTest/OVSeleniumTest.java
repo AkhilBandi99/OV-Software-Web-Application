@@ -43,6 +43,12 @@ public class OVSeleniumTest {
 	static List<WebElement> resultEmpName;
 	static List<WebElement> resultEmpStatuses;
 	static List<WebElement> resultEmpIds;
+	static WebElement sidebartoggle;
+	static WebElement sidebarpayrates;
+	static WebElement sidebaradministration;
+	static WebElement googleradio;
+	static WebElement ovradio;
+	static WebElement addbut;
 
 	public static void setUpDriver() {
 		System.setProperty("webdriver.chrome.driver", PATH);
@@ -78,6 +84,19 @@ public class OVSeleniumTest {
 		exportbut = driver.findElement(By.id("export"));
 		logoutbutton = driver.findElement(By.id("logout"));
 		resultEmp = driver.findElement(By.id("EmployeeList"));
+		sidebartoggle = driver.findElement(By.xpath("//*[@id=\"menu-toggle\"]"));
+		sidebarpayrates = driver.findElement(By.xpath("//*[@id=\"sidebar-wrapper\"]/ul/li[2]/a"));
+		sidebaradministration = driver.findElement(By.xpath("//*[@id=\"sidebar-wrapper\"]/ul/li[3]/a"));
+	}
+
+	public static void constructAdminElements() {
+		sidebartoggle = driver.findElement(By.xpath("//*[@id=\"menu-toggle\"]"));
+		sidebarpayrates = driver.findElement(By.xpath("//*[@id=\"sidebar-wrapper\"]/ul/li[2]/a"));
+		sidebaradministration = driver.findElement(By.xpath("//*[@id=\"sidebar-wrapper\"]/ul/li[3]/a"));
+		googleradio = driver.findElement(By.xpath("//*[@id=\"googleSelector\"]"));
+		ovradio = driver.findElement(By.xpath("//*[@id=\"OVSelector\"]"));
+		addbut = driver.findElement(By.xpath("//*[@id=\"card-style\"]/div/div/button"));
+		logoutbutton = driver.findElement(By.xpath("//*[@id=\"card-style\"]/div/div/div[4]/button"));
 	}
 
 	public static void testLoginOVAccount() {
@@ -187,17 +206,14 @@ public class OVSeleniumTest {
 	public static void testDeletePayrate() {
 		try {
 			Thread.sleep(500);
-			
+
 			WebElement deletepaybut = driver.findElement(By.xpath("//*[@id=\"infotable\"]/tr[2]/td[5]/span"));
 			deletepaybut.click();
 			Thread.sleep(500);
-			
-			Alert alt = driver.switchTo().alert();
-			alt.accept();
-			
+
 			WebElement closepopbut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[1]/button/span"));
 			closepopbut.click();
-			
+
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -210,30 +226,30 @@ public class OVSeleniumTest {
 			WebElement editpaybut = driver.findElement(By.xpath("//*[@id=\"infotable\"]/tr[2]/td[4]/span"));
 			editpaybut.click();
 			WebElement epayrate = driver.findElement(By.xpath("//*[@value=\"45\"]"));
-			WebElement epayratefrom = driver.findElement(By.xpath("//*[@value=\"2016-12-01\"]"));
-			WebElement epayrateuntil = driver.findElement(By.xpath("//*[@value=\"2017-01-01\"]"));
-			
+			WebElement epayratefrom = driver.findElement(By.xpath("//*[@value=\"2017-01-01\"]"));
+			WebElement epayrateuntil = driver.findElement(By.xpath("//*[@value=\"2017-12-31\"]"));
+
 			epayrate.clear();
 			epayratefrom.clear();
 			epayrateuntil.clear();
-			
+
 			epayrate.sendKeys("55");
 			epayratefrom.sendKeys("2016-12-01");
 			epayrateuntil.sendKeys("2018-01-01");
-			
+
 			WebElement savebut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[3]/button[3]"));
 			savebut.click();
 			Thread.sleep(500);
-			
+
 			WebElement closepopbut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[1]/button/span"));
 			closepopbut.click();
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static void testAddPayrate() {
 		try {
 			Thread.sleep(500);
@@ -242,26 +258,26 @@ public class OVSeleniumTest {
 			WebElement newpayrate = driver.findElement(By.xpath("//*[@value=\"Cost\"]"));
 			WebElement newpayratefrom = driver.findElement(By.xpath("//*[@value=\"Start date\"]"));
 			WebElement newpayrateuntil = driver.findElement(By.xpath("//*[@value=\"End date\"]"));
-			
+
 			newpayrate.clear();
 			newpayratefrom.clear();
 			newpayrateuntil.clear();
-			
+
 			newpayrate.sendKeys("45");
-			newpayratefrom.sendKeys("2016-12-01");
-			newpayrateuntil.sendKeys("2017-01-01");
-			
+			newpayratefrom.sendKeys("2017-01-01");
+			newpayrateuntil.sendKeys("2017-12-31");
+
 			WebElement savebut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[3]/button[3]"));
 			savebut.click();
 			Thread.sleep(500);
-			
+
 			WebElement closepopbut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[1]/button/span"));
 			closepopbut.click();
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static void testOfficeFunction() {
@@ -272,7 +288,7 @@ public class OVSeleniumTest {
 			WebElement belgieoff = driver.findElement(By.xpath("//*[@id=\"officeDropdown\"]/a[2]"));
 			belgieoff.click();
 			Thread.sleep(500);
-			
+
 			officebut.click();
 			Thread.sleep(500);
 			WebElement amsoff = driver.findElement(By.xpath("//*[@id=\"officeDropdown\"]/a[1]"));
@@ -282,11 +298,11 @@ public class OVSeleniumTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void testImportFunction() {
 		// TODO : implement import function
 	}
-	
+
 	public static void testExportFunction() {
 		try {
 			exportbut.click();
@@ -295,43 +311,125 @@ public class OVSeleniumTest {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void main(String[] args) {
-		setUpDriver();
+
+	public static void testSidebar() {
+		try {
+			sidebartoggle.click();
+			Thread.sleep(500);
+
+			sidebaradministration.click();
+			Thread.sleep(500);
+
+			constructAdminElements();
+
+			sidebartoggle.click();
+			Thread.sleep(500);
+
+			sidebarpayrates.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testAddGoogleAcc() {
+		try {
+			googleradio.click();
+			Thread.sleep(500);
+			WebElement emailinput = driver.findElement(By.xpath("//*[@id=\"email\"]"));
+			emailinput.sendKeys("testing@domain.com");
+			addbut.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testAddOVAcc() {
+		try {
+			ovradio.click();
+			Thread.sleep(500);
+			WebElement userinput = driver.findElement(By.xpath("//*[@id=\"card-style\"]/div/div/input[1]"));
+			WebElement passinput = driver.findElement(By.xpath("//*[@id=\"card-style\"]/div/div/input[2]"));
+			userinput.sendKeys("test");
+			passinput.sendKeys("test");
+			addbut.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testDeleteGoogleAcc() {
+		try {
+			WebElement deletemail = driver.findElement(By.xpath("//*[@id=\"GoogleAccountList\"]/tr[7]/td[2]"));
+			deletemail.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testDeleteOVAcc() {
+		try {
+			WebElement deleteov = driver.findElement(By.xpath("//*[@id=\"OVAccountList\"]/tr[2]/td[3]"));
+			deleteov.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void testLogin() {
 		loadPage(LOGIN_URL);
-		// test login.html functions
 		constructLoginElements();
 		testLoginOVAccount();
 		// testLoginGoogleAccount();
+	}
 
+	public static void testMain() {
 		// test main.html functions
 		constructMainElements();
-		//testSearchFunction();
-		//testStatusFunction();
+		testSearchFunction();
+		testStatusFunction();
 
-		//loadPage(MAIN_URL);
-		
-		/*
+		loadPage(MAIN_URL);
+
 		WebElement popupr1 = driver.findElement(By.xpath("//*[@id=\"EmployeeList\"]/tr[1]"));
 		popupr1.click();
 		testAddPayrate();
-		
+
 		popupr1.click();
 		testEditPayrate();
-		
+
 		popupr1.click();
 		testDeletePayrate();
-		*/
-		
+
 		loadPage(MAIN_URL);
 		constructMainElements();
-		
-		testOfficeFunction();
-		//testImportFunction();
-		testExportFunction();
-		
-		testLogOut();
 
+		testOfficeFunction();
+		// testImportFunction();
+		testExportFunction();
+
+		testSidebar();
+	}
+
+	public static void testAdmin() {
+		loadPage(ADMIN_URL);
+		constructAdminElements();
+		testAddGoogleAcc();
+		testDeleteGoogleAcc();
+		testAddOVAcc();
+		testDeleteOVAcc();
+	}
+
+	public static void main(String[] args) {
+		setUpDriver();
+		testLogin();
+		testMain();
+		testAdmin();
+		testLogOut();
 	}
 
 }
