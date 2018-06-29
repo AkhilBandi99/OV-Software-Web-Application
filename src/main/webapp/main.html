@@ -15,6 +15,7 @@
 	href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
 	integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
 	crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
 <style>
 #card-style {
@@ -224,6 +225,7 @@
 	<script src="assets/js/main.js"></script>
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
 	<script>
 		var list = [];
 		var info = [];
@@ -301,16 +303,19 @@
 
 				var id = document.createElement("td");
 				var ptxt = document.createTextNode(list[i].id);
+				id.id="employeeid";
 				id.appendChild(ptxt);
 				ver.appendChild(id);
 
 				var name = document.createElement("td");
 				var ntxt = document.createTextNode(list[i].name);
+				name.id ="employeename";
 				name.appendChild(ntxt);
 				ver.appendChild(name);
 
 				var active = document.createElement("td");
 				var atxt = document.createTextNode(list[i].status);
+                active.id="employeestatus";
 				active.appendChild(atxt);
 				ver.appendChild(active);
 				ver.setAttribute('onclick', "getId(" + list[i].id + ", \""
