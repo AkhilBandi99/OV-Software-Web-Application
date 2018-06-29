@@ -162,9 +162,7 @@
             // session ends
         	if (this.responseText == "0"){
             	window.location.replace(".");
-            	console.log(this.responseText);
             }
-        	console.log(this.responseText);
         	try {
 				var temp = JSON.parse(this.responseText);
 				if (temp.length > 0) {
@@ -330,13 +328,11 @@
                 data: JSON.stringify({"email": email}),
                 dataType: 'json',
                 success: function () {
-                    console.log("test1");
                     showSuccessToast("User has been successfully created.");
                     $('#GoogleAccountList tr:last').after('<tr><td class="email">'+email+'</td><td class="fas fa-trash-alt" id="trash"></td></tr>');
                     $("#email").val();
                 },
                 error: function () {
-                    console.log("test2");
                     showErrorToast("An error occurred while creating the user.")
                 }
             });
@@ -412,7 +408,6 @@
 
 
         function requestContent() {
-        console.log("a");
         if (rcounter < rqueue.length) {
             xhr.open("GET", rqueue[rcounter]);
             xhr.send();

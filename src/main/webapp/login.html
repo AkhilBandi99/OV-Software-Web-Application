@@ -49,8 +49,6 @@
 		function login() {
 			username = sanitizeInput(document.getElementById("username").value);
 			password = sanitizeInput(document.getElementById("password").value);
-			console.log(username);
-			console.log(password);
 			if (username.length == 0 || password.length == 0) {
 				$("#warning").text(
 						"Please do not leave one of the space empty.");
@@ -66,7 +64,6 @@
 								} else {
 									window.open("./main.html", "_self");
 								}
-								console.log(response);
 							}
 						})
 			}
@@ -80,7 +77,6 @@
         xhr.send(id_token);
         xhr.onload = function() {
     		if (xhr.readyState == 4 && xhr.status == 200) {
-    			console.log(this.responseText);
     			if(this.responseText == 0) {
                     var auth2 = gapi.auth2.getAuthInstance();
                     auth2.signOut().then(function () {

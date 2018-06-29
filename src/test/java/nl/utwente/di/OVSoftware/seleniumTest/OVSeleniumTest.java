@@ -18,7 +18,7 @@ public class OVSeleniumTest {
 	 * Before running the test, make sure your path is configured properly.
 	 */
 
-	private static final String PATH = "/Users/ignatiuspatrick/Downloads/chromedriver";
+	private static final String PATH = "/Users/akhilbandi/Desktop/Module4/apache-tomcat-8.0.51/chromedriver";
 
 	private static WebDriver driver;
 	private static final String LOGIN_URL = "http://localhost:8080/Module4/login.html";
