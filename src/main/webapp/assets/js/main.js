@@ -1,3 +1,4 @@
+
 $('.table > tbody > tr').click(function () {
     $("#empInfo").modal();
 });
@@ -5,6 +6,8 @@ $('.table > tbody > tr').click(function () {
 /*
     * The script of main page and it's various functions
    */
+
+
 
 // global variables
 var list = [];
@@ -253,8 +256,8 @@ function newPayrtField() {
     // create trash icon
     var trash = document.createElement("td");
     var trashIcon = document.createElement("span");
-    trash.className = "fas fa-trash-alt";
-    trash.setAttribute("onclick", "deletePayrate(" + body.children.length + ")");
+    trashIcon.className = "fas fa-trash-alt";
+    trashIcon.setAttribute("onclick", "deletePayrate(" + body.children.length + ")");
     trash.appendChild(trashIcon);
     ver.appendChild(trash);
     body.appendChild(ver);
@@ -465,6 +468,7 @@ function requestContent() {
 
 // delete the selected payrate
 function deletePayrate(i) {
+	console.log(i);
     var delelem = document.getElementById('infotable').children[i];
     document.getElementById('infotable').removeChild(delelem);
 
