@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 public class Payrates implements Comparable<Payrates>{
 	
@@ -18,6 +19,7 @@ public class Payrates implements Comparable<Payrates>{
 	private final Calendar endDate;
 
 	//Payrates are used to store pay rates for employees
+	@JsonPropertyOrder({ "id", "cost", "startDate", "endDate"})
 	@JsonCreator
 	public Payrates(@JsonProperty("emp_id") int i, @JsonProperty("price") double c,@JsonProperty("startdate") String s,@JsonProperty("enddate") String e) throws ParseException {
 		id = i;
