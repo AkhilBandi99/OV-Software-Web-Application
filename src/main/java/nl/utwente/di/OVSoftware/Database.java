@@ -19,13 +19,19 @@ public class Database {
 	//Creates a connection to the database
 	private static Connection MakeConnection(Table database) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
-		System.out.println(database);
+		//System.out.println(database);
 		String url = "jdbc:postgresql:" + database.getLogin();
 		Connection conn = DriverManager.getConnection(url, database.getUser(), database.getPass());
 		return conn;
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
+	 * sql queries statements for everything except search function
+	 * we put everything into prepared statements so it's secure against sql injection
+	 */
 
-	//Gets all payrates
+	//Gets all payrates of the employees
 	private static ResultSet allPayrates(Connection conn) throws SQLException {
 		PreparedStatement p = conn.prepareStatement(
 				"SELECT * " + 
@@ -34,7 +40,7 @@ public class Database {
 		return res;
 	}
 
-	//Gets all employees
+	//Gets all employees in the humres table
 	private static ResultSet allEmployees(Connection conn) throws SQLException {
 		PreparedStatement p = conn.prepareStatement(
 				"SELECT h.res_id, h.fullname, h.emp_stat " +
@@ -93,39 +99,15 @@ public class Database {
 			p.execute();
 		}
 	}
-	
-	//Edit the payrates for one employee with deletion
-	public static void editPayrates(int crdnr, List<Payrates> list, Table database) {
-		try {
-			Connection conn = MakeConnection(database);
-			delPayrate(conn, crdnr);
-			addPayrates(conn, list);
-		} catch(SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	//Import the payrates for all employee with deletion
-	public static void importPayrts(List<Payrates> list, Table database) {
-		try {
-			Connection conn = MakeConnection(database);
-				try {
-					dropall(conn);
-					addPayrates(conn, list);
-				} catch(SQLException e) {
-					try {
-						conn.rollback();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-				}
-			} catch(SQLException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		
-	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
+	 * sql statements for all search queries also in prepared statements
+	 * we made different methods for different type of queries because it becomes slow if everything is put into a single method
+	 * Also we had ts vector column and index added to the table make full text search faster
+	 * But later we realized that we shouldn't change the tables in any way
+	 * So now we are just querying without index which is also pretty fast
+	 */
 
 	public static ResultSet search(Connection conn, int crdnr, String fullname) {
 		try {
@@ -877,8 +859,11 @@ public class Database {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	/*
+	 * All these methods gets the parameters from mainresource and use the sql statement methods above to send the result back
+	 */
 
+	// gets all the employees in the database
 	public static List<Employee> getEmployees(Table database) {
 		Connection conn;
 		try {
@@ -911,6 +896,7 @@ public class Database {
 		return new ArrayList<Employee>();
 	}
 
+	// gets all the google accounts saved in the database
 	public static List<GoogleAccount> getGoogleAccounts(){
 		Connection conn;
 		try {
@@ -933,6 +919,7 @@ public class Database {
 		return null;
 	}
 
+	// get all the google accounts in the database when accepted
     public static boolean googleAccountAccepted(String email){
     	try {
 			Connection conn = MakeConnection(mainDatabase);
@@ -953,6 +940,7 @@ public class Database {
         return false;
     }
 
+    // get all the ov accounts on the database 
 	public static List<OVAccount> getOVAccounts(){
 		try {
 			Connection conn = MakeConnection(mainDatabase);
@@ -975,7 +963,7 @@ public class Database {
 		return null;
 	}
 
-
+	// get all the ov accounts on the database when accepted
     public static boolean OVAccountAccepted(String username, String password){
     	try {
 			Connection conn = MakeConnection(mainDatabase);
@@ -997,6 +985,7 @@ public class Database {
         return false;
     }
 
+    // create a new ov account
     public static void createOVAccount(String username, String password) throws SQLException, ClassNotFoundException {
 			String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 			Connection conn = MakeConnection(mainDatabase);
@@ -1007,6 +996,8 @@ public class Database {
 			conn.close();
 
     }
+    
+    // create a new google account
 	public static void createGoogleAccount(String email) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("INSERT INTO di08.googleaccounts VALUES(?)");
@@ -1016,6 +1007,7 @@ public class Database {
 
 	}
 
+	// delete an ov account
 	public static void deleteOVAccount(String username) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.localaccounts WHERE username=?");
@@ -1024,6 +1016,7 @@ public class Database {
 			conn.close();
 	}
 
+	// delete a google account
 	public static void deleteGoogleAccount(String email) throws SQLException, ClassNotFoundException {
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("DELETE FROM di08.googleaccounts WHERE email=?");
@@ -1032,6 +1025,7 @@ public class Database {
 			conn.close();
 	}
 
+	// delete a payrate of a employee
 	public static void deletePayrate(String startDate, String endDate, int id, Table database){
 		try {
 			Connection conn = MakeConnection(database);
@@ -1045,8 +1039,39 @@ public class Database {
 			e1.printStackTrace();
 		}
 	}
+	
+	//Edit the payrates for one employee with deletion
+	public static void editPayrates(int crdnr, List<Payrates> list, Table database) {
+		try {
+			Connection conn = MakeConnection(database);
+			delPayrate(conn, crdnr);
+			addPayrates(conn, list);
+		} catch(SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//Import the payrates for all employee with deletion
+	public static void importPayrts(List<Payrates> list, Table database) {
+		try {
+			Connection conn = MakeConnection(database);
+				try {
+					dropall(conn);
+					addPayrates(conn, list);
+				} catch(SQLException e) {
+					try {
+						conn.rollback();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			} catch(SQLException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		
+	}
 
-
+	// get payrates for a specific employee
 	public static List<Payrates> getPayratesSpecificEmployee(int crdnr, Table database){
 		try {
 			Connection conn = MakeConnection(database);
@@ -1071,6 +1096,7 @@ public class Database {
 		return null;
 	}
 
+	// get all the payrates of the all employees in the database
 	public static List<Payrates> getAllPayrates(Table database) {
 		Connection conn;
 		try {
@@ -1095,6 +1121,7 @@ public class Database {
 		return null;
 	}
 
+	// all the combinaitons of search, sort, filter queries are handled by this method
 	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, int sort, Table database) {
 		try {
 			Connection conn = MakeConnection(database);
