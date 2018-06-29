@@ -1,8 +1,5 @@
 package nl.utwente.di.OVSoftware;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Employee {
 	private final int id;
 	private final String name;

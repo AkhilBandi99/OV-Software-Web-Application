@@ -37,7 +37,7 @@ public class CsvWriter implements MessageBodyWriter<Object> {
 	}
 
 	@Override
-	public void writeTo(Object o, Class arg1, Type arg2, Annotation[] arg3, MediaType arg4, MultivaluedMap arg5,
+	public void writeTo(Object o, @SuppressWarnings("rawtypes") Class arg1, Type arg2, Annotation[] arg3, MediaType arg4, @SuppressWarnings("rawtypes") MultivaluedMap arg5,
 			OutputStream out) throws IOException, WebApplicationException {
 		if (o instanceof List<?>) {
 			List<?> data = (List<?>) o;
