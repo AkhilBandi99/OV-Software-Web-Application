@@ -20,7 +20,7 @@ public class AdminResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/ovusers")
-	public List<OVAccount> getAllOVUsers(@Context HttpServletRequest r) {
+	public List<OVAccount> getAllOVUsers(@Context HttpServletRequest r) throws SQLException, ClassNotFoundException {
 		if(Login.Security(r.getSession())==1) {
 			List<OVAccount> ovlist = Database.getOVAccounts();
 			return ovlist;
@@ -32,7 +32,7 @@ public class AdminResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/googleusers")
-	public List<GoogleAccount> getAllGoogleUsers(@Context HttpServletRequest r){
+	public List<GoogleAccount> getAllGoogleUsers(@Context HttpServletRequest r) throws SQLException, ClassNotFoundException {
 		if(Login.Security(r.getSession())==1) {
 			List<GoogleAccount> googlelist = Database.getGoogleAccounts();
 			return googlelist;
