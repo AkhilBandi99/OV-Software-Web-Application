@@ -4,13 +4,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmployeeTest {
     private Employee employee;
+
     @BeforeEach
     void setUp() {
-        employee = new Employee(1337,"Hans","A");
+        employee = new Employee(1337, "Hans", "A");
     }
 
     @AfterEach
@@ -19,12 +20,12 @@ class EmployeeTest {
 
     @Test
     void getId() {
-        assertEquals(1337,employee.getId());
+        assertEquals(1337, employee.getId());
     }
 
     @Test
     void getName() {
-        assertEquals("Hans",employee.getName());
+        assertEquals("Hans", employee.getName());
     }
 
     @Test
@@ -44,6 +45,6 @@ class EmployeeTest {
 
     @Test
     void toStringTest() {
-        assertEquals("1337 Hans A",employee.toString());
+        assertEquals("1337 Hans A", employee.toString());
     }
 }

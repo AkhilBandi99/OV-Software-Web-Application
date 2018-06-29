@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class MyApplication extends Application {
 
-	//This function makes sure all of the classes are registered.
+    //This function makes sure all of the classes are registered.
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
