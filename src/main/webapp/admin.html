@@ -154,6 +154,12 @@
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
 	<script>
+		// ovacc is  used to store all the ov account registered in the database and later on will be displayed on admin.html
+		// googleacc is used to store all the google account registered in the database and later on will also be displayed on admin.html
+		// status is by default -1 meaning the page would not load without any authorization verified by response 200 (OK)
+		// xhr is the XML Http Request
+		// rqueue is an array used to store all the request to get the content of the page
+		// rcounter is an integer used to count the remaining content request url to load
 		var ovacc = [];
 		var googleacc = [];
 		var dropdownitems = [];
@@ -165,6 +171,12 @@
 		$("#username").hide();
 		$("#password").hide();
 		$("#email").show();
+		
+		/**
+		* If the session response text is 0, which means the user is not authorized, then it will direct you back to the login.html
+		* Otherwise, if the response text is a list of JSON object containing a user account, which could be an ov account or google account
+		* it will update the page content with the received response text
+		*/
 		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
 				// session ends
@@ -189,7 +201,7 @@
 				requestContent();
 			}
 		};
-
+		
 		function updatelist() {
 			var body = document.getElementById('EmployeeList');
 			body.innerHTML = "";
@@ -206,7 +218,9 @@
 				body.appendChild(ver);
 			}
 		}
-
+		/**
+		* update the list of the employee registered with ov account
+		*/
 		function updateOVAccount() {
 			var body = document.getElementById('OVAccountList');
 			body.innerHTML = "";
@@ -271,7 +285,9 @@
 							});
 		}
 
-		// update google account table
+		/**
+		* Updates the google account table
+		*/
 		function updateGoogleAccount() {
 			var body = document.getElementById('GoogleAccountList');
 			body.innerHTML = "";
@@ -323,7 +339,11 @@
 										});
 							});
 		}
-
+		
+		/**
+		* Add the ov account to the database
+		*/
+		
 		function addAccount() {
 			if ($("#OVSelector").is(':checked')) {
 				var username = $("#username").val();
@@ -382,7 +402,11 @@
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
 		});
-
+		
+		/**
+		* Display the error pop up
+		*/
+		
 		function showErrorToast(message) {
 			$.notify({
 				message : message
@@ -398,7 +422,11 @@
 				}
 			});
 		}
-
+		
+		/**
+		* Display the success pop up
+		*/
+		
 		function showSuccessToast(message) {
 			$.notify({
 				message : message
@@ -415,7 +443,10 @@
 				}
 			});
 		}
-
+		
+		/**
+		* Logs the user out from the admin.html
+		*/
 		function logout() {
 			var auth2 = gapi.auth2.getAuthInstance();
 			auth2.signOut().then(function() {
@@ -431,6 +462,10 @@
 				gapi.auth2.init();
 			});
 		}
+		
+		/**
+		* Delete the ov user from the database and update the page content
+		*/
 
 		function deleteOVUser(user) {
 			$.ajax({
@@ -443,6 +478,10 @@
 				dataType : 'json'
 			});
 		}
+		
+		/**
+		* Request the content of the page from the server and update the counter
+		*/
 
 		function requestContent() {
 			if (rcounter < rqueue.length) {
