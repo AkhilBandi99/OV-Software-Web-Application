@@ -21,9 +21,9 @@ class DatabaseTest {
         assertNotNull(Database.getPayratesSpecificEmployee(4, Database.mainDatabase));
     }
 
-    /*@Test
+    @Test
     void searchEmployees() {
-        assertNotNull(Database.searchEmployees(4,"MaSt", "A", Database.mainDatabase));
-    }*/
+        assertNotNull(Database.searchEmployees(4,"MaSt", "A", 10, Database.mainDatabase));
+    }
 
 }
