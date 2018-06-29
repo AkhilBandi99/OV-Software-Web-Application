@@ -2,6 +2,8 @@ package nl.utwente.di.OVSoftware;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,8 +18,6 @@ import java.util.List;
 public class Database {
 
 	private static int i = 1;
-	private static List<Employee> ListOnPage = new ArrayList<>();
-	private static List<Employee> ListOnPage2 = new ArrayList<>();
 	public static Table mainDatabase = new Table("Amsterdam", "//farm03.ewi.utwente.nl:7016/docker", "docker", "YkOkimczn");
 	
 	//Creates a connection to the database
@@ -76,109 +76,9 @@ public class Database {
 		p.execute();
 	}
 	
-	//Search for either crdnr fullname or status
-	private static ResultSet searchWstat(Connection conn, int crdnr, String fullname, String status) {
-		try {
-		if (crdnr != -1 && !fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
-						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
-						"WHERE ((ts @@ query1 OR ts @@ query2) " +
-						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
-						"AND h.\"freefield 16\" = 'N' " +
-						"AND h.emp_stat = ?" +
-						"ORDER BY rank DESC;");
-				p.setString(1, crdnr + "");
-				p.setString(2, fullname);
-				p.setString(3, fullname + "%");
-				p.setString(4, crdnr + "");
-				p.setString(5, status);
-				ResultSet res = p.executeQuery();
-				return res;
-			} else {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
-						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
-						"WHERE ((ts @@ query1 OR ts @@ query2) " +
-						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
-						"AND h.\"freefield 16\" = 'N' " +
-						"ORDER BY rank1 DESC, rank2 DESC;");
-				p.setString(1, crdnr + "");
-				p.setString(2, fullname);
-				p.setString(3, fullname + "%");
-				p.setInt(4, crdnr);
-				ResultSet res = p.executeQuery();
-				return res;
-			}
-		} else if (crdnr != -1 && fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
-						"WHERE (ts @@ query " +
-						"OR h.res_id::varchar LIKE ?) " +
-						"AND h.\"freefield 16\" = 'N' " +
-						"AND h.emp_stat = ?" +
-						"ORDER BY rank DESC;");
-				p.setString(1, crdnr + "");
-				p.setString(2, crdnr + "%");
-				p.setString(3, status);
-				ResultSet res = p.executeQuery();
-				return res;
-			} else {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery(?) query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.res_id::varchar LIKE ?) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;");
-				p.setString(1, crdnr + "");
-				p.setString(2, crdnr + "%");
-				ResultSet res = p.executeQuery();
-				return res;
-			}
-		} else if (crdnr == -1 && !fullname.equals("-1")) {
-			if(!status.equals("-1")) {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
-						"FROM di08.humres h, to_tsquery(?) query " +
-						"WHERE (ts @@ query " +
-						"OR h.fullname ILIKE ?) " +
-						"AND h.\"freefield 16\" = 'N' " +
-						"AND h.emp_stat = ?" +
-						"ORDER BY rank DESC;");
-				p.setString(1, fullname);
-				p.setString(2, fullname + "%");
-				p.setString(3, status);
-				ResultSet res = p.executeQuery();
-				return res;
-			} else {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery(?) query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.fullname ILIKE ?) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;");
-				p.setString(1, fullname);
-				p.setString(2, fullname + "%");
-				ResultSet res = p.executeQuery();
-				return res;
-			}
-		}
-		} catch (SQLException e) {
-
-		}
-		return null;
-		
-	}
-	
 	private static void addPayrates(Connection conn, List<Payrates> list) throws SQLException {
 		PreparedStatement p = conn.prepareStatement(
 				"INSERT INTO di08.employeerates(crdnr, purchaseprice, vandatum, totdatum) VALUES (?,?,?,?);");
-		System.out.println(list.size());
 		for (Payrates rate: list) {
 			p.setInt(1, rate.getId());
 			p.setDouble(2, rate.getCost());
@@ -204,7 +104,7 @@ public class Database {
 			delPayrate(conn, crdnr);
 			addPayrates(conn, list);
 		} catch(SQLException | ClassNotFoundException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -223,7 +123,7 @@ public class Database {
 					}
 				}
 			} catch(SQLException | ClassNotFoundException e) {
-				System.out.println(e);
+				e.printStackTrace();
 			}
 		
 	}
@@ -317,24 +217,22 @@ public class Database {
 			} catch (SQLException e) {
 
 			}
-			i = 1;
 			index = 1;
 			return index;
 		}
 	}
 
-	
-	
-	private static ResultSet search(Connection conn, int crdnr, String fullname) {
+	public static ResultSet search(Connection conn, int crdnr, String fullname) {
 		try {
 			if (crdnr != -1 && !fullname.equals("-1")) {
-				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
-						+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
-						+ "WHERE ((ts @@ query1 OR ts @@ query2) "
-						+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank1 DESC, rank2 DESC;");
+				PreparedStatement p = conn.prepareStatement (
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
+						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
+						"WHERE ((ts @@ query1 OR ts @@ query2) " +
+						"OR (h.fullname ILIKE ? " +
+						"AND h.res_id::varchar LIKE ?)) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"ORDER BY rank1 DESC, rank2 DESC;");
 				p.setString(1, crdnr + "");
 				p.setString(2, fullname);
 				p.setString(3, fullname + "%");
@@ -343,77 +241,734 @@ public class Database {
 				return res;
 			} else if (crdnr != -1 && fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery(?) query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.res_id::varchar LIKE ?) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;");
-				p.setString(1, "'" + crdnr + "'");
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.res_id::varchar LIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
 				p.setString(2, crdnr + "%");
 				ResultSet res = p.executeQuery();
 				return res;
 			} else if (crdnr == -1 && !fullname.equals("-1")) {
 				PreparedStatement p = conn.prepareStatement(
-						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
-						+ "FROM di08.humres h, to_tsquery(?) query " 
-						+ "WHERE (ts @@ query "
-						+ "OR h.fullname ILIKE ?) "
-						+ "AND h.\"freefield 16\" = 'N' "
-						+ "ORDER BY rank DESC;");
-				p.setString(1, "'" + fullname + "'");
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.fullname ILIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"ORDER BY rank DESC;");
+				p.setString(1, fullname);
 				p.setString(2, fullname + "%");
 				ResultSet res = p.executeQuery();
 				return res;
 			}
-		} catch (SQLException e) {
-
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
-
-
-	public static ResultSet status(Connection conn, String status) throws SQLException {
-		PreparedStatement p = conn.prepareStatement(
-				"SELECT h.res_id, h.fullname, h.emp_stat " + 
-				"FROM di08.humres h " +
-				"WHERE h.emp_stat = ? " +
-				"AND h.\"freefield 16\" = 'N' " +
-				"ORDER BY h.res_id");
-		p.setString(1, status);
-		ResultSet res = p.executeQuery();
-		return res;
-
+	
+	private static ResultSet searchFilter(Connection conn, int crdnr, String fullname, String status) {
+		try {
+			if (crdnr != -1 && !fullname.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement (
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 " + 
+						"FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " + 
+						"WHERE ((ts @@ query1 OR ts @@ query2) " +
+						"OR (h.fullname ILIKE ? " + "AND h.res_id::varchar LIKE ?)) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank1 DESC, rank2 DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, fullname);
+				p.setString(3, fullname + "%");
+				p.setString(4, crdnr + "%");
+				p.setString(5, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else if (crdnr != -1 && fullname.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.res_id::varchar LIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank DESC;");
+				p.setString(1, crdnr + "");
+				p.setString(2, crdnr + "%");
+				p.setString(3, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else if (crdnr == -1 && !fullname.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank " +
+						"FROM di08.humres h, to_tsquery(?) query " +
+						"WHERE (ts @@ query " +
+						"OR h.fullname ILIKE ?) " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"AND h.emp_stat = ?" +
+						"ORDER BY rank DESC;");
+				p.setString(1, fullname);
+				p.setString(2, fullname + "%");
+				p.setString(3, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			} else if (crdnr == -1 && fullname.equals("-1")) {
+				PreparedStatement p = conn.prepareStatement(
+						"SELECT h.res_id, h.fullname, h.emp_stat " +
+						"FROM di08.humres h " +
+						"WHERE h.emp_stat = ? " +
+						"AND h.\"freefield 16\" = 'N' " +
+						"ORDER BY h.res_id");
+				p.setString(1, status);
+				ResultSet res = p.executeQuery();
+				return res;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 	
-	public static ResultSet sort(Connection conn, int i) throws SQLException{
-		if(i == 01) {
-			PreparedStatement p = conn.prepareStatement(
-				"SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
-				+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.res_id DESC");
-			ResultSet res = p.executeQuery();
-			return res;
-		} else if(i == 00) {
-			PreparedStatement p = conn.prepareStatement(
-					"SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
-					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.res_id");
-			ResultSet res = p.executeQuery();
-			return res;
-		} else if(i == 11) {
-			PreparedStatement p = conn.prepareStatement(
-					"SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
-					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.fullname DESC");
-			ResultSet res = p.executeQuery();
-			return res;
-		} else if(i == 10) {
-			PreparedStatement p = conn.prepareStatement(
-					"SELECT h.res_id, h.fullname, h.emp_stat " + "FROM di08.humres h "
-					+ "WHERE h.\"freefield 16\" = 'N' " + "ORDER BY h.fullname");
-			ResultSet res = p.executeQuery();
-			return res;
-		} else {
-			return null;
+	private static ResultSet searchSort(Connection conn, int crdnr, String fullname, int sort) throws SQLException {
+		PreparedStatement p;
+		try {
+			if (crdnr != -1 && !fullname.equals("-1")) {
+				if(sort == 00) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id;");
+					p.setString(1, crdnr + "");
+					p.setString(2, fullname);
+					p.setString(3, fullname + "%");
+					p.setString(4, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 01) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id DESC;");
+					p.setString(1, crdnr + "");
+					p.setString(2, fullname);
+					p.setString(3, fullname + "%");
+					p.setString(4, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 10) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname;");
+					p.setString(1, crdnr + "");
+					p.setString(2, fullname);
+					p.setString(3, fullname + "%");
+					p.setString(4, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 11) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+							+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+							+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+							+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname DESC;");
+					p.setString(1, crdnr + "");
+					p.setString(2, fullname);
+					p.setString(3, fullname + "%");
+					p.setString(4, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				}
+			} else if (crdnr != -1 && fullname.equals("-1")) {
+				if(sort == 00) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.res_id::varchar LIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.res_id;");
+					p.setString(1, "'" + crdnr + "'");
+					p.setString(2, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 01) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.res_id::varchar LIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.res_id DESC;");
+					p.setString(1, "'" + crdnr + "'");
+					p.setString(2, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 10) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.res_id::varchar LIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.fullname;");
+					p.setString(1, "'" + crdnr + "'");
+					p.setString(2, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 11) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.res_id::varchar LIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.fullname DESC;");
+					p.setString(1, "'" + crdnr + "'");
+					p.setString(2, crdnr + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				}
+			} else if (crdnr == -1 && !fullname.equals("-1")) {
+				if(sort == 00) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.fullname ILIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.res_id;");
+					p.setString(1, "'" + fullname + "'");
+					p.setString(2, fullname + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 01) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.fullname ILIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.res_id DESC;");
+					p.setString(1, "'" + fullname + "'");
+					p.setString(2, fullname + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 10) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.fullname ILIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.fullname;");
+					p.setString(1, "'" + fullname + "'");
+					p.setString(2, fullname + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 11) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+							+ "FROM di08.humres h, to_tsquery(?) query " 
+							+ "WHERE (ts @@ query "
+							+ "OR h.fullname ILIKE ?) "
+							+ "AND h.\"freefield 16\" = 'N' "
+							+ "ORDER BY rank DESC, h.fullname DESC;");
+					p.setString(1, "'" + fullname + "'");
+					p.setString(2, fullname + "%");
+					ResultSet res = p.executeQuery();
+					return res;
+				}
+			} else if (crdnr == -1 && fullname.equals("-1")) {
+				if(sort == 00) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat "
+							+ "FROM di08.humres h " 
+							+ "WHERE h.\"freefield 16\" = 'N' "
+							+ "ORDER BY h.res_id;");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 01) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat "
+							+ "FROM di08.humres h " 
+							+ "WHERE h.\"freefield 16\" = 'N' "
+							+ "ORDER BY h.res_id DESC;");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 10) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat "
+							+ "FROM di08.humres h " 
+							+ "WHERE h.\"freefield 16\" = 'N' "
+							+ "ORDER BY h.fullname;");
+					ResultSet res = p.executeQuery();
+					return res;
+				} else if(sort == 11) {
+					p = conn.prepareStatement(
+							"SELECT h.res_id, h.fullname, h.emp_stat "
+							+ "FROM di08.humres h " 
+							+ "WHERE h.\"freefield 16\" = 'N' "
+							+ "ORDER BY h.fullname DESC;");
+					ResultSet res = p.executeQuery();
+					return res;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	private static ResultSet searchFilterSort(Connection conn, int crdnr, String fullname, String status, int sort) {
+		PreparedStatement p;
+		try {
+			if (crdnr != -1 && !fullname.equals("-1")) {
+				if(status.equals("-1")) {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id DESC;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname DESC;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				} else {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						p.setString(5, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.res_id DESC;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						p.setString(5, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						p.setString(5, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query1) AS rank1, ts_rank(ts, query2) AS rank2 "
+								+ "FROM di08.humres h, to_tsquery(?) query1, to_tsquery(?) query2 " 
+								+ "WHERE ((ts @@ query1 OR ts @@ query2) "
+								+ "OR (h.fullname::varchar ILIKE ? AND h.res_id::varchar LIKE ?)) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank1 DESC, rank2 DESC, h.fullname DESC;");
+						p.setString(1, crdnr + "");
+						p.setString(2, fullname);
+						p.setString(3, fullname + "%");
+						p.setString(4, crdnr + "%");
+						p.setString(5, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				}
+			} else if (crdnr != -1 && fullname.equals("-1")) {
+				if(status.equals("-1")) {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.res_id;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.res_id DESC;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.fullname;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.fullname DESC;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				} else {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.res_id;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.res_id DESC;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.fullname;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.res_id::varchar LIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.fullname DESC;");
+						p.setString(1, "'" + crdnr + "'");
+						p.setString(2, crdnr + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				}
+			} else if (crdnr == -1 && !fullname.equals("-1")) {
+				if(status.equals("-1")) {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.res_id;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.res_id DESC;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.fullname;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "ORDER BY rank DESC, h.fullname DESC;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				} else {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.res_id;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.res_id DESC;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.fullname;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat, ts_rank(ts, query) AS rank "
+								+ "FROM di08.humres h, to_tsquery(?) query " 
+								+ "WHERE (ts @@ query "
+								+ "OR h.fullname ILIKE ?) "
+								+ "AND h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY rank DESC, h.fullname DESC;");
+						p.setString(1, "'" + fullname + "'");
+						p.setString(2, fullname + "%");
+						p.setString(3, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				}
+			} else if (crdnr == -1 && fullname.equals("-1")) {
+				if(status.equals("-1")) {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "ORDER BY h.res_id;");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "ORDER BY h.res_id DESC;");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "ORDER BY h.fullname;");
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "ORDER BY h.fullname DESC;");
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				} else {
+					if(sort == 00) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY h.res_id;");
+						p.setString(1, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 01) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY h.res_id DESC;");
+						p.setString(1, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 10) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY h.fullname;");
+						p.setString(1, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					} else if(sort == 11) {
+						p = conn.prepareStatement(
+								"SELECT h.res_id, h.fullname, h.emp_stat "
+								+ "FROM di08.humres h " 
+								+ "WHERE h.\"freefield 16\" = 'N' "
+								+ "AND h.emp_stat = ?"
+								+ "ORDER BY h.fullname DESC;");
+						p.setString(1, status);
+						ResultSet res = p.executeQuery();
+						return res;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,11 +999,6 @@ public class Database {
 			} catch (SQLException | NullPointerException e) {
 
 			}
-			ListOnPage = new ArrayList<>();
-			ListOnPage.addAll(l);
-			ListOnPage2 = new ArrayList<>();
-			ListOnPage2.addAll(l);
-
 			return l;
 		} catch (ClassNotFoundException | SQLException e1) {
 			
@@ -525,8 +1075,6 @@ public class Database {
     	try {
 			Connection conn = MakeConnection(mainDatabase);
 			PreparedStatement p = conn.prepareStatement("SELECT password FROM di08.localaccounts WHERE username= ?");
-			System.out.println(username);
-			System.out.println(password);
 			p.setString(1, username);
 			ResultSet res = p.executeQuery();
 			conn.close();
@@ -539,7 +1087,7 @@ public class Database {
 	        }
 
 		} catch (ClassNotFoundException | SQLException e1) {
-			System.out.println(e1);
+			e1.printStackTrace();
 		}
         return false;
     }
@@ -642,15 +1190,21 @@ public class Database {
 		return null;
 	}
 
-	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, Table database) {
+	public static List<Employee> searchEmployees(int crdnr, String fullname, String status, int sort, Table database) {
 		try {
 			if(Database.tsvector() != 0 && Database.update() != 0 && Database.index() != 0) {
 				Connection conn = MakeConnection(database);
 				ResultSet res;
-				if(!status.equals("-1")) {
-					res = Database.searchWstat(conn, crdnr, fullname, status);
-				} else {
+				if((crdnr != -1 || !fullname.equals("-1")) && status.equals("-1") && sort == -1) {
 					res = Database.search(conn, crdnr, fullname);
+				} else if(!status.equals("-1") && sort == -1) {
+					res = Database.searchFilter(conn, crdnr, fullname, status);
+				} else if(status.equals("-1") && sort != -1) {
+					res = Database.searchSort(conn, crdnr, fullname, sort);
+				} else if(sort != -1) {
+					res = Database.searchFilterSort(conn, crdnr, fullname, status, sort);
+				} else {
+					res = null;
 				}
 				List<Employee> l = new ArrayList<>();
 				try {
@@ -674,22 +1228,6 @@ public class Database {
 				} catch (SQLException | NullPointerException e) {
 
 				}
-				ListOnPage = new ArrayList<>();
-				ResultSet result = Database.search(conn, crdnr, fullname);
-				List<Employee> f = new ArrayList<>();
-				try {
-					if(result != null) {
-						while(result.next()) {
-							f.add(new Employee(result.getInt(1), result.getString(2),result.getString(3)));
-						}
-					}
-				} catch (SQLException | NullPointerException e) {
-
-				};
-				ListOnPage.addAll(l);
-				ListOnPage2 = new ArrayList<>();
-				ListOnPage2.addAll(l);
-
 				return l;
 			} else {
 				List<Employee> l = new ArrayList<>();
@@ -697,80 +1235,6 @@ public class Database {
 			}
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
-		}
-		return null;
-	}
-
-	public static List<Employee> statusFilter(String status, int crdnr, String fullname, Table database) {
-		Connection conn;
-		try {
-			conn = MakeConnection(database);
-			ResultSet res = Database.status(conn, status);
-			List<Employee> l = new ArrayList<>();
-			try {
-				while(res.next()) {
-					for(int i = 0; i < ListOnPage.size(); i++) {
-						if(res.getInt(1) == ListOnPage.get(i).getId()) {
-							String stat = "Unknown";
-							switch (res.getString(3)) {
-								case "A":
-									stat = "Active";
-									break;
-								case "I":
-									stat = "Not Active";
-									break;
-								case "H":
-									stat = "Not Active Yet";
-									break;
-							}
-							l.add(new Employee(res.getInt(1), res.getString(2),stat));
-						}
-					}
-				}
-			} catch (SQLException | NullPointerException e) {
-
-			}
-			ListOnPage2 = new ArrayList<>();
-			ListOnPage2.addAll(l);
-			return l;
-		} catch (ClassNotFoundException | SQLException e1) {
-
-		}
-		return null;
-	}
-	
-	public static List<Employee> sortTable(int i,Table database) {
-		Connection conn;
-		try {
-			conn = MakeConnection(database);
-			ResultSet res = Database.sort(conn, i);
-			List<Employee> l = new ArrayList<>();
-			try {
-				while(res.next()) {
-					for(int n = 0; n < ListOnPage2.size(); n++) {
-						if(res.getInt(1) == ListOnPage2.get(n).getId()) {
-							String stat = "Unknown";
-							switch (res.getString(3)) {
-								case "A":
-									stat = "Active";
-									break;
-								case "I":
-									stat = "Not Active";
-									break;
-								case "H":
-									stat = "Not Active Yet";
-									break;
-							}
-							l.add(new Employee(res.getInt(1), res.getString(2),stat));
-						}
-					}
-				}
-			} catch (SQLException | NullPointerException e) {
-
-			}
-			return l;
-		} catch (ClassNotFoundException | SQLException e1) {
-
 		}
 		return null;
 	}

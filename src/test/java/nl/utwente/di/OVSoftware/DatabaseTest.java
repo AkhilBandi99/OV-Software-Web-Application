@@ -23,7 +23,8 @@ class DatabaseTest {
 
     @Test
     void searchEmployees() {
-        assertNotNull(Database.searchEmployees(4,"MaSt", "A", Database.mainDatabase));
+        assertNotNull(Database.searchEmployees(4,"MaSt", "A", 10, Database.mainDatabase));
+        assertNotNull(Database.searchEmployees(-1,"-1", "-1", 10, Database.mainDatabase));
     }
 
 }

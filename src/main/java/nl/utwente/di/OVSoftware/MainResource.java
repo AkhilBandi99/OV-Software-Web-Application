@@ -24,16 +24,6 @@ public class MainResource {
 	DatabaseMaps tables = new DatabaseMaps();
 
 	@GET
-	@Path("/status/{status}/search/{crdnr}/{name}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> status(@Context HttpServletRequest r, @PathParam("status") String s, @PathParam("crdnr") int i, @PathParam("name") String f) {
-		if (Login.Security(r.getSession()) == 1) {
-			return Database.statusFilter(s, i, f, (Table) r.getSession().getAttribute("Database"));
-		}
-		return null;
-	}
-
-	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Employee> getEmployees(@Context HttpServletRequest r) {
@@ -52,23 +42,13 @@ public class MainResource {
 		}
 		return null;
 	}
-	
-	@GET
-	@Path("/sort/{num}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> sort(@Context HttpServletRequest r, @PathParam("num") int n) {
-		if (Login.Security(r.getSession()) == 1) {
-			return Database.sortTable(n, (Table) r.getSession().getAttribute("Database"));
-		}
-		return null;
-	}
 
 	@GET
-	@Path("/search/{crdnr}/{name}/status/{status}")
+	@Path("/search/{crdnr}/{name}/status/{status}/sort/{num}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s) {
+	public List<Employee> search(@Context HttpServletRequest r, @PathParam("crdnr") int n, @PathParam("name") String c, @PathParam("status") String s, @PathParam("num") int so) {
 		if (Login.Security(r.getSession()) == 1) {
-			return Database.searchEmployees(n, c, s, (Table) r.getSession().getAttribute("Database"));
+			return Database.searchEmployees(n, c, s, so, (Table) r.getSession().getAttribute("Database"));
 		}
 		return null;
 	}
