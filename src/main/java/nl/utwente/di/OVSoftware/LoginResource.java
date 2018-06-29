@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.util.Collections;
 
 @Path("/")
@@ -21,7 +22,7 @@ public class LoginResource {
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/login/{user}/{pass}")
-	public int getClichedMessage(@PathParam("user") String user, @PathParam("pass") String pass, @Context HttpServletRequest r) {
+	public int getClichedMessage(@PathParam("user") String user, @PathParam("pass") String pass, @Context HttpServletRequest r) throws SQLException, ClassNotFoundException {
 		if(Database.OVAccountAccepted(user,pass)) {
 			r.getSession().setAttribute("Timeout", System.currentTimeMillis());
 			r.getSession().setAttribute("Database", Database.mainDatabase);
@@ -50,7 +51,7 @@ public class LoginResource {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/googleLogin")
-	public int handleLogin(String token, @Context HttpServletRequest request) {
+	public int handleLogin(String token, @Context HttpServletRequest request) throws SQLException, ClassNotFoundException {
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jacksonFactory)
 				.setAudience(Collections.singletonList(CLIENT_ID))
 				.build();
