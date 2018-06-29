@@ -37,7 +37,7 @@ public class OVSeleniumTest {
 	static WebElement searchbut;
 	static WebElement officebut;
 	static WebElement importbut;
-	static WebElement export;
+	static WebElement exportbut;
 	static WebElement logoutbutton;
 	static WebElement resultEmp;
 	static List<WebElement> resultEmpName;
@@ -75,7 +75,7 @@ public class OVSeleniumTest {
 		searchbut = driver.findElement(By.id("searchmain"));
 		officebut = driver.findElement(By.id("officeButton"));
 		importbut = driver.findElement(By.id("import"));
-		export = driver.findElement(By.id("export"));
+		exportbut = driver.findElement(By.id("export"));
 		logoutbutton = driver.findElement(By.id("logout"));
 		resultEmp = driver.findElement(By.id("EmployeeList"));
 	}
@@ -171,7 +171,6 @@ public class OVSeleniumTest {
 	public static void testLogOut() {
 
 		try {
-			constructMainElements();
 			logoutbutton.click();
 			Thread.sleep(500);
 			if (driver.getCurrentUrl().contains("login.html")) {
@@ -267,10 +266,17 @@ public class OVSeleniumTest {
 
 	public static void testOfficeFunction() {
 		try {
+			Thread.sleep(500);
 			officebut.click();
 			Thread.sleep(500);
 			WebElement belgieoff = driver.findElement(By.xpath("//*[@id=\"officeDropdown\"]/a[2]"));
 			belgieoff.click();
+			Thread.sleep(500);
+			
+			officebut.click();
+			Thread.sleep(500);
+			WebElement amsoff = driver.findElement(By.xpath("//*[@id=\"officeDropdown\"]/a[1]"));
+			amsoff.click();
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -278,11 +284,16 @@ public class OVSeleniumTest {
 	}
 	
 	public static void testImportFunction() {
-		
+		// TODO : implement import function
 	}
 	
 	public static void testExportFunction() {
-		
+		try {
+			exportbut.click();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -299,7 +310,8 @@ public class OVSeleniumTest {
 		//testStatusFunction();
 
 		//loadPage(MAIN_URL);
-
+		
+		/*
 		WebElement popupr1 = driver.findElement(By.xpath("//*[@id=\"EmployeeList\"]/tr[1]"));
 		popupr1.click();
 		testAddPayrate();
@@ -309,12 +321,15 @@ public class OVSeleniumTest {
 		
 		popupr1.click();
 		testDeletePayrate();
-
-		testOfficeFunction();
-		testImportFunction();
-		testExportFunction();
+		*/
 		
 		loadPage(MAIN_URL);
+		constructMainElements();
+		
+		testOfficeFunction();
+		//testImportFunction();
+		testExportFunction();
+		
 		testLogOut();
 
 	}
