@@ -2,7 +2,7 @@ package nl.utwente.di.OVSoftware;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DatabaseTest {
 
@@ -23,8 +23,8 @@ class DatabaseTest {
 
     @Test
     void searchEmployees() {
-        assertNotNull(Database.searchEmployees(4,"MaSt", "A", 10, Database.mainDatabase));
-        assertNotNull(Database.searchEmployees(-1,"-1", "-1", 00, Database.mainDatabase));
+        assertNotNull(Database.searchEmployees(4, "MaSt", "A", 10, Database.mainDatabase));
+        assertNotNull(Database.searchEmployees(-1, "-1", "-1", 00, Database.mainDatabase));
     }
 
 }

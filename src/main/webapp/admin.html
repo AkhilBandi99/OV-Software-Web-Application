@@ -2,507 +2,160 @@
 <html>
 
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-signin-client_id"
-	content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
-<title>Module4</title>
-<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/styles.css">
-<link rel="stylesheet"
-	href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
-	integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
-	crossorigin="anonymous">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id"
+          content="477517551933-umld4fqt1rrf4mhou2t7pd4nb5ruepus.apps.googleusercontent.com">
+    <title>Module4</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
 
-<style>
-#card-style {
-	box-shadow: 3px 3px #e0e0e0;
-}
-</style>
+    <style>
+        #card-style {
+            box-shadow: 3px 3px #e0e0e0;
+        }
+    </style>
 
 
 </head>
 
 <body onload="requestContent()">
-	<div id="wrapper">
+<div id="wrapper">
 
-		<!-- Sidebar -->
-		<div id="sidebar-wrapper">
-			<ul class="sidebar-nav">
-				<li class="sidebar-brand"><a style="cursor: pointer;"
-					href="https://www.ovsoftware.nl/"> OV Software </a></li>
-				<li><a href="main.html">Payrates</a></li>
-				<li><a href="#">Administration</a></li>
-			</ul>
-		</div>
-		<!-- /#sidebar-wrapper -->
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a style="cursor: pointer;"
+                                         href="https://www.ovsoftware.nl/"> OV Software </a></li>
+            <li><a href="main.html">Payrates</a></li>
+            <li><a href="#">Administration</a></li>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
 
-		<!-- Page Content -->
-		<div id="page-content-wrapper">
-			<div class="container-fluid">
-				<div class="row" style="padding-top: 12px; padding-bottom: 6px;">
-					<div class="col-md-12" style="padding: 0px;">
-						<div class="card" id="card-style">
-							<div class="card-body">
-								<div class="col-md-12 d-flex align-items-center">
-									<div id="menu-toggle" href="#menu-toggle">
-										<div class="bar1"></div>
-										<div class="bar2"></div>
-										<div class="bar3"></div>
-									</div>
-									<a href="https://www.ovsoftware.nl/"> <img
-										src="assets/img/OV.png"
-										style="height: 70px; margin-right: 12px; cursor: pointer;">
-									</a>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" name="accounttype"
-											type="radio" id="googleSelector" checked="checked" /><label
-											class="form-check-label" for="googleSelector"
-											style="cursor: pointer;">Google Account</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" name="accounttype"
-											type="radio" id="OVSelector" /><label
-											class="form-check-label" for="OVSelector"
-											style="cursor: pointer;">OV Account</label>
-									</div>
-									<input id="username" type="text" placeholder="Username"
-										style="margin: 6px;"><input id="password"
-										type="password" placeholder="Password" style="margin: 6px;">
-									<input id="email" type="email" placeholder="Email"
-										style="margin: 6px;">
-									<button onclick=addAccount() class="btn btn-primary"
-										type="button" style="margin-left: 6px;">Add</button>
-									<div class="btn-group ml-auto" role="group">
-										<button onclick=logout() class="btn btn-primary ml-auto"
-											type="button" style="margin: 6px;">Log Out</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row" style="padding-top: 6px;">
-					<div class="col-md-4">
-						<div class="row">
-							<h2>Google Accounts</h2>
-						</div>
-						<div class="row d-block" style="padding-right: 8px">
-							<div class="card">
-								<div class="card-body" style="padding: 0px;">
-									<div class="table-responsive table-hover">
-										<table class="table">
-											<thead>
-												<tr>
-													<th>Email</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody id="GoogleAccountList">
-												<tr>
-													<td>*.student.utwente.nl</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-8">
-						<div class="row">
-							<h2>OV accounts</h2>
-						</div>
-						<div class="row d-block" style="padding-left: 8px">
-							<div class="card">
-								<div class="card-body" style="padding: 0px;">
-									<div class="table-responsive table-hover">
-										<table class="table">
-											<thead>
-												<tr>
-													<th>Username</th>
-													<th>Password</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody id="OVAccountList">
-												<tr>
-													<td>test</td>
-													<td>test</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /#page-content-wrapper -->
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row" style="padding-top: 12px; padding-bottom: 6px;">
+                <div class="col-md-12" style="padding: 0px;">
+                    <div class="card" id="card-style">
+                        <div class="card-body">
+                            <div class="col-md-12 d-flex align-items-center">
+                                <div id="menu-toggle" href="#menu-toggle">
+                                    <div class="bar1"></div>
+                                    <div class="bar2"></div>
+                                    <div class="bar3"></div>
+                                </div>
+                                <a href="https://www.ovsoftware.nl/"> <img
+                                        src="assets/img/OV.png"
+                                        style="height: 70px; margin-right: 12px; cursor: pointer;">
+                                </a>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" name="accounttype"
+                                           type="radio" id="googleSelector" checked="checked"/><label
+                                        class="form-check-label" for="googleSelector"
+                                        style="cursor: pointer;">Google Account</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" name="accounttype"
+                                           type="radio" id="OVSelector"/><label
+                                        class="form-check-label" for="OVSelector"
+                                        style="cursor: pointer;">OV Account</label>
+                                </div>
+                                <input id="username" type="text" placeholder="Username"
+                                       style="margin: 6px;"><input id="password"
+                                                                   type="password" placeholder="Password"
+                                                                   style="margin: 6px;">
+                                <input id="email" type="email" placeholder="Email"
+                                       style="margin: 6px;">
+                                <button onclick=addAccount() class="btn btn-primary"
+                                        type="button" style="margin-left: 6px;">Add
+                                </button>
+                                <div class="btn-group ml-auto" role="group">
+                                    <button onclick=logout() class="btn btn-primary ml-auto"
+                                            type="button" style="margin: 6px;">Log Out
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 6px;">
+                <div class="col-md-4">
+                    <div class="row">
+                        <h2>Google Accounts</h2>
+                    </div>
+                    <div class="row d-block" style="padding-right: 8px">
+                        <div class="card">
+                            <div class="card-body" style="padding: 0px;">
+                                <div class="table-responsive table-hover">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="GoogleAccountList">
+                                        <tr>
+                                            <td>*.student.utwente.nl</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <h2>OV accounts</h2>
+                    </div>
+                    <div class="row d-block" style="padding-left: 8px">
+                        <div class="card">
+                            <div class="card-body" style="padding: 0px;">
+                                <div class="table-responsive table-hover">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Password</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="OVAccountList">
+                                        <tr>
+                                            <td>test</td>
+                                            <td>test</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
 
-	</div>
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-	<script src="assets/js/main.js"></script>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
-		async defer></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
-	<script>
-		// ovacc is  used to store all the ov account registered in the database and later on will be displayed on admin.html
-		// googleacc is used to store all the google account registered in the database and later on will also be displayed on admin.html
-		// status is by default -1 meaning the page would not load without any authorization verified by response 200 (OK)
-		// xhr is the XML Http Request
-		// rqueue is an array used to store all the request to get the content of the page
-		// rcounter is an integer used to count the remaining content request url to load
-		var ovacc = [];
-		var googleacc = [];
-		var dropdownitems = [];
-		var status = -1;
-		var xhr = new XMLHttpRequest();
-		var rqueue = [ "./OV/test", "./OV/admin/googleusers",
-				"./OV/admin/ovusers" ];
-		var rcounter = 0;
-		$("#username").hide();
-		$("#password").hide();
-		$("#email").show();
-		
-		/**
-		* If the session response text is 0, which means the user is not authorized, then it will direct you back to the login.html
-		* Otherwise, if the response text is a list of JSON object containing a user account, which could be an ov account or google account
-		* it will update the page content with the received response text
-		*/
-		xhr.onload = function() {
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				// session ends
-				if (this.responseText == "0") {
-					window.location.replace(".");
-				}
-				try {
-					var temp = JSON.parse(this.responseText);
-					if (temp.length > 0) {
-
-						if (temp[0].hasOwnProperty("email")) {
-							googleacc = temp;
-							updateGoogleAccount();
-						} else if (temp[0].hasOwnProperty("username")) {
-							ovacc = temp;
-							updateOVAccount();
-						}
-					}
-				} catch (e) {
-					console.log("caught exception : " + e);
-				}
-				requestContent();
-			}
-		};
-		
-		function updatelist() {
-			var body = document.getElementById('EmployeeList');
-			body.innerHTML = "";
-
-			for (var i = 0; i < googleacc.length; i++) {
-
-				var ver = document.createElement("tr");
-
-				// create email display
-				var em = document.createElement("td");
-				var etxt = document.createTextNode(googleacc[i].email);
-				em.appendChild(etxt);
-				ver.appendChild(em);
-				body.appendChild(ver);
-			}
-		}
-		/**
-		* update the list of the employee registered with ov account
-		*/
-		function updateOVAccount() {
-			var body = document.getElementById('OVAccountList');
-			body.innerHTML = "";
-
-			for (var i = 0; i < ovacc.length; i++) {
-
-				var ver = document.createElement("tr");
-
-				// create user display
-				var user = document.createElement("td");
-				var utxt = document.createTextNode(ovacc[i].username);
-				user.appendChild(utxt);
-				ver.appendChild(user);
-				user.className = "username";
-				// create pass display
-				var pass = document.createElement("td");
-				var ptxt = document.createTextNode(ovacc[i].password);
-				pass.appendChild(ptxt);
-				ver.appendChild(pass);
-
-				// create trash icon
-				var trash = document.createElement("td");
-				var trashIcon = document.createElement("span");
-				trash.style = "cursor:pointer;"
-				trash.className = "fas fa-trash-alt";
-				trash.id = "trash";
-				trash.setAttribute("onclick", "deleteOVUser(\""
-						+ ovacc[i].username + "\")");
-				trash.appendChild(trashIcon);
-				ver.appendChild(trash);
-
-				body.appendChild(ver);
-
-				body.appendChild(ver);
-			}
-
-			$('#OVAccountList')
-					.on(
-							'click',
-							"#trash",
-							function() {
-								var row = $(this).closest('tr').remove();
-								$
-										.ajax({
-											url : "./OV/admin/ovuser",
-											contentType : 'application/json; charset=utf-8',
-											type : "DELETE",
-											data : JSON.stringify({
-												"username" : $(this).closest(
-														'tr').children(
-														"td.username").text()
-											}),
-											dataType : 'json',
-											success : function() {
-												row.remove();
-												showSuccessToast("User has been successfully deleted.");
-											},
-											error : function() {
-												showErrorToast("An error occurred while deleting the user.");
-											}
-										});
-							});
-		}
-
-		/**
-		* Updates the google account table
-		*/
-		function updateGoogleAccount() {
-			var body = document.getElementById('GoogleAccountList');
-			body.innerHTML = "";
-
-			for (var i = 0; i < googleacc.length; i++) {
-
-				var ver = document.createElement("tr");
-
-				// create email display
-				var em = document.createElement("td");
-				var etxt = document.createTextNode(googleacc[i].email);
-				em.className = "email";
-				em.appendChild(etxt);
-				ver.appendChild(em);
-
-				// create trash icon
-				var trash = document.createElement("td");
-				trash.style = "cursor:pointer;"
-				trash.className = "fas fa-trash-alt";
-				trash.id = "trash";
-				ver.appendChild(trash);
-				body.appendChild(ver);
-			}
-
-			$('#GoogleAccountList')
-					.on(
-							'click',
-							"#trash",
-							function() {
-								var row = $(this).closest('tr').remove();
-								$
-										.ajax({
-											url : "./OV/admin/googleuser",
-											contentType : 'application/json; charset=utf-8',
-											type : "DELETE",
-											data : JSON.stringify({
-												"email" : $(this).closest('tr')
-														.children("td.email")
-														.text()
-											}),
-											dataType : 'json',
-											success : function() {
-												row.remove();
-												showSuccessToast("User has been successfully deleted.");
-											},
-											error : function() {
-												showErrorToast("An error occurred while deleting the user.");
-											}
-										});
-							});
-		}
-		
-		/**
-		* Add the ov account to the database
-		*/
-		
-		function addAccount() {
-			if ($("#OVSelector").is(':checked')) {
-				var username = $("#username").val();
-				var password = $("#password").val();
-				$
-						.post({
-							url : "./OV/admin/ovuser",
-							contentType : 'application/json; charset=utf-8',
-							data : JSON.stringify({
-								"username" : username,
-								"password" : password
-							}),
-							dataType : 'json',
-							success : function() {
-								showSuccessToast("User has been successfully created.");
-								$('#OVAccountList tr:last')
-										.after(
-												'<tr><td class="username">'
-														+ username
-														+ '</td><td>•••••••••</td><td class="fas fa-trash-alt" id="trash"></td></tr>');
-								$("#username").val("");
-								$("#password").val("");
-							},
-							error : function() {
-								showErrorToast("An error occurred while creating the user.")
-							}
-						});
-			}
-			if ($("#googleSelector").is(':checked')) {
-				var email = $("#email").val();
-				$
-						.post({
-							url : "./OV/admin/googleuser",
-							contentType : 'application/json; charset=utf-8',
-							data : JSON.stringify({
-								"email" : email
-							}),
-							dataType : 'json',
-							success : function() {
-								showSuccessToast("User has been successfully created.");
-								$('#GoogleAccountList tr:last')
-										.after(
-												'<tr><td class="email">'
-														+ email
-														+ '</td><td class="fas fa-trash-alt" id="trash"></td></tr>');
-								$("#email").val();
-							},
-							error : function() {
-								showErrorToast("An error occurred while creating the user.")
-							}
-						});
-			}
-		}
-
-		$("#menu-toggle").click(function(e) {
-			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
-		});
-		
-		/**
-		* Display the error pop up
-		*/
-		
-		function showErrorToast(message) {
-			$.notify({
-				message : message
-			}, {
-				type : 'danger',
-				placement : {
-					from : "bottom",
-					align : "center"
-				},
-				animate : {
-					enter : 'animated fadeInUp',
-					exit : 'animated fadeOutDown'
-				}
-			});
-		}
-		
-		/**
-		* Display the success pop up
-		*/
-		
-		function showSuccessToast(message) {
-			$.notify({
-				message : message
-			}, {
-				type : 'success',
-				allow_dismiss : true,
-				placement : {
-					from : "bottom",
-					align : "center"
-				},
-				animate : {
-					enter : 'animated fadeInUp',
-					exit : 'animated fadeOutDown'
-				}
-			});
-		}
-		
-		/**
-		* Logs the user out from the admin.html
-		*/
-		function logout() {
-			var auth2 = gapi.auth2.getAuthInstance();
-			auth2.signOut().then(function() {
-				console.log('User signed out.');
-			});
-			xhr.open("GET", "./OV/logout");
-			xhr.send();
-			window.open("./login.html", "_self");
-		}
-
-		function onLoad() {
-			gapi.load('auth2', function() {
-				gapi.auth2.init();
-			});
-		}
-		
-		/**
-		* Delete the ov user from the database and update the page content
-		*/
-
-		function deleteOVUser(user) {
-			$.ajax({
-				url : "./OV/admin/ovuser",
-				type : "DELETE",
-				contentType : 'application/json; charset=utf-8',
-				data : JSON.stringify({
-					"username" : user
-				}),
-				dataType : 'json'
-			});
-		}
-		
-		/**
-		* Request the content of the page from the server and update the counter
-		*/
-
-		function requestContent() {
-			if (rcounter < rqueue.length) {
-				xhr.open("GET", rqueue[rcounter]);
-				xhr.send();
-				rcounter++;
-			}
-		}
-
-		$("#googleSelector").click(function() {
-			$("#username").hide();
-			$("#password").hide();
-			$("#email").show();
-		});
-
-		$("#OVSelector").click(function() {
-			$("#username").show();
-			$("#password").show();
-			$("#email").hide();
-		});
-	</script>
+</div>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/admin.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=onLoad"
+        async defer></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"></script>
 </body>
 
 </html>

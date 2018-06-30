@@ -11,10 +11,10 @@ import javax.ws.rs.core.MediaType;
 @Path("test")
 public class TestResource {
 
-	@GET
-	@Produces(MediaType.TEXT_PLAIN)
-	public String test(@Context HttpServletRequest r) {
-		return "" + Login.Security(r.getSession());
-	}
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String test(@Context HttpServletRequest r) {
+        return "" + Login.Security(r.getSession());
+    }
 
 }

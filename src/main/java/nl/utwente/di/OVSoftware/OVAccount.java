@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OVAccount {
-	private String username;
-	private String password;
+    private String username;
+    private String password;
 
-	public String getUsername() {
-		return username;
-	}
+    //OV accounts are used to store the usernames and passwords for local accounts.
+    @JsonCreator
+    public OVAccount(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+        this.username = username;
+        this.password = password;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	//OV accounts are used to store the usernames and passwords for local accounts.
-	@JsonCreator
-	public OVAccount(@JsonProperty("username") String username, @JsonProperty("password") String password) {
-		this.username = username;
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 }
