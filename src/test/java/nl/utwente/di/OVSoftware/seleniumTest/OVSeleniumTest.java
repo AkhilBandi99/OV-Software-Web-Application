@@ -13,10 +13,10 @@ public class OVSeleniumTest {
      * Before running the test, make sure your path is configured properly.
      */
 
-    private static final String PATH = "/Users/akhilbandi/Desktop/Module4/apache-tomcat-8.0.51/chromedriver";
-    private static final String LOGIN_URL = "http://localhost:8080/Module4/login.html";
-    private static final String MAIN_URL = "http://localhost:8080/Module4/main.html";
-    private static final String ADMIN_URL = "http://localhost:8080/Module4/admin.html";
+    private static final String PATH = "/Users/ignatiuspatrick/Desktop/chromedriver";
+    private static final String LOGIN_URL = "http://farm03.ewi.utwente.nl:7015/mod04di08";
+    private static final String MAIN_URL = "http://farm03.ewi.utwente.nl:7015/mod04di08/main.html";
+    private static final String ADMIN_URL = "http://farm03.ewi.utwente.nl:7015/mod04di08/admin.html";
     static WebElement username;
     static WebElement password;
     static WebElement loginbutton;
@@ -228,8 +228,8 @@ public class OVSeleniumTest {
             epayrateuntil.clear();
 
             epayrate.sendKeys("55");
-            epayratefrom.sendKeys("2016-12-01");
-            epayrateuntil.sendKeys("2018-01-01");
+            epayratefrom.sendKeys("2017-01-01");
+            epayrateuntil.sendKeys("2018-12-31");
 
             WebElement savebut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[3]/button[3]"));
             savebut.click();
@@ -249,9 +249,9 @@ public class OVSeleniumTest {
             Thread.sleep(500);
             WebElement addpayratebut = driver.findElement(By.xpath("//*[@id=\"empInfo\"]/div/div/div[3]/button[1]"));
             addpayratebut.click();
-            WebElement newpayrate = driver.findElement(By.xpath("//*[@value=\"Cost\"]"));
-            WebElement newpayratefrom = driver.findElement(By.xpath("//*[@value=\"Start date\"]"));
-            WebElement newpayrateuntil = driver.findElement(By.xpath("//*[@value=\"End date\"]"));
+            WebElement newpayrate = driver.findElement(By.xpath("//*[@id=\"infotable\"]/tr[2]/td[1]/input"));
+            WebElement newpayratefrom = driver.findElement(By.xpath("//*[@id=\"infotable\"]/tr[2]/td[2]/input"));
+            WebElement newpayrateuntil = driver.findElement(By.xpath("//*[@id=\"infotable\"]/tr[2]/td[3]/input"));
 
             newpayrate.clear();
             newpayratefrom.clear();
