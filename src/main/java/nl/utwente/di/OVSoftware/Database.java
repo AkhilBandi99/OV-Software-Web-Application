@@ -915,7 +915,7 @@ public class Database {
         return null;
     }
 
-    // get all the google accounts in the database when accepted
+    // get the google account in the database when accepted
     public static boolean googleAccountAccepted(String email) {
         try {
             Connection conn = MakeConnection(mainDatabase);
@@ -959,7 +959,7 @@ public class Database {
         return null;
     }
 
-    // get all the ov accounts on the database when accepted
+    // get the ov account on the database when accepted
     public static boolean OVAccountAccepted(String username, String password) {
         try {
             Connection conn = MakeConnection(mainDatabase);
@@ -1019,21 +1019,6 @@ public class Database {
         p.setString(1, email);
         p.execute();
         conn.close();
-    }
-
-    // delete a payrate of a employee
-    public static void deletePayrate(String startDate, String endDate, int id, Table database) {
-        try {
-            Connection conn = MakeConnection(database);
-            PreparedStatement p = conn.prepareStatement("DELETE FROM di08.employeerates WHERE vandatum=? AND totdatum=? AND id=?");
-            p.setString(1, startDate);
-            p.setString(2, endDate);
-            p.setInt(3, id);
-            p.execute();
-            conn.close();
-        } catch (ClassNotFoundException | SQLException e1) {
-            e1.printStackTrace();
-        }
     }
 
     //Edit the payrates for one employee with deletion

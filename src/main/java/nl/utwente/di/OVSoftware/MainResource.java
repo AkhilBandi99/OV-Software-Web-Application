@@ -76,11 +76,8 @@ public class MainResource {
             s.close();
             Payrates.checkIntegrity(prts);
             Database.editPayrates(crdnr, prts, (Table) r.getSession().getAttribute("Database"));
-
             if (ret == null) {
                 return "1";
-            } else {
-                return ret;
             }
         }
         return null;
