@@ -1,6 +1,7 @@
 package nl.utwente.di.OVSoftware;
 
 import org.junit.Rule;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
