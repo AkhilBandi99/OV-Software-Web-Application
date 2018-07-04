@@ -1,5 +1,6 @@
-package nl.utwente.di.OVSoftware;
+package nl.utwente.di.OVSoftware.utils;
 
+import nl.utwente.di.OVSoftware.models.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;

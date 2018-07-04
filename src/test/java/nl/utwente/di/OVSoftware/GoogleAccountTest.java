@@ -1,5 +1,6 @@
 package nl.utwente.di.OVSoftware;
 
+import nl.utwente.di.OVSoftware.models.GoogleAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

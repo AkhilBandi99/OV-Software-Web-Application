@@ -1,4 +1,4 @@
-package nl.utwente.di.OVSoftware;
+package nl.utwente.di.OVSoftware.models;
 
 public class Employee {
     private final int id;

@@ -1,4 +1,4 @@
-package nl.utwente.di.OVSoftware;
+package nl.utwente.di.OVSoftware.utils;
 
 import javax.servlet.http.HttpSession;
 

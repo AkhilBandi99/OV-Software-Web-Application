@@ -7,7 +7,7 @@
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>nl.utwente.di.OVSoftware.MyApplication</param-value>
+            <param-value>nl.utwente.di.OVSoftware.OVApplication</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
