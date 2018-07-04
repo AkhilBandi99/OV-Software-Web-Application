@@ -3,10 +3,8 @@ package nl.utwente.di.OVSoftware;
 import nl.utwente.di.OVSoftware.models.Employee;
 import nl.utwente.di.OVSoftware.models.Payrates;
 import nl.utwente.di.OVSoftware.utils.Database;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -27,9 +25,6 @@ class DatabaseTest {
 		payrates = new Payrates(employee.getId(), 90, "01-01-2018", "31-12-2018");
 		invalidpayrate = new Payrates(employee.getId(), 90, "01-01-2018", "31-12-2017");
 	}
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
     @Test
     void getAllPayrates() {
@@ -94,21 +89,23 @@ class DatabaseTest {
     
     @Test
     void addPayrates() throws ParseException {
-    	list.add(invalidpayrate);
-    	Database.editPayrates(employee.getId(), list, Database.mainDatabase);
-    	thrown.expect(SQLException.class);
-    	list.remove(invalidpayrate);
-    	list.add(payrates);
-    	Database.editPayrates(employee.getId(), list, Database.mainDatabase);
-    	list.remove(payrates);
+        assertThrows(SQLException.class, () -> {
+            list.add(invalidpayrate);
+            Database.editPayrates(employee.getId(), list, Database.mainDatabase);
+            list.remove(invalidpayrate);
+            list.add(payrates);
+            Database.editPayrates(employee.getId(), list, Database.mainDatabase);
+            list.remove(payrates);
+        });
     }
     
     @Test
     void importPayrates() {
-		list.add(invalidpayrate);
-		Database.importPayrts(list, Database.mainDatabase);
-		thrown.expect(SQLException.class);
-		list.remove(invalidpayrate);
+        assertThrows(SQLException.class, () -> {
+            list.add(invalidpayrate);
+            Database.importPayrts(list, Database.mainDatabase);
+            list.remove(invalidpayrate);
+        });
     }
 
     @Test
