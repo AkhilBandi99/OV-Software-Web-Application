@@ -1,19 +1,20 @@
 package nl.utwente.di.OVSoftware;
 
+import nl.utwente.di.OVSoftware.models.Employee;
+import nl.utwente.di.OVSoftware.models.Payrates;
+import nl.utwente.di.OVSoftware.utils.Database;
 import org.junit.Rule;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseTest {
 	private Employee employee;

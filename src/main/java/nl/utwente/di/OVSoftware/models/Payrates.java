@@ -1,8 +1,9 @@
-package nl.utwente.di.OVSoftware;
+package nl.utwente.di.OVSoftware.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import nl.utwente.di.OVSoftware.exceptions.DateException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

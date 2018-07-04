@@ -1,12 +1,17 @@
 package nl.utwente.di.OVSoftware;
 
+import nl.utwente.di.OVSoftware.resources.AdminResource;
+import nl.utwente.di.OVSoftware.resources.LoginResource;
+import nl.utwente.di.OVSoftware.resources.MainResource;
+import nl.utwente.di.OVSoftware.resources.TestResource;
+import nl.utwente.di.OVSoftware.utils.CsvWriter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MyApplication extends Application {
+public class OVApplication extends Application {
 
     //This function makes sure all of the classes are registered.
     @Override

@@ -1,4 +1,6 @@
-package nl.utwente.di.OVSoftware;
+package nl.utwente.di.OVSoftware.resources;
+
+import nl.utwente.di.OVSoftware.utils.Login;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
