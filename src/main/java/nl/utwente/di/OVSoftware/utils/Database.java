@@ -1023,14 +1023,10 @@ public class Database {
     }
 
     //Edit the payrates for one employee with deletion
-    public static void editPayrates(int crdnr, List<Payrates> list, Table database) {
-        try {
+    public static void editPayrates(int crdnr, List<Payrates> list, Table database) throws SQLException, ClassNotFoundException {
             Connection conn = MakeConnection(database);
             delPayrate(conn, crdnr);
             addPayrates(conn, list);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     //Import the payrates for all employee with deletion
@@ -1050,7 +1046,6 @@ public class Database {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     // get payrates for a specific employee

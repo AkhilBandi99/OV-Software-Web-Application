@@ -18,7 +18,7 @@ class PayratesTest {
     @BeforeEach
     void setUp() {
         try {
-            payrates = new Payrates(1337, 523.014, "01.01.2018", "01.01.2019");
+            payrates = new Payrates(1337, 523.014, "2018-01-01", "2019-01-01");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -40,12 +40,12 @@ class PayratesTest {
 
     @Test
     void getStartDate() {
-        assertEquals("01.01.2018", payrates.getStartDate());
+        assertEquals("2018-01-01", payrates.getStartDate());
     }
 
     @Test
     void getEndDate() {
-        assertEquals("01.01.2019", payrates.getEndDate());
+        assertEquals("2019-01-01", payrates.getEndDate());
     }
 
     @Test

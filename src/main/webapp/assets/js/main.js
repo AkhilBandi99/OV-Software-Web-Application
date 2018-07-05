@@ -150,6 +150,11 @@ function searchupdate() {
     }
 }
 
+function resetFilters() {
+	 xhr.open("GET", "./OV/main/employees");
+     xhr.send();
+}
+
 // update payrate table when page reloads
 function updateinfo() {
     var body = document.getElementById('infotable');
@@ -514,6 +519,17 @@ function showSuccessToast(message) {
     });
 }
 
+// resets all the filters selected
+$('#reset').on('click', function(e) {
+	document.getElementById("searchid").value = "";
+    document.getElementById("searchname").value = "";
+    document.getElementById("numSort").className = "fas fa-sort fa-fw";
+    document.getElementById("nameSort").className = "fas fa-sort fa-fw";
+	$('.dropdown-toggle').first().html("Status");
+	xhr.open("GET", "./OV/main/employees");
+	xhr.send();
+}).trigger('click');
+
 // menu toggle function
 $("#menu-toggle").click(function (e) {
     e.preventDefault();
@@ -522,6 +538,7 @@ $("#menu-toggle").click(function (e) {
 
 // notify the status of import
 function showImportStatus(status) {
+	console.log(status);
     $("#importstatus").html(status);
     $("#importpopup").modal();
 }

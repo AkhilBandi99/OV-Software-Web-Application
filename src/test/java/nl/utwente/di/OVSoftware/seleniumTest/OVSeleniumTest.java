@@ -12,9 +12,9 @@ public class OVSeleniumTest {
 	 * Before running the test, make sure your path is configured properly.
 	 */
 
-	private static final String PATH = "/Users/ignatiuspatrick/Desktop/chromedriver";
+	private static final String PATH = "/Users/akhilbandi/Desktop/Module4/apache-tomcat-8.0.51/chromedriver";
 	// this file change anro's payrate
-	private static final String EXPORT_FILE_PATH = "/Users/ignatiuspatrick/Downloads/export.csv"; // change export file
+	private static final String EXPORT_FILE_PATH = "/Users/akhilbandi/Downloads/export.csv"; // change export file
 																									// location here
 	private static final String LOGIN_URL = "http://farm03.ewi.utwente.nl:7015/mod04di08";
 	private static final String MAIN_URL = "http://farm03.ewi.utwente.nl:7015/mod04di08/main.html";

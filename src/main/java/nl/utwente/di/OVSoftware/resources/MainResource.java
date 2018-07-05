@@ -62,7 +62,7 @@ public class MainResource {
     @POST
     @Path("/editPayrates")
     @Consumes(MediaType.TEXT_PLAIN)
-    public String editPayrates(@Context HttpServletRequest r, String payrates) throws ParseException, DateException {
+    public String editPayrates(@Context HttpServletRequest r, String payrates) throws ParseException, DateException, ClassNotFoundException, SQLException {
         if (Login.Security(r.getSession()) == 1) {
             Scanner s = new Scanner(payrates);
             String ret = null;
@@ -113,7 +113,7 @@ public class MainResource {
             try {
                 List<Payrates> list = new ArrayList<>();
                 Scanner s = new Scanner(in);
-                while (!s.nextLine().equals("id,cost,startDate,endDate")) ;
+                while (!s.nextLine().equals("id,cost,startDate,endDate"));
                 String line = " ";
                 while (s.hasNextLine() || line.equals("")) {
                     line = s.nextLine();

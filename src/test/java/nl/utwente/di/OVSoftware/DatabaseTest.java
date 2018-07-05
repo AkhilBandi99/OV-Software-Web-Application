@@ -21,9 +21,9 @@ class DatabaseTest {
 	
 	@BeforeEach
 	void setup() throws ParseException {
-		employee = new Employee(9999, "AkBa", "A");
-		payrates = new Payrates(employee.getId(), 90, "01-01-2018", "31-12-2018");
-		invalidpayrate = new Payrates(employee.getId(), 90, "01-01-2018", "31-12-2017");
+		employee = Database.getEmployees(Database.mainDatabase).get(0);
+		payrates = new Payrates(employee.getId(), 0, "2016-01-01", "2016-12-31");
+		invalidpayrate = new Payrates(employee.getId(), 90, "2018-01-01", "2017-12-31");
 	}
 
     @Test
@@ -88,24 +88,17 @@ class DatabaseTest {
     }
     
     @Test
-    void addPayrates() throws ParseException {
-        assertThrows(SQLException.class, () -> {
-            list.add(invalidpayrate);
-            Database.editPayrates(employee.getId(), list, Database.mainDatabase);
-            list.remove(invalidpayrate);
-            list.add(payrates);
-            Database.editPayrates(employee.getId(), list, Database.mainDatabase);
-            list.remove(payrates);
-        });
-    }
-    
-    @Test
-    void importPayrates() {
-        assertThrows(SQLException.class, () -> {
-            list.add(invalidpayrate);
-            Database.importPayrts(list, Database.mainDatabase);
-            list.remove(invalidpayrate);
-        });
+    void addPayrates() throws ClassNotFoundException, SQLException {
+    	list.clear();
+    	Database.editPayrates(employee.getId(), list, Database.mainDatabase);
+		int size = Database.getPayratesSpecificEmployee(employee.getId(), Database.mainDatabase).size();
+        list.add(payrates);
+        Database.editPayrates(employee.getId(), list, Database.mainDatabase);
+        assertEquals(size + 1, Database.getPayratesSpecificEmployee(employee.getId(), Database.mainDatabase).size());
+        list.clear();
+        list.add(invalidpayrate);
+        Database.editPayrates(employee.getId(), list, Database.mainDatabase);
+        assertEquals(size + 1, Database.getPayratesSpecificEmployee(employee.getId(), Database.mainDatabase).size());
     }
 
     @Test
